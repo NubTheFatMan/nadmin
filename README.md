@@ -19,7 +19,7 @@ Want to keep up-to-date with Nadmin's progression? You can find the Trello for i
 - Imitate command created.
 - Admin Say command created.
 - Files have had a complete rework, now clients download only what they need.
-- Give command created
+- Give command created.
 
 # Installation
 Now that you know what Nadmin is about, it's time you learn how to install it.
@@ -31,7 +31,6 @@ Now that you know what Nadmin is about, it's time you learn how to install it.
 # Addon Created by Nub
 This addon was devoloped by me, Nub. Have any questions? Concerns? Suggestions? (All related to Nadmin)
 
-Email: that1nub@gmail.com\
 Discord: Nub#0002\
 Discord Guild: https://discord.gg/pjbemj4 \
 Steam: Nub (https://steamcommunity.com/id/that1nubofficial/)
