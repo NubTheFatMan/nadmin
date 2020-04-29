@@ -26,7 +26,7 @@ Now that you know what Nadmin is about, it's time you learn how to install it.
 1. This will be redone at a later time. If you know how to do it, then go ahead and do what you know.
 
 # Documentation
-[Here](https://github.com/that1nub/nadmin/wiki) is the documentation if you want to create your own features.
+No documentation has been created yet.
 
 # Addon Created by Nub
 This addon was devoloped by me, Nub. Have any questions? Concerns? Suggestions? (All related to Nadmin)
