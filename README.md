@@ -32,8 +32,7 @@ Want to keep up-to-date with Nadmin's progression? You can find the Trello for i
 - Advert management added.
 
 # Installation
-Now that you know what Nadmin is about, it's time you learn how to install it.
-1. This will be redone at a later time. If you know how to do it, then go ahead and do what you know.
+Check the releases section on the right.
 
 # Documentation
 No documentation has been created yet.
