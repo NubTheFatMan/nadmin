@@ -7,7 +7,9 @@ net.Receive("nadmin_cast_vote", function()
     back:SetPos(0, 0)
     back:SetSize(ScrW(), ScrH())
     function back:Paint(w, h)
-        draw.Blur(0, 0, w, h, Color(0, 0, 0))
+        if nadmin.vote.forcedResponse then
+            draw.Blur(0, 0, w, h, Color(0, 0, 0))
+        end
     end
 
     local panel = vgui.Create("DPanel", back)

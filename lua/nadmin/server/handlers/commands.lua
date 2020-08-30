@@ -89,6 +89,8 @@ hook.Add("PlayerSay", "nadmin_chat", function(ply, msg, isTeam)
             return ""
         end
     end
+
+    if ply.n_Muted then return "" end
 end)
 
 concommand.Add("nadmin", function(ply, comm, argList, argStr)

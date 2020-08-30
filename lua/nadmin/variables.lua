@@ -130,7 +130,7 @@ nadmin.MODE_BELOW = 0 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_SAME  = 1 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_ALL   = 2 --Used in nadmin:FindPlayer(), argument 3
 
-nadmin.version = "v3.4"
+nadmin.version = "v3.5"
 
 nadmin.defaults = nadmin.defaults or table.Copy(nadmin)
 

@@ -92,8 +92,13 @@ hook.Add("PlayerInitialSpawn", "nadmin_spawn", function(ply)
         ply:SetLevel(1)
     end
 
-    local lastLeft = nadmin.userdata[ply:SteamID()].lastJoined.when or 0
-    local lastName = nadmin.userdata[ply:SteamID()].lastJoined.name or ply:Nick()
+    local lastLeft = 0
+    local lastName = ply:Nick()
+    local user = nadmin.userdata[ply:SteamID()]
+    if user then
+        lastLeft = user.lastJoined.when
+        lastName = user.lastJoined.name
+    end
 
     local now = os.time()
     local time = now - lastLeft
@@ -103,7 +108,7 @@ hook.Add("PlayerInitialSpawn", "nadmin_spawn", function(ply)
     local col = nadmin:GetNameColor(ply)
     if not first then
         local t = nadmin:FormatTime(time)
-        if lastName == ply:Nick() then
+        if lastName == ply:Nick() or lastName == "" then
             if nadmin.plugins.joinMessages then
                 nadmin:Notify(col, ply:Nick(), nadmin.colors.white, " (", col, ply:SteamID(),  nadmin.colors.white, ") last joined ", nadmin.colors.red, t .. " ago", nadmin.colors.white, ".")
             end
@@ -149,6 +154,16 @@ hook.Add("player_disconnect", "nadmin_disconnect", function(ply)
 	local reason = ply.reason
 
     local col = nadmin:GetNameColor(steamid) or nadmin:DefaultRank().color
+
+    -- Leaving during a voteban
+    if reason == "Disconnect by user." then -- Only ban if it was a purposeful disconnect (not a crash)
+        local ban = nadmin.voteBans[steamid]
+        if ban ~= nil then
+            nadmin:BanAsID(name, steamid, ban[1], ban[2], "Leaving during voteban against you.", 3600)
+            nadmin:Notify(col, name, nadmin.colors.white, " has been banned for an hour for leaving to avoid punishment.")
+            return
+        end
+    end
 
     if nadmin.plugins.joinMessages then
         nadmin:Notify(col, name, nadmin.colors.white, " (", col, steamid,  nadmin.colors.white, ") has disconnected (", nadmin.colors.blue, reason, nadmin.colors.white, ").")

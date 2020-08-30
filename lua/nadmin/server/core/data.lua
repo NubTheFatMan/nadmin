@@ -56,7 +56,7 @@ hook.Add("Think", "nadmin_save_userdata", function()
                 nadmin.userdata[id].lastJoined.when = os.time()
                 file.Write("nadmin/userdata/" .. string.lower(string.Replace(id, ":", ",")) .. ".txt",  util.TableToJSON(nadmin.userdata[id], true))
             end
-            MsgN("[Nadmin]Performed a save on " .. tostring(c) .. " player" .. nadmin:Ternary(c > 1, "s", "") .. ".")
+            -- MsgN("[Nadmin]Performed a save on " .. tostring(c) .. " player" .. nadmin:Ternary(c > 1, "s", "") .. ".")
             nadmin.plyToSave = {} -- Clear the table
         end
 

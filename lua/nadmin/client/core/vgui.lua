@@ -18,7 +18,9 @@ function nadmin.vgui:DPanel(pos, size, parent)
     function panel:Paint(w, h)
         if isfunction(self.RenderCondition) then if not self:RenderCondition() then return end end
 
-        draw.RoundedBox(0, 0, 0, w, h, self.color)
+        if IsColor(self.color) then
+            draw.RoundedBox(0, 0, 0, w, h, self.color)
+        end
     end
 
     return panel
@@ -519,6 +521,217 @@ function nadmin.vgui:DComboBox(pos, size, parent)
     end
 
     return box
+end
+
+function nadmin.vgui:DSlider(pos, size, parent)
+    if not istable(pos) then pos = {0, 0} end
+    if not istable(size) then size = {ScrW(), 24} end
+
+    local slider = vgui.Create("DPanel", parent)
+    slider:SetPos(unpack(pos))
+    slider:SetSize(unpack(size))
+    slider.text = "Slider"
+    slider.font = "nadmin_derma"
+    slider.color = nadmin.colors.gui.theme
+    slider.textColor = nadmin:TextColor(slider.color)
+    slider.min, slider.max = 0, 2
+    slider.value = slider.min
+
+    local label = vgui.Create("DLabel", slider)
+    label:SetText(slider.text)
+    label:SetFont(slider.font)
+    label:SetTextColor(slider.textColor)
+    label:SizeToContentsX()
+    label:SetTall(size[2])
+    label:Dock(LEFT)
+
+    local slide = vgui.Create("DButton", slider)
+    slide:SetText("")
+    slide:Dock(FILL)
+    slide:DockMargin(0, 0, 4, 0)
+
+    local entry = nadmin.vgui:DTextEntry(nil, {size[2], size[2]}, slider)
+    entry:SetColor(nadmin:DarkenColor(slider.color, 25))
+    entry:Dock(RIGHT)
+    entry:SetText(slider.value)
+    entry:SetNumeric(true)
+
+    function slider:_RUNFUNC()
+        if isfunction(self.OnValueChanged) then self:OnValueChanged(self:GetValue()) end
+    end
+
+    function entry:OnTextChanged()
+        slider.value = tonumber(self:GetText()) or slider.min
+        slider:_RUNFUNC()
+    end
+
+    function entry:OnFocusChanged(gained)
+        if not gained then
+            if tonumber(self:GetText()) == nil then
+                slider:SetValue(slider.min)
+            end
+        end
+        slider:_RUNFUNC()
+    end
+
+    function entry:OnKeyCode(key)
+        if key == KEY_UP then
+            slider:SetValue(slider.value + 1)
+            slider:_RUNFUNC()
+        elseif key == KEY_DOWN then
+            slider:SetValue(slider.value - 1)
+            slider:_RUNFUNC()
+        end
+    end
+
+    function slide:OnReleased()
+        local w, h = self:GetWide(), self:GetTall()
+
+        local pos = self:ScreenToLocal(gui.MouseX(), gui.MouseY())
+        pos = math.min(pos, w - h/2 - 2)
+
+        local positions = {}
+        local dif = slider.max - slider.min
+        for i = 0, dif do
+            table.insert(positions, {h/2 + (i * (w - h)/dif), slider.min + i})
+        end
+
+        local value
+        for i = 1, #positions do
+            if pos > positions[i][1] then continue end
+
+            if istable(positions[i - 1]) then
+                local dist1 = math.abs(pos - positions[i - 1][1])
+                local dist2 = math.abs(pos - positions[i][1])
+                if dist1 <= dist2 then
+                    value = positions[i - 1][2]
+                else
+                    value = positions[i][2]
+                end
+
+                break
+            elseif pos > w then -- Mouse was after end of slider
+                value = slider.max
+                break
+            else  -- Mouse was before slider
+                value = slider.min
+                break
+            end
+        end
+
+        if isnumber(value) then
+            slider:SetValue(value)
+        end
+    end
+
+    function slide:Paint(w, h)
+        local wid = h/6
+        local height = h -- Help with telling what is what; slider ball height
+        local col = nadmin:BrightenColor(slider.color, 25)
+        draw.RoundedBox(0, height/2, h/2-wid/2, w - height, wid, col)
+
+        local dif = slider.max - slider.min
+        for i = 0, dif do
+            local x = i * (w - height)/dif
+            if i == 1 then
+                x = x + wid/2
+            elseif i == dif then
+                x = x - wid
+            end
+
+            draw.RoundedBox(0, height/2 + x, h/2, wid, h/2, col)
+        end
+
+        if self:IsDown() then
+            local x = self:ScreenToLocal(gui.MouseX(), gui.MouseY())
+            x = x - h/2 - 2
+            x = math.Clamp(x, 0, w - h - 2)
+
+            local y = height/2
+            draw.Circle(height/2 + wid/2 + x, y, height/2, 45, 360, 0, col)
+            draw.Circle(height/2 + wid/2 + x, y, wid, 15, 360, 0, nadmin.colors.gui.blue)
+        else
+            local x, y = (slider.value - slider.min) * (w - height)/dif - 2, height/2
+            draw.Circle(height/2 + wid/2 + x + wid/2, y, height/2, 45, 360, 0, col)
+            draw.Circle(height/2 + wid/2 + x + wid/2, y, wid, 15, 360, 0, nadmin:DarkenColor(col, 25))
+        end
+    end
+
+    function slider:Paint(w, h)
+        draw.RoundedBox(0, 0, 0, w, h, self:GetColor())
+    end
+
+    function slider:SetText(text)
+        if not isstring(text) then return end
+        self.text = text
+        label:SetText(text)
+        if text == "" then
+            label:SetWide(0)
+            slide:DockMargin(0, 0, 4, 0)
+        else
+            slide:DockMargin(4, 0, 4, 0)
+            label:SizeToContentsX()
+        end
+    end
+    function slider:GetText() return self.text end
+
+    function slider:SetFont(font)
+        if not isstring(font) then return end
+        self.font = font
+        label:SetFont(font)
+        if self:GetText() ~= "" then
+            label:SizeToContentsX()
+            slide:DockMargin(4, 0, 4, 0)
+        end
+    end
+    function slider:GetFont() return self.font end
+
+    function slider:SetColor(col, no_update)
+        if not IsColor(col) then return end
+        self.color = col
+
+        if not no_update then
+            self.textColor = nadmin:TextColor(col)
+        end
+    end
+    function slider:GetColor(col) return self.color end
+
+    function slider:SetTextColor(col)
+        if not IsColor(col) then return end
+        self.textColor = col
+    end
+    function slider:GetTextColor(col) return self.textColor end
+
+    function slider:SetMinValue(min)
+        if not isnumber(min) then return end
+        slider.min = min
+        if min > slider.value then self:SetValue(min) end
+    end
+    function slider:GetMinValue() return self.min end
+
+    function slider:SetMaxValue(max)
+        if not isnumber(max) then return end
+        slider.max = max
+        if max < slider.value then self:SetValue(max) end
+    end
+    function slider:GetMaxValue() return self.max end
+
+    function slider:SetClampValue(min, max)
+        if isnumber(min) then self.min = min end
+        if isnumber(max) then self.max = max end
+        if isnumber(min) or isnumber(max) then self:SetValue(math.Clamp(slider.value, min, max)) end
+    end
+    function slider:GetClampValue() return self.min, self.max end
+
+    function slider:SetValue(val)
+        if not isnumber(val) then return end
+        self.value = val
+        entry:SetText(tonumber(val))
+        slider:_RUNFUNC()
+    end
+    function slider:GetValue() return self.value end
+
+    return slider
 end
 
 function nadmin.vgui:CreateBlur(pos, size, parent)

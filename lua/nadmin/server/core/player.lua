@@ -167,8 +167,14 @@ function PLAYER:RemoveProps()
     if not IsValid(self) then return end
 
     for i, ent in ipairs(ents.GetAll()) do
-        if ent.nadmin_owner == self then
-            ent:Remove()
+        if CPPI and ent.CPPIGetOwner then
+            if ent:CPPIGetOwner() == self then
+                ent:Remove()
+            end
+        else
+            if ent.nadmin_owner == self then
+                ent:Remove()
+            end
         end
     end
 end

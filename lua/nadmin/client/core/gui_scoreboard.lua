@@ -813,8 +813,8 @@ function nadmin.scoreboard:Show()
     else
         if self.shouldClose then self:Hide() self.shouldClose = false end
         function self.panel:Paint(w, h)
-            draw.RoundedBox(0, 0, 0, w, h, nadmin.colors.gui.theme)
-            draw.RoundedBox(0, 0, 0, w, 92, nadmin.colors.gui.blue)
+            draw.RoundedBoxEx(34, 0, 0, w, h, nadmin.colors.gui.theme, true, false, false, false)
+            draw.RoundedBoxEx(34, 0, 0, w, 92, nadmin.colors.gui.blue, true, false, false, false)
 
             surface.SetDrawColor(255, 255, 255)
             surface.SetMaterial(icon)
@@ -836,6 +836,13 @@ function nadmin.scoreboard:Show()
                 text = game.GetIPAddress(),
                 pos = {w/2, th/2 + sh/2 + 12},
                 xalign = TEXT_ALIGN_CENTER,
+                font = font_normal,
+                color = nadmin:DarkenColor(nadmin:TextColor(nadmin.colors.gui.blue), 25)
+            })
+            draw.Text({
+                text = "TPS: " .. tostring(math.Round(1/engine.ServerFrameTime())),
+                pos = {w - 4, th/2 + sh/2 + 12},
+                xalign = TEXT_ALIGN_RIGHT,
                 font = font_normal,
                 color = nadmin:DarkenColor(nadmin:TextColor(nadmin.colors.gui.blue), 25)
             })
@@ -1055,8 +1062,12 @@ function nadmin.scoreboard:Show()
 
                     local rIcon = Material(rank.icon)
                     local wid = nadmin.scoreboard.panel:GetWide()
+                    local rCol = rank.color
+                    local rTCol = nadmin:TextColor(nadmin.colors.gui.blue)
                     function bar:Paint(w, h)
                         draw.RoundedBox(0, 0, 0, w, h, nadmin.colors.gui.blue)
+                        draw.RoundedBox(0, 0, 26, w, 2, rCol)
+
                         surface.SetDrawColor(255, 255, 255)
                         surface.SetMaterial(rIcon)
                         surface.DrawTexturedRect(4, 4, 20, 20)
@@ -1064,7 +1075,7 @@ function nadmin.scoreboard:Show()
                             text = rank.title,
                             pos = {28, 4},
                             font = "nadmin_derma",
-                            color = nadmin:TextColor(nadmin.colors.gui.blue)
+                            color = rTCol
                         })
                         draw.Text({
                             text = "Kills",
@@ -1072,14 +1083,14 @@ function nadmin.scoreboard:Show()
                             font = "nadmin_derma",
                             xalign = TEXT_ALIGN_CENTER,
                             yalign= TEXT_ALIGN_CENTER,
-                            color = nadmin:TextColor(nadmin.colors.gui.blue)
+                            color = rTCol
                         })
                         draw.Text({
                             text = "Deaths",
                             pos = {sort_deaths:GetPos() + sort_deaths:GetWide()/2, 14},
                             font = "nadmin_derma", xalign = TEXT_ALIGN_CENTER,
                             yalign= TEXT_ALIGN_CENTER,
-                            color = nadmin:TextColor(nadmin.colors.gui.blue)
+                            color = rTCol
                         })
                         draw.Text({
                             text = "Playtime",
@@ -1087,7 +1098,7 @@ function nadmin.scoreboard:Show()
                             font = "nadmin_derma",
                             xalign = TEXT_ALIGN_CENTER,
                             yalign= TEXT_ALIGN_CENTER,
-                            color = nadmin:TextColor(nadmin.colors.gui.blue)
+                            color = rTCol
                         })
                         draw.Text({
                             text = "Ping",
@@ -1095,7 +1106,7 @@ function nadmin.scoreboard:Show()
                             font = "nadmin_derma",
                             xalign = TEXT_ALIGN_CENTER,
                             yalign= TEXT_ALIGN_CENTER,
-                            color = nadmin:TextColor(nadmin.colors.gui.blue)
+                            color = rTCol
                         })
                     end
 

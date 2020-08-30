@@ -40,6 +40,8 @@ hook.Add("PlayerNoClip", "nadmin_noclip_prevention", function(ply)
 
     if ply:GetMoveType() == MOVETYPE_NOCLIP then
         return true
+    elseif ply.n_BuildMode then
+        return true
     elseif GetConVar("sbox_noclip"):GetInt() == 0 then
         return ply:HasPerm("always_allow_noclip")
     end

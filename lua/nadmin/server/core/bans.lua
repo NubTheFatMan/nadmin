@@ -39,6 +39,48 @@ function nadmin:GetBanReason(id) -- Inspired by ULX. You will notice a huge simi
     return string.gsub(nadmin.config.banMessage, "{{([%w_]+)}}", rep)
 end
 
+function nadmin:BanAsID(name, steamid, by, by_id, reason, dur)
+    if not isstring(steamid) then return end
+
+    local ban = {}
+    if isstring(by) then
+        ban.by = by
+    end
+    if isstring(by_id) then
+        ban.by_steamid = by_id
+    end
+
+    if isstring(reason) then
+        ban.reason = reason
+    end
+    if isnumber(dur) then
+        ban.dur = dur
+    end
+
+    ban.start = os.time()
+
+    ban.targ_nick = name
+    ban.targ_id = steamid
+
+    nadmin.bans[steamid] = table.Copy(ban)
+
+    local banMsg
+    for i, ply in ipairs(player.GetAll()) do
+        if ply:SteamID() == steamid or ply:IPAddress() == steamid then
+            if not isstring(banMsg) then banMsg = nadmin:GetBanReason(steamid) end
+            local nick = ply:Nick()
+            ply:RemoveProps()
+            nadmin.SilentNotify = true -- Don't show people the ban reason, and instead just show that they were disconencted from a ban.
+            ply:Kick(banMsg)
+            nadmin:Notify(nadmin.colors.blue, nick, nadmin.colors.white, " has been disconnected from a ban.")
+        end
+    end
+
+    nadmin:Log("messages", '"' .. steamid .. "\" has been banned.")
+
+    nadmin:SaveBans()
+end
+
 function nadmin:Ban(name, steamid, by, reason, dur)
     if not isstring(steamid) then return end
 
@@ -48,6 +90,7 @@ function nadmin:Ban(name, steamid, by, reason, dur)
         ban.by_steamid = by:SteamID()
     elseif isstring(by) then
         ban.by = by
+        ban.by_steamid = by
     end
 
     if isstring(reason) then
