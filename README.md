@@ -4,22 +4,32 @@ Nadmin is an administration mod for the Steam game Garry's Mod. I have two inspi
 ***Nadmin is stable.***\
 Want to keep up-to-date with Nadmin's progression? You can find the Trello for it [here](https://trello.com/b/9fjgYlEJ/nadmin).
 
-# Latest Additions (v3.4)
-- Minor bug fixes
-- A VGUI framework has been created in order to shorten the file sizes that involve the GUI. This will also help me in the future if I want to change the behavior of something.
-- Bans tab has been ported over to the VGUI framework
-- Bans tab completed
-- Freeze command created
-- Me command created
-- All commands now use rank colors for players instead of blue and red.
-- Fixed a critical bug where new installations wouldn't properly register default ranks.
-- Spectate command created.
-- Chat commands are no longer hidden if the command entered doesn't exist.
-- Silent notifications are no longer silent to those who can see them.
-- Imitate command created.
-- Admin Say command created.
-- Files have had a complete rework, now clients download only what they need.
-- Give command created.
+# Latest Additions (v3.5)
+- Mute command created.
+- Strip command created.
+- Arm command created.
+- Blind command created.
+- AFK system created.
+- Gag command created.
+- Explode command created.
+- Cleanup Player command created.
+- Cleanup Gibs command created.
+- Trainfuck command created.
+- Votekick command created.
+- Voteban command created.
+- Set Deaths command created.
+- Set Frags command created.
+- Slap command created.
+- Unlimited Ammo command created.
+- Rocket command created.
+- RCON command created.
+- Respawn command created.
+- Set Spawn command created.
+- Remove Spawn command created.
+- Build command created.
+- PVP command created.
+- Scoreboard has had a couple changes. The top left is now rounded to wrap the icon, and a rank color will now appear on the divider. ![Picture of scoreboard](https://nubstoys.xyz/gmod/mods/nadmin/scoreboard.png)
+- Advert management added.
 
 # Installation
 Now that you know what Nadmin is about, it's time you learn how to install it.
