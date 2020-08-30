@@ -61,7 +61,7 @@ cmd.advUsage = {
 
 cmd.scoreboard = {}
 cmd.scoreboard.targetMode = nadmin.MODE_BELOW
-cmd.scoreboard.canTargSelf = true
+cmd.scoreboard.canTargetSelf = false
 cmd.scoreboard.iconRender = function(panel, w, h, ply)
     surface.SetDrawColor(255, 255, 255)
     surface.SetMaterial(dis)

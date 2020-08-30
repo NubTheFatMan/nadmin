@@ -1,7 +1,7 @@
 if CLIENT then
     nadmin.menu:RegisterTab({
         title = "Client Settings",
-        sort = 4,
+        sort = 5,
         forcedPriv = true,
         content = function(parent)
             local y = 4

@@ -2,7 +2,7 @@ local COMMAND = {}
 COMMAND.title = "Votemode"
 COMMAND.description = "Initializes a votemode to switch the server from build to war or vice versa."
 COMMAND.author = "Nub"
-COMMAND.timeCreated = "Satuerday, March 22, 2020 @ 2:08 AM"
+COMMAND.timeCreated = "Saturday, March 22, 2020 @ 2:08 AM"
 COMMAND.category = "Utility"
 COMMAND.call = "votemode"
 

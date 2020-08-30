@@ -1,22 +1,21 @@
 local cmd = {}
-cmd.title = "Slay"
-cmd.description = "Kill a player."
+cmd.title = "Respawn"
+cmd.description = "Respawn a player (dead or alive)."
 cmd.author = "Nub"
-cmd.timeCreated = "Feb. 22 2020 @ 10:49 PM CST"
-cmd.category = "Fun"
-cmd.call = "slay"
+cmd.timeCreated = "Sunday, May 24 2020 @ 12:41 AM CST"
+cmd.category = "Utility"
+cmd.call = "respawn"
 cmd.usage = "<player>"
 cmd.server = function(caller, args)
     local targs = nadmin:FindPlayer(args[1], caller, nadmin.MODE_BELOW)
     if #targs > 0 then
         for i, targ in ipairs(targs) do
-            targ:Kill()
-            targ:SetFrags(targ:Frags() + 1)
+            targ:Spawn()
         end
 
         local myCol = nadmin:GetNameColor(caller) or nadmin.colors.blue
 
-        local msg = {myCol, caller:Nick(), nadmin.colors.white, " has slain "}
+        local msg = {myCol, caller:Nick(), nadmin.colors.white, " has respawned "}
         table.Add(msg, nadmin:FormatPlayerList(targs, "and"))
         table.Add(msg, {nadmin.colors.white, "."})
         nadmin:Notify(unpack(msg))
@@ -30,20 +29,25 @@ cmd.advUsage = {
         type = "player",
         text = "Player",
         targetMode = nadmin.MODE_BELOW
+    },
+    {
+        type = "checkbox",
+        text = "Forceful Respawn"
     }
 }
 
-local del = Material("icon16/user_delete.png")
+local del = Material("icon16/brick_delete.png")
 
 cmd.scoreboard = {}
 cmd.scoreboard.targetMode = nadmin.MODE_BELOW
+cmd.scoreboard.canTargetSelf = false
 cmd.scoreboard.iconRender = function(panel, w, h, ply)
     surface.SetDrawColor(255, 255, 255)
     surface.SetMaterial(del)
     surface.DrawTexturedRect(w/2 - 10, 4, 20, 20)
 end
 cmd.scoreboard.OnClick = function(ply, rmb)
-    LocalPlayer():ConCommand("nadmin" .. nadmin:Ternary(rmb, "s", "") .. " slay " .. ply:SteamID())
+    LocalPlayer():ConCommand("nadmin" .. nadmin:Ternary(rmb, "s", "") .. " cleanup " .. ply:SteamID())
 end
 
 

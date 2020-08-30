@@ -1700,7 +1700,7 @@ else
             local tCol = nadmin.colors.red
             local r = nadmin:FindRank(data.rank)
             if istable(r) then tCol = r.color end
-            
+
             nadmin:RemoveUserData(member)
             if type(target) == "Player" then
                 target:CheckData()
@@ -1814,8 +1814,12 @@ else
         if ply:HasPerm("manage_ranks") then
             canView = true
 
+            local defRank = (id == nadmin:DefaultRank().id)
+
             for steamid, user in pairs(nadmin.userdata) do
                 if user.rank == id then
+                    table.insert(data, {steamID = steamid, nick = user.lastJoined.name})
+                elseif defRank and user.rank == "" then
                     table.insert(data, {steamID = steamid, nick = user.lastJoined.name})
                 end
             end
@@ -1886,6 +1890,8 @@ else
             nadmin:SaveRanks()
 
             if typ == "Create" then return end -- No need to check players since no one will have this rank.
+
+            if rank.id == oid then return end -- No need to move players if the rank ID wasn't changed
 
             for i, d in pairs(nadmin.userdata) do
                 if d.rank == oid then

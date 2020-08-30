@@ -28,6 +28,16 @@ COMMAND.server = function(caller, args)
     end
 end
 
+COMMAND.asay = "#"
+if SERVER then
+    hook.Add("PlayerSay", "nadmin_asay", function(ply, msg, isTeam)
+        if string.StartWith(msg, COMMAND.asay) and ply:HasPerm("admin_say") then
+            COMMAND.server(ply, {string.Trim(string.sub(msg, #COMMAND.asay + 1))})
+            return ""
+        end
+    end)
+end
+
 COMMAND.advUsage = {
     {
         type = "string",

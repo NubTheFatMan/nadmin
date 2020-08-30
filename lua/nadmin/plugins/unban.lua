@@ -11,9 +11,11 @@ cmd.server = function(caller, args, advArgs)
     if #args > 0 then
         local id = args[1]
 
-        if not caller:HasPerm("ip_ban") and not string.match(id, nadmin.config.steamIDMatch) then
-            nadmin:Notify(caller, nadmin.colors.red, "Invalid Steam ID; you don't have permission to IP unban.")
-            return
+        if IsValid(caller) then
+            if not caller:HasPerm("ip_ban") and not string.match(id, nadmin.config.steamIDMatch) then
+                nadmin:Notify(caller, nadmin.colors.red, "Invalid Steam ID; you don't have permission to IP unban.")
+                return
+            end
         end
 
         if istable(nadmin.bans[id]) then
