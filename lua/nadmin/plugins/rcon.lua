@@ -7,12 +7,12 @@ cmd.category = "Server Management"
 cmd.call = "rcon"
 cmd.usage = "{command}"
 cmd.server = function(caller, args)
-    if #args > 1 then
+    if #args > 0 then
         local col = nadmin:GetNameColor(caller) or nadmin.colors.blue
         nadmin:Notify(col, caller:Nick(), nadmin.colors.white, " has rconned ", nadmin.colors.red, table.concat(args, " "), nadmin.colors.white, ".")
-        RunConsoleCommand(unpack(args))
+        game.ConsoleCommand(table.concat(args, " ") .. "\n")
     else
-        nadmin:Notify(caller, nadmin.colors.red, nadmin.errors.notEnoughArgs .. " You need at least 2.")
+        nadmin:Notify(caller, nadmin.colors.red, nadmin.errors.notEnoughArgs)
     end
 end
 

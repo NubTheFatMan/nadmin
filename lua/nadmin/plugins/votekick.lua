@@ -3,7 +3,7 @@ COMMAND.title = "Votekick"
 COMMAND.description = "Start a vote to kick a player."
 COMMAND.author = "Nub"
 COMMAND.timeCreated = "Thursday, May 21, 2020 @ 1:00 AM CT"
-COMMAND.category = "Player Management"
+COMMAND.category = "Voting"
 COMMAND.call = "votekick"
 COMMAND.usage = "<player> {reason}"
 

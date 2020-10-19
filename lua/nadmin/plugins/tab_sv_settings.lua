@@ -2,6 +2,13 @@ nadmin:RegisterPerm({
     title = "Manage Server Settings"
 })
 if CLIENT then
+    nadmin.serverConfig = nadmin.serverConfig or {}
+    nadmin.serverConfig.options = nadmin.serverConfig.options or {}
+
+    function nadmin.serverConfig:RegisterOption(cfg)
+        
+    end
+
     local content
     nadmin.menu:RegisterTab({
         title = "Server Settings",
@@ -203,7 +210,168 @@ if CLIENT then
                 {"Ban Message", "icon16/page_white_text.png"},
                 {"Command Echoes", "icon16/comment.png"},
                 {"Logs", "icon16/database.png"},
-                {"MOTD", "icon16/layout.png"},
+                {"MOTD", "icon16/layout.png", function()
+                    content.enabled = nadmin.vgui:DCheckBox(nil, {content:GetWide()-8, 28}, content)
+                    content.enabled:Dock(TOP)
+                    content.enabled:DockMargin(4, 4, 4, 0)
+                    content.enabled:SetText("MOTD Enabled")
+                    content.enabled:SetColor(nadmin.colors.gui.theme)
+
+                    content.preview = nadmin.vgui:DButton(nil, {content:GetWide()-8, 28}, content)
+                    content.preview:Dock(TOP)
+                    content.preview:DockMargin(4, 4, 4, 0)
+                    content.preview:SetIcon("icon16/application.png")
+                    content.preview:SetText("Preview MOTD")
+                    content.preview:SetColor(nadmin.colors.gui.theme)
+
+                    content.save = nadmin.vgui:DButton(nil, {content:GetWide()-8, 28}, content)
+                    content.save:Dock(TOP)
+                    content.save:DockMargin(4, 4, 4, 0)
+                    content.save:SetIcon("icon16/disk.png")
+                    content.save:SetText("Save MOTD")
+
+                    content.mode = nadmin.vgui:DComboBox(nil, {content:GetWide()-8, 28}, content)
+                    content.mode:Dock(TOP)
+                    content.mode:DockMargin(4, 4, 4, 0)
+                    content.mode:SetColor(nadmin.colors.gui.theme)
+                    content.mode:SetValue("MOTD Mode...")
+                    content.mode:AddChoice("Generator", nil, false, "icon16/layout.png")
+                    content.mode:AddChoice("Local File", nil, false, "icon16/tag.png")
+                    content.mode:AddChoice("URL", nil, false, "icon16/link.png")
+
+                    content.gen = nadmin.vgui:DScrollPanel(nil, nil, content)
+                    content.gen:Dock(FILL)
+                    content.gen:DockMargin(4, 4, 4, 4)
+                    content.gen:SetVisible(false)
+
+                    content.fileError = nadmin.vgui:DLabel(nil, "Problem loading local file:\n-> 404 - File doesn't exist: \"garrysmod/addons/nadmin/motd.txt\"\n-> 413 - File length exceeds 65523 characters, maximum string length that can be sent to a client.", content)
+                    content.fileError:Dock(TOP)
+                    content.fileError:DockMargin(4, 4, 4, 0)
+                    content.fileError:SetTextColor(nadmin.colors.gui.red)
+                    content.fileError:SizeToContentsY()
+                    content.fileError:SetVisible(false)
+
+                    content.url = nadmin.vgui:DTextEntry(nil, {content:GetWide()-8, 28}, content)
+                    content.url:Dock(TOP)
+                    content.url:DockMargin(4, 4, 4, 0)
+                    content.url:SetColor(nadmin.colors.gui.theme)
+                    content.url:SetPlaceholderText("URL to load...")
+                    content.url:SetVisible(false)
+
+                    content.lock = nadmin.vgui:DPanel(nil, {content:GetWide(), content:GetTall()}, content)
+                    function content.lock:Paint(w, h)
+                        local tc = nadmin:TextColor(self:GetColor())
+
+                        draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0, 150))
+
+                        draw.Circle(w/2, h/2, 16, 360, 360, 0, Color(0, 0, 0, 100))
+                        draw.Circle(w/2, h/2, 16, 360, 270, (SysTime() % 360) * 180, tc)
+                        draw.Circle(w/2, h/2, 14, 360, 360, 0, nadmin:DarkenColor(self:GetColor(), 25))
+                        draw.Circle(w/2, h/2, 14, 360, 360, 0, Color(0, 0, 0, 150))
+                    end
+
+                    function content.mode:OnSelect(ind, val, data)
+                        if val == "Generator" then
+                            content.lock:SetVisible(true)
+
+                            content.gen:SetVisible(false)
+                            content.fileError:SetVisible(false)
+                            content.url:SetVisible(false)
+
+                            net.Start("nadmin_fetch_motd_cfg")
+                                net.WriteString(val)
+                            net.SendToServer()
+                        elseif val == "Local File" then
+                            content.lock:SetVisible(true)
+
+                            content.gen:SetVisible(false)
+                            content.fileError:SetVisible(false)
+                            content.url:SetVisible(false)
+
+                            net.Start("nadmin_fetch_motd_cfg")
+                                net.WriteString(val)
+                            net.SendToServer()
+                        elseif val == "URL" then
+                            content.lock:SetVisible(true)
+
+                            content.gen:SetVisible(false)
+                            content.fileError:SetVisible(false)
+                            content.url:SetVisible(false)
+
+                            net.Start("nadmin_fetch_motd_cfg")
+                                net.WriteString(val)
+                            net.SendToServer()
+                        end
+                    end
+
+                    local gen = content.gen
+
+                    gen.titleText = nadmin.vgui:DLabel(nil, "MOTD Title", gen, true)
+                    gen.titleText:SetFont("nadmin_derma_large")
+                    gen.titleText:SizeToContents()
+                    gen.titleText:Dock(TOP)
+                    gen.titleText:DockMargin(4, 4, 4, 0)
+
+                    gen.titleDiv = nadmin.vgui:DPanel(nil, {gen:GetWide() - 8, 28}, gen)
+                    gen.titleDiv:Dock(TOP)
+                    gen.titleDiv:DockMargin(4, 4, 4, 0)
+
+                    gen.title = nadmin.vgui:DTextEntry(nil, {content:GetWide() - 16, 28}, gen.titleDiv)
+                    gen.title:SetPlaceholderText("MOTD Title...")
+
+                    gen.titleSettings = nadmin.vgui:DButton({gen.title:GetWide() - 24, 4}, {20, 20}, gen.title)
+                    gen.titleSettings:SetColor(nadmin.colors.gui.theme)
+                    gen.titleSettings:SetText("")
+                    gen.titleSettings:SetIcon("icon16/cog.png")
+
+                    gen.div = nadmin.vgui:DPanel(nil, {content:GetWide() - 16, 4}, gen)
+                    gen.div:Dock(TOP)
+                    gen.div:DockMargin(4, 4, 4, 0)
+                    gen.div:SetColor(nadmin:DarkenColor(nadmin.colors.gui.theme, -25))
+
+                    gen.bodyText = nadmin.vgui:DLabel(nil, "MOTD Body", gen, true)
+                    gen.bodyText:SetFont("nadmin_derma_large")
+                    gen.bodyText:SizeToContents()
+                    gen.bodyText:Dock(TOP)
+                    gen.bodyText:DockMargin(4, 4, 4, 0)
+
+                    function content.preview:DoClick()
+                        local data
+
+                        if content.fileError:IsVisible() then
+                            if isstring(content.fileError.data) then
+                                data = content.fileError.data
+                            end
+                        elseif content.url:IsVisible() then
+                            data = content.url:GetText()
+                        end
+
+                        nadmin.motd:Open(data)
+                    end
+
+                    function content.save:DoClick()
+                        local mode = content.mode:GetValue()
+
+                        if mode == "Generator" then mode = "" end
+
+                        net.Start("nadmin_update_motd_cfg")
+                            net.WriteBool(content.enabled:GetChecked())
+                            net.WriteString(mode)
+                            if mode == "URL" then
+                                net.WriteString(content.url:GetText())
+                            end
+                        net.SendToServer()
+
+                        content.lock:SetVisible(true)
+                        net.Start("nadmin_fetch_motd_cfg")
+                            net.WriteString("%GETMODE%")
+                        net.SendToServer()
+                    end
+
+                    net.Start("nadmin_fetch_motd_cfg")
+                        net.WriteString("%GETMODE%")
+                    net.SendToServer()
+                end},
                 {"Voteban", "icon16/disconnect.png"},
                 {"Votemap", "icon16/world.png"},
                 {"Reserved Slots", "icon16/status_online.png"}
@@ -251,6 +419,48 @@ if CLIENT then
         end
     })
 
+    net.Receive("nadmin_fetch_motd_cfg", function()
+        if not IsValid(content) then return end -- No need to process since they closed the menu
+        local enabled = net.ReadBool()
+        local mode = net.ReadString()
+
+        if enabled then
+            content.enabled:SetChecked(true)
+        end
+
+        content.mode:SetValue(mode)
+
+        if mode == "Generator" then
+            local gen = net.ReadTable()
+
+            content.gen.title:SetText(gen.title.text)
+
+            content.gen:SetVisible(true)
+        elseif mode == "Local File" then
+            local errored = net.ReadBool()
+            local val = net.ReadString()
+
+            if errored then
+                content.fileError:SetText("Problem loading local file:\n" .. val)
+            else
+                content.fileError:SetText("No errors occur using Local File.")
+                content.fileError:SetTextColor(nadmin.colors.gui.blue)
+                content.fileError.data = val
+            end
+
+            content.fileError:SizeToContentsY()
+
+            content.fileError:SetVisible(true)
+        elseif mode == "URL" then
+            local url = net.ReadString()
+
+            content.url:SetText(url)
+            content.url:SetVisible(true)
+        end
+
+        content.lock:SetVisible(false)
+    end)
+
     net.Receive("nadmin_req_adverts", function()
         local adverts = net.ReadTable()
 
@@ -258,16 +468,117 @@ if CLIENT then
 
         content.adverts.advs:Clear()
 
-        if #adverts > 0 then
+        local numAd = #adverts
+        if numAd > 0 then
             local btns = {}
 
             function content.adverts.advs:Paint() end
-            for i = 1, #adverts do
+            for i = 1, numAd do
                 local adv = adverts[i]
 
-                local btn = nadmin.vgui:DButton(nil, {content.adverts.advs:GetWide() - 8, 28}, content.adverts.advs)
-                btn:Dock(TOP)
-                btn:DockMargin(4, 4, 4, 0)
+                local row = nadmin.vgui:DPanel(nil, {content.adverts.advs:GetWide() - 8, 28}, content.adverts.advs)
+                row:Dock(TOP)
+                row:DockMargin(4, 4, 4, 0)
+                function row:Paint() end
+
+                local up = nadmin.vgui:DButton(nil, {30, 13}, row)
+                up:SetColor(nadmin:BrightenColor(nadmin.colors.gui.theme, 25))
+                up:SetText("")
+                function up:Paint(w, h)
+                    if self:IsMouseInputEnabled() then
+                        draw.RoundedBox(0, 0, 0, w, h, nadmin:BrightenColor(self:GetColor(), self:IsDown() and 10 or (self:IsHovered() and 25 or 0)))
+                    else
+                        draw.RoundedBox(0, 0, 0, w, h, nadmin:DarkenColor(self:GetColor(), 15))
+                    end
+
+                    local c = self:GetTextColor()
+                    draw.NoTexture()
+
+                    surface.SetDrawColor(c.r, c.g, c.b)
+                    surface.DrawPoly({
+                        {x = w/2, y = 2},
+                        {x = w/2 + h/2 - 2, y = h - 2},
+                        {x = w/2 - h/2 + 2, y = h - 2}
+                    })
+                end
+                if i == 1 then
+                    up:SetMouseInputEnabled(false)
+                end
+
+                function up:DoClick()
+                    if istable(adverts[i - 1]) then
+                        local above = adverts[i - 1]
+                        net.Start("nadmin_add_advert")
+                            net.WriteString(above.text)
+                            net.WriteInt(above.repeatAfter, 32)
+                            net.WriteTable({above.color.r, above.color.g, above.color.b})
+                            net.WriteInt(i, 32)
+                        net.SendToServer()
+
+                        net.Start("nadmin_add_advert")
+                            net.WriteString(adv.text)
+                            net.WriteInt(adv.repeatAfter, 32)
+                            net.WriteTable({adv.color.r, adv.color.g, adv.color.b})
+                            net.WriteInt(i - 1, 32)
+                        net.SendToServer()
+                    end
+                end
+
+                local down = nadmin.vgui:DButton({0, 15}, {30, 13}, row)
+                down:SetColor(nadmin:BrightenColor(nadmin.colors.gui.theme, 25))
+                down:SetText("")
+                function down:Paint(w, h)
+                    if self:IsMouseInputEnabled() then
+                        draw.RoundedBox(0, 0, 0, w, h, nadmin:BrightenColor(self:GetColor(), self:IsDown() and 10 or (self:IsHovered() and 25 or 0)))
+                    else
+                        draw.RoundedBox(0, 0, 0, w, h, nadmin:DarkenColor(self:GetColor(), 15))
+                    end
+
+                    local c = self:GetTextColor()
+                    draw.NoTexture()
+
+                    surface.SetDrawColor(c.r, c.g, c.b)
+                    surface.DrawPoly({
+                        {x = w/2 - h/2 + 2, y = 2},
+                        {x = w/2 + h/2 - 2, y = 2},
+                        {x = w/2, y = h - 2}
+                    })
+                end
+                if i == numAd then
+                    down:SetMouseInputEnabled(false)
+                end
+
+                function down:DoClick()
+                    if istable(adverts[i + 1]) then
+                        local below = adverts[i + 1]
+                        net.Start("nadmin_add_advert")
+                            net.WriteString(below.text)
+                            net.WriteInt(below.repeatAfter, 32)
+                            net.WriteTable({below.color.r, below.color.g, below.color.b})
+                            net.WriteInt(i, 32)
+                        net.SendToServer()
+
+                        net.Start("nadmin_add_advert")
+                            net.WriteString(adv.text)
+                            net.WriteInt(adv.repeatAfter, 32)
+                            net.WriteTable({adv.color.r, adv.color.g, adv.color.b})
+                            net.WriteInt(i + 1, 32)
+                        net.SendToServer()
+                    end
+                end
+
+                local resend = nadmin.vgui:DButton({32, 0}, {28, 28}, row)
+                resend:SetColor(nadmin:BrightenColor(nadmin.colors.gui.theme, 25))
+                resend:SetText("")
+                resend:SetIcon("icon16/arrow_refresh.png")
+                resend:SetToolTip("Resend advert")
+                function resend:DoClick()
+                    net.Start("nadmin_resend_advert")
+                        net.WriteInt(i, 32)
+                    net.SendToServer()
+                end
+
+                local btn = nadmin.vgui:DButton({62, 0}, {row:GetWide() - 62, 28}, row)
                 btn:SetText(adv.text)
                 btn:SetColor(adv.color)
 
@@ -314,85 +625,5 @@ if CLIENT then
         end
     end)
 else
-    nadmin.config.adverts = nadmin.config.adverts or {}
-    local adverts = nadmin.config.adverts
 
-    util.AddNetworkString("nadmin_add_advert")
-    util.AddNetworkString("nadmin_req_adverts")
-
-    net.Receive("nadmin_add_advert", function(len, ply)
-        local msg = net.ReadString()
-        local rep = net.ReadInt(32)
-        local col = net.ReadTable()
-        local ind = net.ReadInt(32)
-
-        if not ply:HasPerm("manage_server_settings") then
-            nadmin:Notify(ply, nadmin.colors.red, "You aren't allowed to manage server settings.")
-            return
-        end
-
-        if msg == "" then
-            if istable(adverts[ind]) then
-                table.remove(adverts, ind)
-            end
-        else
-            if istable(adverts[ind]) then
-                adverts[ind] = {
-                    text = msg,
-                    repeatAfter = rep,
-                    color = Color(col[1], col[2], col[3]),
-                    lastRan = 0
-                }
-            else
-                table.insert(adverts, {
-                    text = msg,
-                    repeatAfter = rep,
-                    color = Color(col[1], col[2], col[3]),
-                    lastRan = 0
-                })
-            end
-        end
-
-        net.Start("nadmin_req_adverts")
-            net.WriteTable(adverts)
-        net.Send(ply)
-
-        file.Write("nadmin/config/adverts.txt", util.TableToJSON(adverts))
-    end)
-
-    local loaded = file.Read("nadmin/config/adverts.txt", "DATA")
-    loaded = util.JSONToTable(loaded)
-    table.Merge(adverts, loaded)
-    for i = 1, #adverts do
-        local adv = adverts[i]
-        if not IsColor(adv.color) and istable(adv.color) then
-            local col = adv.color
-            adv.color = Color(col.r, col.g, col.b)
-        end
-    end
-
-    net.Receive("nadmin_req_adverts", function(len, ply)
-        net.Start("nadmin_req_adverts")
-            net.WriteTable(adverts)
-        net.Send(ply)
-    end)
-
-    hook.Add("Think", "nadmin_adverts", function()
-        local now = os.time()
-
-        for i = 1, #adverts do
-            local adv = adverts[i]
-
-            -- Validate the advert is setup correctly
-            if not isstring(adv.text) then continue end
-            if not isnumber(adv.repeatAfter) then continue end
-            if not IsColor(adv.color) then continue end
-            if not isnumber(adv.lastRan) then adv.lastRan = 0 end
-
-            if now - adv.lastRan >= (adv.repeatAfter * nadmin.time.m) then
-                nadmin:Notify(adv.color, adv.text)
-                adv.lastRan = now
-            end
-        end
-    end)
 end

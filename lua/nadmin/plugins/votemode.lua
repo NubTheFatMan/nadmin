@@ -3,7 +3,7 @@ COMMAND.title = "Votemode"
 COMMAND.description = "Initializes a votemode to switch the server from build to war or vice versa."
 COMMAND.author = "Nub"
 COMMAND.timeCreated = "Saturday, March 22, 2020 @ 2:08 AM"
-COMMAND.category = "Utility"
+COMMAND.category = "Voting"
 COMMAND.call = "votemode"
 
 nadmin:RegisterPerm({

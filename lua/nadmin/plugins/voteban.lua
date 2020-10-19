@@ -3,7 +3,7 @@ COMMAND.title = "Voteban"
 COMMAND.description = "Start a vote to ban a player for 30 minutes."
 COMMAND.author = "Nub"
 COMMAND.timeCreated = "Thursday, May 21, 2020 @ 1:22 AM CT"
-COMMAND.category = "Player Management"
+COMMAND.category = "Voting"
 COMMAND.call = "voteban"
 COMMAND.usage = "<player> {reason}"
 
