@@ -4,32 +4,13 @@ Nadmin is an administration mod for the Steam game Garry's Mod. I have two inspi
 ***Nadmin is stable.***\
 Want to keep up-to-date with Nadmin's progression? You can find the Trello for it [here](https://trello.com/b/9fjgYlEJ/nadmin).
 
-# Latest Additions (v3.5)
-- Mute command created.
-- Strip command created.
-- Arm command created.
-- Blind command created.
-- AFK system created.
-- Gag command created.
-- Explode command created.
-- Cleanup Player command created.
-- Cleanup Gibs command created.
-- Trainfuck command created.
-- Votekick command created.
-- Voteban command created.
-- Set Deaths command created.
-- Set Frags command created.
-- Slap command created.
-- Unlimited Ammo command created.
-- Rocket command created.
-- RCON command created.
-- Respawn command created.
-- Set Spawn command created.
-- Remove Spawn command created.
-- Build command created.
-- PVP command created.
-- Scoreboard has had a couple changes. The top left is now rounded to wrap the icon, and a rank color will now appear on the divider. ![Picture of scoreboard](https://nubstoys.xyz/gmod/mods/nadmin/scoreboard.png)
-- Advert management added.
+# Latest Additions (v3.6)
+- MOTD settings have been started (still WIP).
+- You can change the sort of adverts.
+- You can resend an advert message.
+- Addons command created. Opens the workshop collection in Steam overlay.
+- Discord command created. Will open a Discord invitation in Steam overlay.
+- RCON has been updated to be able to run any possible command as if through command line.
 
 # Installation
 Check the releases section on the right.
