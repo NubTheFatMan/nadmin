@@ -54,7 +54,7 @@ nadmin.colors.gui.health = Color(255, 62, 62)  --The color of your health.
 nadmin.colors.gui.armor  = Color(98, 176, 255) --The color of your armor.
 nadmin.colors.gui.xp     = Color(205, 175, 0)  --The color of the XP bar
 
-nadmin.config.prefixes  = {"n!", "n/", "~"} --What to type in chat to call a command.
+nadmin.config.prefixes  = {"!", "n!", "n/", "~"} --What to type in chat to call a command.
 nadmin.config.sprefixes = {"n@", "n?"}      --What to type in chat to call a command silently.
 
 nadmin.config.chat.tagLeft  = "(" --What goes before the player's rank in chat.
@@ -130,7 +130,7 @@ nadmin.MODE_BELOW = 0 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_SAME  = 1 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_ALL   = 2 --Used in nadmin:FindPlayer(), argument 3
 
-nadmin.version = "v3.5"
+nadmin.version = "v3.6"
 
 nadmin.defaults = nadmin.defaults or table.Copy(nadmin)
 

@@ -58,6 +58,9 @@ hook.Add("PlayerInitialSpawn", "nadmin_spawn", function(ply)
     --Set their data
     if not ply:IsBot() then
         ply:CheckData()
+        timer.Simple(1, function()
+            ply:Nadmin_OpenMOTD()
+        end)
         if istable(nadmin.userdata[ply:SteamID()]) then
             local data = nadmin.userdata[ply:SteamID()]
             ply:SetRank(data.rank)
