@@ -22,5 +22,5 @@ No documentation has been created yet.
 This addon was devoloped by me, Nub. Have any questions? Concerns? Suggestions? (All related to Nadmin)
 
 Discord: Nub#0002\
-Discord Guild: https://discord.gg/pjbemj4 \
-Steam: Nub (https://steamcommunity.com/id/that1nubofficial/)
+Discord Guild: https://discord.gg/P8Un9Drm8p \
+Steam: Nub (https://steamcommunity.com/id/nubthefatman/)
