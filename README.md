@@ -4,7 +4,7 @@ Nadmin is an administration mod for the Steam game Garry's Mod. I have two inspi
 ***Nadmin is stable.***\
 Want to keep up-to-date with Nadmin's progression? You can find the Trello for it [here](https://trello.com/b/9fjgYlEJ/nadmin).
 
-# Latest Additions (v3.6)
+# Latest Additions (v3.7)
 - Reworked Client Settings.
 - New FPS Booster command.
 - Added the Administrate command, which ghosts and gods you.
