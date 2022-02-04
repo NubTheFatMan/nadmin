@@ -3,6 +3,7 @@
 ]]--
 --Big tables, no touchy
 nadmin               = nadmin               or {}
+nadmin.access        = nadmin.access        or {}
 nadmin.bans          = nadmin.bans          or {}
 nadmin.colors        = nadmin.colors        or {}
 nadmin.colors.chat   = nadmin.colors.chat   or {}
@@ -48,14 +49,15 @@ nadmin.colors.chat.tag  = Color(255, 255, 255) --The color of peoples ranks in c
 
 nadmin.colors.gui.blue  = Color(0, 150, 255)   --The color of buttons on the gui.
 nadmin.colors.gui.red   = Color(255, 62, 62)   --The color of buttons like "Are you sure" or something is invalid
-nadmin.colors.gui.theme = Color(100, 100, 100) --The main color of the gui. Uses `nadmin:DarkenColor` and `nadmin:BrightenColor` to adapt
+nadmin.colors.gui.theme = Color(75, 75, 75)    --The main color of the gui. Uses `nadmin:DarkenColor` and `nadmin:BrightenColor` to adapt
 
 nadmin.colors.gui.health = Color(255, 62, 62)  --The color of your health.
 nadmin.colors.gui.armor  = Color(98, 176, 255) --The color of your armor.
 nadmin.colors.gui.xp     = Color(205, 175, 0)  --The color of the XP bar
+nadmin.colors.gui.ammo   = Color(200, 200, 0)  --The color of your ammo counter.
 
-nadmin.config.prefixes  = {"!", "n!", "n/", "~"} --What to type in chat to call a command.
-nadmin.config.sprefixes = {"n@", "n?"}      --What to type in chat to call a command silently.
+nadmin.config.prefixes  = {"!", "/", "n!", "n/", "~"} --What to type in chat to call a command.
+nadmin.config.sprefixes = {"n@", "n?"}           --What to type in chat to call a command silently.
 
 nadmin.config.chat.tagLeft  = "(" --What goes before the player's rank in chat.
 nadmin.config.chat.tagRight = ")" --What goes after the player's rank in chat.
@@ -88,6 +90,7 @@ nadmin.errors.noAccessNPC     = "You do not have access to spawn this NPC."
 nadmin.errors.noAccessTool    = "You do not have access to use this tool."
 nadmin.errors.noAccessVehicle = "You do not have access to spawn this vehicle."
 nadmin.errors.noAccessSWEP    = "You do not have access to this weapon."
+nadmin.errors.noAccessProp    = "You do not have access to this prop."
 
 -- HP regeneration
 nadmin.hpRegen.amount = 2              -- How much health to add
@@ -102,8 +105,13 @@ nadmin.immunity.admin      = 60  --Immunity of administrators.
 nadmin.immunity.superadmin = 80  --Immunity of superadministrators.
 nadmin.immunity.owner      = 100 --Immunity of owners.
 
-nadmin.levelReq.base = 400 -- The base amount of XP required for a levelup
-nadmin.levelReq.mult = 200 -- This number * their level added onto the base (mult*lvl + base)
+-- Access levels, like immunity but less precise. These actual tell if the player is admin or superadmin while immunity is who can target who
+nadmin.access.restricted = -1 -- This access level restricts everything, and the restrictions acts as a whitelist. Like a psuedo ban
+nadmin.access.default    = 0  -- This signifies that a rank is the default rank. Only one rank can have this
+nadmin.access.user       = 1  -- This signifies that they're just a regular user with no special access
+nadmin.access.admin      = 2  -- This rank has administration access on the server
+nadmin.access.superadmin = 3  -- This rank has super admin access on the server
+nadmin.access.owner      = 4  -- This rank has owner access. They have access to everything and nothing can be restricted from them
 
 nadmin.plugins.afk          = true  --Enables AFK system that stops players from gaining playtime.
 nadmin.plugins.badges       = true  --Enabled the use of custom badges.
@@ -111,6 +119,9 @@ nadmin.plugins.joinMessages = true  --Enables join and leave messages.
 nadmin.plugins.levels       = true  --Enables people to have levels.
 nadmin.plugins.logs         = true  --Makes `nadmin:Log()` save to a file.
 nadmin.plugins.scoreboard   = true  --Enables the custom scoreboard.
+nadmin.plugins.loadouts     = false --Enables loadouts per rank.
+nadmin.plugins.propprotec   = true  --Enables the prop protection module.
+nadmin.plugins.hud          = true  --Enables the custom HUD
 
 --These are using when parsing time (4d2h, for example. It does (4 * nadmin.time.d) + (2 * nadmin.time.h))
 nadmin.time.s = 1
@@ -121,8 +132,11 @@ nadmin.time.w = (3600*24)*7
 nadmin.time.mo = (3600*24)*30
 nadmin.time.y = (3600*24)*365
 
-nadmin.xp.amount = 1 -- How much xp to give
-nadmin.xp.rate   = 5 -- How often to give xp (in seconds)
+nadmin.levelReq.base = 400 -- The base amount of XP required for a levelup
+nadmin.levelReq.mult = 200 -- This number * their level added onto the base (mult*lvl + base)
+
+nadmin.xp.amount = 5 -- How much xp to give
+nadmin.xp.rate   = 60 -- How often to give xp (in seconds)
 
 -- INTERNAL BEYOND THIS POINT, DON'T CHANGE!!
 
@@ -130,12 +144,13 @@ nadmin.MODE_BELOW = 0 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_SAME  = 1 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_ALL   = 2 --Used in nadmin:FindPlayer(), argument 3
 
-nadmin.version = "v3.6"
+nadmin.version = "v3.7"
 
 nadmin.defaults = nadmin.defaults or table.Copy(nadmin)
 
 nadmin.defaults.userdata = { --Userdata structure for a player
     rank = "",
+    forcedName = "",
     playtime = 0,
     lastJoined = {
         name = "",
@@ -145,6 +160,7 @@ nadmin.defaults.userdata = { --Userdata structure for a player
         lvl = 1,
         xp = 0
     },
+    ppFriends = {},
     money = 0,
     badges = {}
 }

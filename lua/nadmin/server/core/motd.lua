@@ -3,7 +3,6 @@ util.AddNetworkString("nadmin_update_motd_cfg")
 util.AddNetworkString("nadmin_open_motd")
 
 nadmin.config.motd = nadmin.config.motd or {}
-local motd = nadmin.config.motd
 
 local loaded = file.Read("nadmin/config/motd.txt", "DATA")
 if isstring(loaded) then
@@ -11,40 +10,37 @@ if isstring(loaded) then
     motd = loaded
 end
 
-if not isbool(motd.enabled) then motd.enabled = true end
-if not isstring(motd.using) then motd.using = "Generator" end
-if not istable(motd.modes) then motd.modes = {} end
+if not isbool(nadmin.config.motd.enabled) then nadmin.config.motd.enabled = true end
+if not isstring(nadmin.config.motd.using) then nadmin.config.motd.using = "Generator" end
+if not istable(nadmin.config.motd.modes) then nadmin.config.motd.modes = {} end
 
-if not istable(motd.modes.gen) then
-    motd.modes.gen = {
+if not istable(nadmin.config.motd.modes.gen) then
+    nadmin.config.motd.modes.gen = {
         title = {
             text = "Welcome to %HostName%!",
-            font = "nadmin_derma",
-            bgcol = nadmin.colors.gui.blue
-        },
-        subtitle = {
-            text = "Enjoy your stay!",
-            font = "nadmin_derma_small_b"
+            subtext = "Enjoy your stay!",
+            bgcol = nadmin.colors.gui.blue,
+            txcol = nadmin.colors.white,
         },
         contents = {}
     }
 end
-if not isstring(motd.modes.url) then
-    motd.modes.url = "https://www.google.com/"
+if not isstring(nadmin.config.motd.modes.url) then
+    nadmin.config.motd.modes.url = "https://www.google.com/"
 end
 
 local PLAYER = PLAYER or FindMetaTable("Player")
 
 function PLAYER:Nadmin_OpenMOTD()
     if not IsValid(self) then return end
-    if not motd.enabled then return end
+    if not nadmin.config.motd.enabled then return end
 
     net.Start("nadmin_open_motd")
-        net.WriteString(motd.using) -- Writing the mode we are using
-        if motd.using == "Generator" then -- Only send generator info to limit information sent
-            net.WriteTable(motd.modes.gen)
-        elseif motd.using == "Local File" then -- Open the local file and check for errors
-            local info = file.Read("addons/nadmin/motd.txt", "GAME")
+        net.WriteString(nadmin.config.motd.using) -- Writing the mode we are using
+        if nadmin.config.motd.using == "Generator" then -- Only send generator info to limit information sent
+            net.WriteTable(nadmin.config.motd.modes.gen)
+        elseif nadmin.config.motd.using == "Local File" then -- Open the local file and check for errors
+            local info = file.Read("nadmin/motd.txt", "DATA")
             if isstring(info) then
                 if string.len(info) <= 65523 then
                     net.WriteBool(false) -- No error occured
@@ -57,8 +53,8 @@ function PLAYER:Nadmin_OpenMOTD()
                 net.WriteBool(true) -- Is Errored check
                 net.WriteString("404: File \"garrysmod/addons/nadmin/motd.txt\" not found.") -- What error occured
             end
-        elseif motd.using == "URL" then
-            net.WriteString(motd.modes.url)
+        elseif nadmin.config.motd.using == "URL" then
+            net.WriteString(nadmin.config.motd.modes.url)
         end
     net.Send(self)
 
@@ -73,41 +69,42 @@ net.Receive("nadmin_update_motd_cfg", function(len, ply)
 
     local enabled = net.ReadBool()
     if isbool(enabled) then
-        motd.enabled = enabled
+        nadmin.config.motd.enabled = enabled
     end
 
     local using = net.ReadString()
     if isstring(using) then
-        motd.using = using
+        nadmin.config.motd.using = using
     end
 
     if using == "Generator" then
-        local gen = net.ReadTable()
-        if istable(gen) then
-            motd.modes.gen = gen
+        local data = net.ReadTable()
+        if istable(data) then
+            nadmin.config.motd.modes.gen = table.Copy(data)
         end
     elseif using == "URL" then
         local url = net.ReadString()
         if isstring(url) then
-            motd.modes.url = url
+            nadmin.config.motd.modes.url = url
         end
     end
 
-    file.Write("nadmin/config/motd.txt", util.TableToJSON(motd))
+    file.Write("nadmin/config/motd.txt", util.TableToJSON(nadmin.config.motd))
+    nadmin:Log("server_management", ply:Nick() .. " updated the MOTD.")
 end)
 
 net.Receive("nadmin_fetch_motd_cfg", function(len, ply)
     local using = net.ReadString()
 
-    if using == "%GETMODE%" then using = motd.using end
+    if not isstring(using) or using == "_get" then using = nadmin.config.motd.using end
 
     net.Start("nadmin_fetch_motd_cfg")
-        net.WriteBool(motd.enabled) -- Write if the MOTD is even in use
+        net.WriteBool(nadmin.config.motd.enabled) -- Write if the MOTD is even in use
         net.WriteString(using) -- Writing the mode we are using
         if using == "Generator" then -- Only send generator info to limit information sent
-            net.WriteTable(motd.modes.gen)
+            net.WriteTable(nadmin.config.motd.modes.gen)
         elseif using == "Local File" then -- Open the local file and check for errors
-            local info = file.Read("addons/nadmin/motd.txt", "GAME")
+            local info = file.Read("nadmin/motd.txt", "DATA")
             if isstring(info) then
                 if string.len(info) <= 65523 then
                     net.WriteBool(false) -- No error occured
@@ -121,7 +118,7 @@ net.Receive("nadmin_fetch_motd_cfg", function(len, ply)
                 net.WriteString("404: File \"garrysmod/addons/nadmin/motd.txt\" not found.") -- What error occured
             end
         elseif using == "URL" then
-            net.WriteString(motd.modes.url)
+            net.WriteString(nadmin.config.motd.modes.url)
         end
     net.Send(ply)
 end)

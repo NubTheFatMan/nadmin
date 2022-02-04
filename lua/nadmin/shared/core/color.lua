@@ -1,4 +1,5 @@
 function nadmin:DarkenColor(col, am)
+    if not IsColor(col) then error("Can't darken a non-color - " .. tostring(col)) end
     local r = col.r or 255
     local g = col.g or 255
     local b = col.b or 255
@@ -7,6 +8,7 @@ function nadmin:DarkenColor(col, am)
     return setmetatable({r = math.Clamp(r - n, 0, 255), g = math.Clamp(g - n, 0, 255), b = math.Clamp(b - n, 0, 255), a = math.Clamp(a, 0, 255)}, debug.getregistry().Color)
 end
 function nadmin:BrightenColor(col, am)
+    if not IsColor(col) then error("Can't brighten a non-color - " .. tostring(col)) end
     local r = col.r or 255
     local g = col.g or 255
     local b = col.b or 255
@@ -15,6 +17,7 @@ function nadmin:BrightenColor(col, am)
     return setmetatable({r = math.Clamp(r + n, 0, 255), g = math.Clamp(g + n, 0, 255), b = math.Clamp(b + n, 0, 255), a = math.Clamp(a, 0, 255)}, debug.getregistry().Color)
 end
 function nadmin:AlphaColor(col, am)
+    if not IsColor(col) then error("Can't alpha a non-color - " .. tostring(col)) end
     local r = col.r or 255
     local g = col.g or 255
     local b = col.b or 255
@@ -22,6 +25,7 @@ function nadmin:AlphaColor(col, am)
     return setmetatable({r = r, g = g, b = b, a = math.Clamp(a, 0, 255)}, debug.getregistry().Color)
 end
 function nadmin:InvertColor(col)
+    if not IsColor(col) then error("Can't invert a non-color - " .. tostring(col)) end
     local r = col.r or 255
     local g = col.g or 255
     local b = col.b or 255
@@ -30,6 +34,7 @@ function nadmin:InvertColor(col)
 end
 
 function nadmin:TextColor(col)
+    if not IsColor(col) then error("Can't get the text color a non-color - " .. tostring(col)) end
     local r = col.r or 255
     local g = col.g or 255
     local b = col.b or 255

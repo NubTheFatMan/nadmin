@@ -12,3 +12,7 @@ end
 function ENTITY:IPAddress()
     return game.GetIPAddress()
 end
+
+function ENTITY:PlayerToString()
+    return "[CONSOLE]"
+end

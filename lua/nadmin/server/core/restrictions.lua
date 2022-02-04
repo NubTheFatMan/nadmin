@@ -45,6 +45,30 @@ hook.Add("Initialize", "nadmin.find.registered.shit", function()
             table.insert(nadmin.entities, ent.t.ClassName or class)
         end
     end
+    table.Add(nadmin.entities, {
+        "item_ammo_357",
+        "item_ammo_357_large",
+        "item_ammo_ar2",
+        "item_ammo_ar2_large",
+        "item_ammo_ar2_altfire",
+        "combine_mine",
+        "item_ammo_crossbow",
+        "item_healthcharger",
+        "item_healthkit",
+        "item_healthvial",
+        "grenade_helicopter",
+        "item_suit",
+        "item_ammo_pistol",
+        "item_ammo_pistol_large",
+        "item_rpg_round",
+        "item_ammo_smg1",
+        "item_ammo_smg1_large",
+        "item_ammo_smg1_grenade",
+        "item_battery",
+        "item_suitcharger",
+        "prop_thumper",
+        "npc_grenade_frag"
+    })
     --Sort them in alphabetical order
     table.sort(nadmin.entities, function(a, b) return a < b end)
 
@@ -62,6 +86,9 @@ hook.Add("Initialize", "nadmin.find.registered.shit", function()
             local _, __, class = string.find(val, "([%w_]*)%.lua")
             table.insert(nadmin.tools, class)
         end
+
+        --Props
+        local props = file.Find("models/*.mdl", "GAME")
     end
     table.sort(nadmin.tools, function(a, b) return a < b end)
 end)

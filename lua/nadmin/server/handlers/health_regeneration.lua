@@ -8,6 +8,10 @@ hook.Add("Think", "nadmin_hp_regen", function()
     for i, ply in ipairs(player.GetAll()) do
         if not ply:Alive() then continue end
         local can = ply:HasPerm(nadmin.hpRegen.perm)
+        
+        if can then 
+            if nadmin.plyPref and nadmin.plyPref[ply:SteamID()] and not nadmin.plyPref[ply:SteamID()].hpRegen then can = false end
+        end
 
         if can then
             if not nadmin.hpRegen.cache[ply:SteamID()] then nadmin.hpRegen.cache[ply:SteamID()] = {time = now, hp = ply:Health()} end

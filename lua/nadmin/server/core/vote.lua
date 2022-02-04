@@ -50,8 +50,10 @@ net.Receive("nadmin_cast_vote", function()
             table.insert(nadmin.vote.responded, ply)
             table.insert(nadmin.vote.responses[choice], ply)
 
+            local col = nadmin:GetNameColor(ply) or nadmin.colors.blue
+
             if nadmin.vote.showResponses then
-                nadmin:Notify(nadmin.colors.blue, ply:Nick(), nadmin.colors.white, " has voted ", nadmin.colors.red, choice, nadmin.colors.white, ".")
+                nadmin:Notify(col, ply:Nick(), nadmin.colors.white, " has voted ", nadmin.colors.blue, choice, nadmin.colors.white, ".")
             end
 
             if #nadmin.vote.responded == #nadmin.vote.players then --Everyone voted

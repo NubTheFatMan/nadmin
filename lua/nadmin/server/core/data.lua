@@ -16,6 +16,24 @@ if file.Exists("nadmin/config/bans.txt", "DATA") then
     nadmin.bans = util.JSONToTable(file.Read("nadmin/config/bans.txt"))
 end
 
+if file.Exists("nadmin/config/pp.txt", "DATA") then 
+    nadmin.ppData = util.JSONToTable(file.Read("nadmin/config/pp.txt"))
+end
+
+nadmin.defaultPermData = nadmin.defaultPermData or {}
+if file.Exists("nadmin/config/default_access.txt", "DATA") then 
+    nadmin.defaultPermData = util.JSONToTable(file.Read("nadmin/config/default_access.txt"))
+end
+
+function nadmin:SaveDefaultPermData()
+    file.Write("nadmin/config/default_access.txt", util.TableToJSON(nadmin.defaultPermData))
+end
+
+function nadmin:SavePPData()
+    file.Write("nadmin/config/pp.txt", util.TableToJSON(nadmin.ppData))
+    MsgN("[Nadmin]Updated Prop Protection Config.")
+end
+
 function nadmin:SaveUserData(id)
     if not isstring(id) then return end
     if not istable(nadmin.userdata[id]) then return end

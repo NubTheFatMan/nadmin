@@ -22,8 +22,17 @@ gameevent.Listen("player_connect")
 hook.Add("player_connect", "nadmin_connect", function(ply)
     local tCol = nadmin:GetNameColor(ply.networkid) or nadmin:DefaultRank().color
 
+    local data = nadmin.userdata[ply.networkid]
+
+    local name = ply.name 
+    if istable(data) then 
+        if isstring(data.name) and data.name ~= "" then 
+            name = data.name
+        end
+    end
+
     if nadmin.plugins.joinMessages then
-        nadmin:Notify(tCol, ply.name, nadmin.colors.white, " (", tCol, ply.networkid, nadmin.colors.white, ") has connected to the server.")
+        nadmin:Notify(tCol, name, nadmin.colors.white, " (", tCol, ply.networkid, nadmin.colors.white, ") has connected to the server.")
     end
     nadmin:Log("messages", ply.name .. " (" .. ply.networkid .. ")<" .. ply.address .. "> has connected to the server.")
 end)
@@ -66,6 +75,7 @@ hook.Add("PlayerInitialSpawn", "nadmin_spawn", function(ply)
             ply:SetRank(data.rank)
             ply:SetPlayTime(data.playtime)
             ply:SetLevel(data.level.lvl, data.level.xp)
+            if isstring(data.forcedName) and data.forcedName ~= "" then ply:SetNick(data.forcedName, true) end
 
             -- This is done incase they leave before they are saved.
             data.lastJoined.name = ply:Nick()
@@ -74,6 +84,7 @@ hook.Add("PlayerInitialSpawn", "nadmin_spawn", function(ply)
             ply:SetRank(nadmin:DefaultRank().id)
             ply:SetPlayTime(0)
             ply:SetLevel(1)
+            nadmin.userdata[ply:SteamID()].lastJoined.name = ply:Nick()
         end
 
         -- Add this new player to the save table
@@ -135,6 +146,7 @@ hook.Add("PlayerInitialSpawn", "nadmin_spawn", function(ply)
         net.WriteTable(nadmin.tools)
         net.WriteTable(nadmin.vehicles)
         net.WriteTable(nadmin.weapons)
+        net.WriteTable(nadmin.maps)
     net.Send(ply)
 
     nadmin:SendRanksToClients()

@@ -7,7 +7,7 @@ nadmin:RegisterPerm({
 })
 
 hook.Add("PhysgunPickup", "nadmin_physgun_player_pickup", function(ply, ent)
-    if ent:IsPlayer() and ply:HasPerm("physgun_players") and ply:BetterThan(ent) then
+    if ent:IsPlayer() and ply:HasPerm("physgun_players") and ply:BetterThan(ent) and nadmin.plyPref and nadmin.plyPref[ply:SteamID()] and nadmin.plyPref[ply:SteamID()].physgunOthers then
         ent:UnLock()
         ent.IsPickedUp = true
         ent:SetMoveType(MOVETYPE_NONE)
@@ -43,7 +43,13 @@ hook.Add("PlayerNoClip", "nadmin_noclip_prevention", function(ply)
     elseif ply.n_BuildMode then
         return true
     elseif GetConVar("sbox_noclip"):GetInt() == 0 then
-        return ply:HasPerm("always_allow_noclip")
+        -- return ply:HasPerm("always_allow_noclip")
+        if ply:HasPerm("always_allow_noclip") then 
+            if nadmin.plyPref and nadmin.plyPref[ply:SteamID()] and nadmin.plyPref[ply:SteamID()].allowNoclip then 
+                return true 
+            end
+        end
+        return false
     end
 end)
 

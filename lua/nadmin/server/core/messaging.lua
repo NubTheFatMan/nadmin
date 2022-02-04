@@ -32,7 +32,7 @@ function nadmin:Notify(...) --Function copied from Evolve
             if nadmin.SilentNotify then
                 local plys = {}
                 for i, ply in ipairs(player.GetAll()) do
-                    if ply:HasPerm("see_silent_commands") then
+                    if ply:HasPerm("see_silent_commands") and nadmin.plyPref and nadmin.plyPref[ply:SteamID()].silentNotifs then
                         table.insert(plys, ply)
                     end
                 end

@@ -17,6 +17,11 @@ function nadmin:FindPlayer(needle, caller, mode)
                 for i, ply in ipairs(player.GetAll()) do
                     table.insert(found, ply)
                 end
+            elseif needle == "@" then --Put whoever they're looking at in the table
+                local targ = caller:GetEyeTraceNoCursor().Entity
+                if targ:IsPlayer() then 
+                    table.insert(found, targ)
+                end
             end
         end
     else --If the needle wasn't a string
@@ -116,24 +121,52 @@ end
 function PLAYER:BetterThan(ply)
     if not IsValid(self) then return false end
 
-    local targRank = ply:GetRank()
-    if not targRank then return true end
+    if IsValid(ply) and ply:IsPlayer() then 
+        local targRank = ply:GetRank()
+        if not targRank then return true end
 
-    local callRank = self:GetRank()
-    if not callRank then return false end
+        local callRank = self:GetRank()
+        if not callRank then return false end
 
-    return callRank.immunity > targRank.immunity
+        return callRank.immunity > targRank.immunity
+    elseif isstring(ply) then 
+        local targ = nadmin.userdata[ply]
+        if istable(targ) then 
+            local targRank = nadmin:FindRank(targ.rank)
+            if not targRank then return true end
+
+            local callRank = self:GetRank()
+            if not callRank then return false end
+
+            return callRank.immunity > targRank.immunity
+        end
+    end
+    return false
 end
 function PLAYER:BetterThanOrEqual(ply)
     if not IsValid(self) then return false end
 
-    local targRank = ply:GetRank()
-    if not targRank then return true end
+    if IsValid(ply) and ply:IsPlayer() then 
+        local targRank = ply:GetRank()
+        if not targRank then return true end
 
-    local callRank = self:GetRank()
-    if not callRank then return false end
+        local callRank = self:GetRank()
+        if not callRank then return false end
 
-    return callRank.immunity >= targRank.immunity
+        return callRank.immunity >= targRank.immunity
+    elseif isstring(ply) then 
+        local targ = nadmin.userdata[ply]
+        if istable(targ) then 
+            local targRank = nadmin:FindRank(targ.rank)
+            if not targRank then return true end
+
+            local callRank = self:GetRank()
+            if not callRank then return false end
+
+            return callRank.immunity >= targRank.immunity
+        end
+    end
+    return false
 end
 
 -- Level stuff
@@ -240,7 +273,7 @@ function nadmin:FormatPlayerList(plys, join, sepCol)
     end
     return out
 end
-function nadmin:FormatPlayerListNoColor(plys, join)
+function nadmin:FormatPlayerListNoColor(plys, join, format)
     local p = istable(plys) and plys or player.GetAll()
     local j = isstring(join) and join or "or"
 
@@ -255,6 +288,10 @@ function nadmin:FormatPlayerListNoColor(plys, join)
             out = out .. ", " .. j .. " "
         end
 
+        local nick = ply:Nick()
+        if isstring(format) then 
+            nick = ply:PlayerToString(format)
+        end
         out = out .. ply:Nick()
     end
 

@@ -20,6 +20,15 @@ function PLAYER:CheckData()
     local d = table.Copy(nadmin.defaults.userdata)
     if self:IsBot() then return d end -- We don't want to save bot data, nor should they have any data
     nadmin.userdata[self:SteamID()] = ct(nadmin.userdata[self:SteamID()] or {}, d)
+    return nadmin.userdata[self:SteamID()]
+end
+
+function nadmin:CheckData(id)
+    if not isstring(id) then return end 
+    
+    local d = table.Copy(nadmin.defaults.userdata)
+    nadmin.userdata[id] = ct(nadmin.userdata[id] or {}, d)
+    return nadmin.userdata[id]
 end
 
 function PLAYER:SaveData()
@@ -27,6 +36,12 @@ function PLAYER:SaveData()
     if self:IsBot() then return end -- We don't want to save bot data
     self:CheckData()
     file.Write("nadmin/userdata/" .. string.lower(string.Replace(self:SteamID(), ":", ",")) .. ".txt",  util.TableToJSON(nadmin.userdata[self:SteamID()], true))
+end
+
+function nadmin:SaveData(id)
+    if not isstring(id) then return end
+    local user = nadmin:CheckData(id)
+    file.Write("nadmin/userdata/" .. string.lower(string.Replace(id, ":", ",")) .. ".txt",  util.TableToJSON(user, true))
 end
 
 --HasGodMode fix for client
@@ -138,17 +153,20 @@ function PLAYER:AddExperience(xp)
 end
 
 --Nicknaming
-function PLAYER:SetNick(nick)
+function PLAYER:SetNick(nick, no_save)
     if not IsValid(self) then return end
 
     if isstring(nick) then
         if nick == self:RealName() then
             self:SetNWString("nadmin_nickname", self:RealName())
+            if not no_save then nadmin.userdata[self:SteamID()].forcedName = "" end
         else
             self:SetNWString("nadmin_nickname", nick)
+            if not no_save then nadmin.userdata[self:SteamID()].forcedName = nick end
         end
     else
         self:SetNWString("nadmin_nickname", self:RealName())
+        if not no_save then nadmin.userdata[self:SteamID()].forcedName = "" end
     end
 end
 

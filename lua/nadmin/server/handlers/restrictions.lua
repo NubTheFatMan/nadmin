@@ -3,6 +3,13 @@ hook.Add("PlayerSpawnProp", "nadmin.block.freezebanspawning", function(ply, mode
     if ply.FreezeBan then
         return false
     end
+
+    if GAMEMODE.IsSandboxDerived then
+        if ply:HasRestriction(model) then
+            nadmin:Notify(ply, nadmin.colors.red, nadmin.errors.noAccessProp)
+            return false
+        end
+    end
 end)
 
 --Spawning weapons with toolgun or middle mouse click.

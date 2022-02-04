@@ -13,6 +13,33 @@ function nadmin:RegisterCommand(tbl)
 
     if cmd.forcedPriv then
         self.forcedPrivs[cmd.id] = true
+    elseif SERVER then -- Since this command isn't forced, we'll automatically add it to ranks permissions if they meet certain criteria 
+        -- First check the immunity
+        if isnumber(cmd.defaultImmunity) then 
+            if nadmin.defaultPermData[cmd.id] ~= cmd.defaultImmunity then -- Only update rank permissions if the stored value differs 
+                for id, rank in ipairs(nadmin.ranks) do 
+                    if rank.immunity >= cmd.defaultImmunity then 
+                        if not table.HasValue(rank.privileges, cmd.id) then 
+                            table.insert(rank.privileges, cmd.id)
+                        end
+                    end
+                end
+                nadmin.defaultPermData[cmd.id] = cmd.defaultImmunity
+                nadmin:SaveDefaultPermData()
+            end
+        elseif isnumber(cmd.defaultAccess) then -- Check the default access
+            if nadmin.defaultPermData[cmd.id] ~= cmd.defaultAccess then -- Only update rank permissions if the stored value differs 
+                for id, rank in ipairs(nadmin.ranks) do 
+                    if rank.access >= cmd.defaultAccess then 
+                        if not table.HasValue(rank.privileges, cmd.id) then 
+                            table.insert(rank.privileges, cmd.id)
+                        end
+                    end
+                end
+                nadmin.defaultPermData[cmd.id] = cmd.defaultAccess
+                nadmin:SaveDefaultPermData()
+            end
+        end
     end
 
     -- MsgN("Registered Command: " .. cmd.title)

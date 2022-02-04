@@ -4,7 +4,17 @@ hook.Add("Think", "nadmin_time_handle", function()
         lastTime = SysTime()
         for i, ply in ipairs(player.GetAll()) do
             if ply:GetPlayTime() >= math.huge then continue end
-            if ply.n_AFK and not ply:HasPerm("allow_afk_time") then continue end -- Don't give time to AFK players.
+            
+            local afkTime = (nadmin.plyPref and nadmin.plyPref[ply:SteamID()] and nadmin.plyPref[ply:SteamID()].afkTime) 
+            if ply.n_AFK then 
+                if ply:HasPerm("allow_afk_time") then 
+                    if not afkTime then continue end
+                else 
+                    continue 
+                end
+            end
+
+            -- if afk and afkTime then continue end -- Don't give time to AFK players.
 
             ply:SetPlayTime(ply:GetPlayTime() + 1)
 

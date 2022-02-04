@@ -1,3 +1,16 @@
+nadmin.null_rank = {
+    title = "Unranked",
+    id = NULL, 
+    icon = "no_texture",
+    immunity = 0,
+    access = 0,
+    autoPromote = {when = 0, rank = "", enabled = false},
+    loadout = {},
+    color = Color(255, 255, 255),
+    restrictions = {},
+    privileges = {}
+}
+
 function nadmin:RegisterRank(tbl)
     local rank = tbl or {}
 
@@ -5,7 +18,8 @@ function nadmin:RegisterRank(tbl)
     rank.id          = isstring(tbl.id)         and tbl.id          or string.lower(string.Replace(rank.title, " ", "_"))
     rank.icon        = isstring(tbl.icon)       and tbl.icon        or "icon16/user.png"
     rank.immunity    = isnumber(tbl.immunity)   and tbl.immunity    or nadmin.immunity.everyone
-    rank.ownerRank   = isbool(tbl.ownerRank)    and tbl.ownerRank   or false
+    rank.access      = isnumber(tbl.access)     and tbl.access      or nadmin.access.user
+    rank.inheritFrom = istable(tbl.inheritFrom) and tbl.inheritFrom or null
     rank.autoPromote = istable(tbl.autoPromote) and tbl.autoPromote or {when = 0, rank = "", enabled = false}
 
     -- Default gmod loadout
@@ -28,13 +42,40 @@ function nadmin:RegisterPerm(tbl)
     if not istable(perm) then return end
 
     perm.title = isstring(tbl.title) and tbl.title or "Undefined"
-    perm.id    = isstring(tbl.id)    and    tbl.id or string.lower(string.Replace(perm.title, " ", "_"))
+    perm.id    = isstring(tbl.id)    and tbl.id    or string.lower(string.Replace(perm.title, " ", "_"))
 
     if perm.forcedPriv then
         self.forcedPrivs[perm.id] = true
+    elseif SERVER then -- Since this permission isn't forced, we'll automatically add it to ranks permissions if they meet certain criteria 
+        -- First check the immunity
+        if isnumber(perm.defaultImmunity) then 
+            if nadmin.defaultPermData[perm.id] ~= perm.defaultImmunity then -- Only update rank permissions if the stored value differs 
+                for id, rank in ipairs(nadmin.ranks) do 
+                    if rank.immunity >= perm.defaultImmunity then 
+                        if not table.HasValue(rank.privileges, perm.id) then 
+                            table.insert(rank.privileges, perm.id)
+                        end
+                    end
+                end
+                nadmin.defaultPermData[perm.id] = perm.defaultImmunity
+                nadmin:SaveDefaultPermData()
+            end
+        elseif isnumber(perm.defaultAccess) then -- Check the default access
+            if nadmin.defaultPermData[perm.id] ~= perm.defaultAccess then -- Only update rank permissions if the stored value differs 
+                for id, rank in ipairs(nadmin.ranks) do 
+                    if rank.access >= perm.defaultAccess then 
+                        if not table.HasValue(rank.privileges, perm.id) then 
+                            table.insert(rank.privileges, perm.id)
+                        end
+                    end
+                end
+                nadmin.defaultPermData[perm.id] = perm.defaultAccess
+                nadmin:SaveDefaultPermData()
+            end
+        end
     end
 
-    nadmin.perms[perm.id] = perm
+    nadmin.perms[perm.id] = table.Copy(perm)
 
     -- MsgN("Registered Permission: " .. perm.title .. " | " .. perm.id)
     return nadmin.perms[perm.id]
@@ -45,6 +86,7 @@ function nadmin:FindRank(id)
     for i, rank in pairs(nadmin.ranks) do
         if string.lower(id) == string.lower(rank.title) then return rank end
     end
+    return nadmin.null_rank
 end
 
 function nadmin:DefaultRank()
@@ -54,4 +96,13 @@ function nadmin:DefaultRank()
     end
     table.sort(ranks, function(a, b) return a.immunity < b.immunity end)
     return ranks[1]
+end
+
+function nadmin:DefaultRankUpdated()
+    for id, rank in pairs(nadmin.ranks) do
+        if rank.access == nadmin.access.default then
+            return rank
+        end
+    end
+    return nadmin.null_rank
 end

@@ -28,5 +28,5 @@ hook.Add("PlayerSpawnedSWEP", "nadmin_spawn_log", function(ply, ent)
 end)
 
 hook.Add("PlayerSay", "nadmin_chat_log", function(ply, txt, isTeam)
-    nadmin:Log("messages", ply:PlayerToString("nick (steamid)<ipaddress>") .. nadmin:Ternary(isTeam, " (TEAM)", "") .. ": " .. txt, true)
+    nadmin:Log("messages", ply:PlayerToString("nick (steamid)") .. nadmin:Ternary(isTeam, " (TEAM)", "") .. ": " .. txt, true)
 end)
