@@ -13,6 +13,7 @@ cmd.server = function(caller, args)
             if isnumber(dur) then
                 if dur >= 1 then
                     nadmin:Announce(table.concat(args, " "), dur)
+                    nadmin:Notify(nadmin:GetNameColor(caller) or nadmin.colors.blue, caller:Nick(), nadmin.colors.white, " has made an announcement.")
                 else
                     nadmin:Notify(caller, nadmin.colors.red, "The duration must be at least 1 second.")
                 end

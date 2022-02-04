@@ -483,6 +483,7 @@ if CLIENT then
                 h = basic:GetTall()
 
                 -- Delete button
+                -- local deleteRank = vgui.Create("NadminButton", basic)
                 local deleteRank = nadmin.vgui:DButton(nil, {w - 8, 28}, basic)
                 deleteRank:Dock(TOP)
                 deleteRank:DockMargin(4, 4, 4, 0)
@@ -574,30 +575,101 @@ if CLIENT then
                     if not self:GetErrored() then editRank.title = val end
                 end
 
-                if not owner then
-                    local im_edit = nadmin.vgui:DPanel(nil, {w - 8, 28}, basic)
-                    im_edit:Dock(TOP)
-                    im_edit:DockMargin(4, 4, 4, 0)
+                local im_edit = nadmin.vgui:DPanel(nil, {w - 8, 28}, basic)
+                im_edit:Dock(TOP)
+                im_edit:DockMargin(4, 4, 4, 0)
 
-                    local immunityText = nadmin.vgui:DLabel(nil, "Immunity:", im_edit)
+                local immunityText = nadmin.vgui:DLabel(nil, "Immunity:", im_edit)
 
-                    local immunity = nadmin.vgui:DTextEntry({immunityText:GetWide() + 4, 0}, {w - immunityText:GetWide() - 12, immunityText:GetTall()}, im_edit)
-                    immunity:SetUpdateOnType(true)
-                    immunity:SetPlaceholderText("Immunity")
-                    immunity:SetNumeric(true)
+                local immunity = nadmin.vgui:DTextEntry({immunityText:GetWide() + 4, 0}, {w - immunityText:GetWide() - 12, immunityText:GetTall()}, im_edit)
+                immunity:SetUpdateOnType(true)
+                immunity:SetPlaceholderText("Immunity")
+                immunity:SetNumeric(true)
 
-                    function immunity:ErrorCondition()
-                        local val = tonumber(string.Trim(self:GetText()))
-                        if type(val) ~= "number" then return true end
-                        return (val >= myRank.immunity) or (val < 0)
+                function immunity:ErrorCondition()
+                    local val = tonumber(string.Trim(self:GetText()))
+                    if type(val) ~= "number" then return true end
+                    return (val >= myRank.immunity) or (val < 0)
+                end
+                
+                if istable(editRank) then immunity:SetText(editRank.immunity)
+                else immunity:SetMouseInputEnabled(false) immunity:SetText("Please select a rank.") end
+                
+                function immunity:OnValueChange(val)
+                    if not self:GetErrored() then editRank.immunity = tonumber(string.Trim(val)) end
+                end
+
+                local ac_edit = nadmin.vgui:DPanel(nil, {w - 8, 28}, basic)
+                ac_edit:Dock(TOP)
+                ac_edit:DockMargin(4, 4, 4, 0)
+
+                local accessText = nadmin.vgui:DLabel(nil, "Access Level:", ac_edit)
+
+                local acx = accessText:GetWide() + 4
+                local ach = accessText:GetTall()
+                local acRest = nadmin.vgui:DButton({acx, 0}, {ach, ach}, ac_edit)
+                acRest:SetIcon("icon16/cancel.png")
+                acRest:SetToolTip("Restricted Access")
+                acRest:SetColor(nadmin.colors.gui.theme)
+                acRest.access = nadmin.access.restricted
+                acx = acx + ach + 4   
+                if not istable(editRank) then acRest:SetMouseInputEnabled(false) 
+                elseif editRank.access == nadmin.access.restricted then acRest:SetColor(nadmin.colors.gui.blue) end
+
+                local acDef = nadmin.vgui:DButton({acx, 0}, {ach, ach}, ac_edit)
+                acDef:SetIcon("icon16/new.png")
+                acDef:SetToolTip("Default (Only one rank can have this!)")
+                acDef:SetColor(nadmin.colors.gui.theme)
+                acDef.access = nadmin.access.default
+                acx = acx + ach + 4   
+                if not istable(editRank) then acDef:SetMouseInputEnabled(false) 
+                elseif editRank.access == nadmin.access.default then acDef:SetColor(nadmin.colors.gui.blue) end
+
+                local acUser = nadmin.vgui:DButton({acx, 0}, {ach, ach}, ac_edit)
+                acUser:SetIcon("icon16/user.png")
+                acUser:SetToolTip("Regular")
+                acUser:SetColor(nadmin.colors.gui.theme)
+                acUser.access = nadmin.access.user
+                acx = acx + ach + 4   
+                if not istable(editRank) then acUser:SetMouseInputEnabled(false) 
+                elseif editRank.access == nadmin.access.user then acUser:SetColor(nadmin.colors.gui.blue) end
+
+                local acAdm = nadmin.vgui:DButton({acx, 0}, {ach, ach}, ac_edit)
+                acAdm:SetIcon("icon16/shield.png")
+                acAdm:SetToolTip("Admin")
+                acAdm:SetColor(nadmin.colors.gui.theme)
+                acAdm.access = nadmin.access.admin
+                acx = acx + ach + 4   
+                if not istable(editRank) then acAdm:SetMouseInputEnabled(false) 
+                elseif editRank.access == nadmin.access.admin then acAdm:SetColor(nadmin.colors.gui.blue) end
+
+                local acSup = nadmin.vgui:DButton({acx, 0}, {ach, ach}, ac_edit)
+                acSup:SetIcon("icon16/shield_add.png")
+                acSup:SetToolTip("Superadmin")
+                acSup:SetColor(nadmin.colors.gui.theme)
+                acSup.access = nadmin.access.superadmin
+                acx = acx + ach + 4   
+                if not istable(editRank) then acSup:SetMouseInputEnabled(false) 
+                elseif editRank.access == nadmin.access.superadmin then acSup:SetColor(nadmin.colors.gui.blue) end
+
+                local acOwn = nadmin.vgui:DButton({acx, 0}, {ach, ach}, ac_edit)
+                acOwn:SetIcon("icon16/key.png")
+                acOwn:SetToolTip("Owner")
+                acOwn:SetColor(nadmin.colors.gui.theme)
+                acOwn.access = nadmin.access.owner
+                acx = acx + ach + 4   
+                if not istable(editRank) then acOwn:SetMouseInputEnabled(false) 
+                elseif editRank.access == nadmin.access.owner then acOwn:SetColor(nadmin.colors.gui.blue) end
+
+                local accesses = {acRest, acDef, acUser, acAdm, acSup, acOwn}
+                local function setAccess(selected)
+                    -- drunk code block :^) 
+                    -- luv you nub <3
+                    editRank.access = selected.access
+                    for i, btn in ipairs(accesses) do
+                        btn:setColor(nadmin.colors.gui.theme) 
                     end
-
-                    if istable(editRank) then immunity:SetText(editRank.immunity)
-                    else immunity:SetMouseInputEnabled(false) immunity:SetText("Please select a rank.") end
-
-                    function immunity:OnValueChange(val)
-                        if not self:GetErrored() then editRank.immunity = tonumber(string.Trim(val)) end
-                    end
+                    selected:SetColor(nadmin.colors.gui.blue)
                 end
 
                 local icon_edit = nadmin.vgui:DPanel(nil, {w - 8, 28}, basic)
@@ -629,7 +701,7 @@ if CLIENT then
 
                 local vbar = iconBrowser:GetVBar()
 
-                -- Optimization function: creates 20 icons a frame
+                -- Optimization function: creates 50 icons a frame
                 local function drawIcons(search)
                     iconBrowser:Clear()
                     if IsValid(nadmin.temp_panel) then nadmin.temp_panel:Remove() end
@@ -641,7 +713,7 @@ if CLIENT then
                     local keys = table.GetKeys(nadmin.icons)
                     table.sort(keys, function(a, b) return a < b end)
                     nadmin.temp_panel = vgui.Create("DPanel")
-                    function nadmin.temp_panel:Paint()
+                    function nadmin.temp_panel:Paint() -- Create some icons every frame. To prevent the game from freezing, it will only create a certain number of icons every frame
                         local i = 0
                         local maxi = 50
                         while index < #keys and i < maxi do
@@ -1539,6 +1611,8 @@ if CLIENT then
         -- This way of adding right click spawn menu functionality could be considered hacky
         local oldDermaMenu = DermaMenu
         function DermaMenu(parentmenu, parent)
+            nadmin.prevPrevSpawnMenuRightClick = nadmin.prevSpawnMenuRightClick
+            nadmin.prevSpawnMenuRightClick = nadmin.spawnMenuRightClick
         	nadmin.spawnMenuRightClick = oldDermaMenu(parentmenu, parent)
             return nadmin.spawnMenuRightClick
         end
@@ -1551,67 +1625,75 @@ if CLIENT then
                 if isfunction(self.OpenMenu) then
                     self:OpenMenu(self)
                 end
-                if IsValid(nadmin.spawnMenuRightClick) and isstring(self:GetSpawnName()) then
+                if IsValid(nadmin.spawnMenuRightClick) then
                     if not LocalPlayer():HasPerm("manage_ranks") then return end
 
-                    local name = self:GetSpawnName()
-                    if not (table.HasValue(nadmin.entities, name) or table.HasValue(nadmin.npcs, name) or table.HasValue(nadmin.vehicles, name) or table.HasValue(nadmin.weapons, name)) then return end
-
-                    local ranks = {}
-                    local call_rank = LocalPlayer():GetRank()
-                    for id, rank in pairs(nadmin.ranks) do
-                        if rank.ownerRank or rank.immunity >= nadmin.immunity.owner then continue end
-                        if rank.immunity >= call_rank.immunity then continue end
-                        table.insert(ranks, {title = rank.title, id = rank.id, immunity = rank.immunity, restrictions = rank.restrictions, loadout = rank.loadout})
-                    end
-                    table.sort(ranks, function(a, b) return a.immunity < b.immunity end)
-
-                    local orig = nadmin.spawnMenuRightClick
-
-                    local sub = nadmin.spawnMenuRightClick:AddSubMenu("Restrict from rank")
-                    for i, rank in ipairs(ranks) do
-                        local line = sub:AddOption(rank.title, function()
-                            net.Start("nadmin_restrict_perm")
-                                net.WriteString("Restrict")
-                                net.WriteString(rank.id)
-                                net.WriteString(name)
-                            net.SendToServer()
-                        end)
-                        if table.HasValue(rank.restrictions, name) then
-                            line:SetIcon("icon16/lock.png")
-                        else
-                            line:SetIcon("icon16/lock_open.png")
-                        end
-                    end
-
-                    if table.HasValue(nadmin.weapons, name) then
+                    local name
+                    if self.GetSpawnName then name = self:GetSpawnName() 
+                    elseif self.GetModelName then name = self:GetModelName() end
+                    
+                    if table.HasValue(nadmin.entities, name) or table.HasValue(nadmin.npcs, name) or table.HasValue(nadmin.vehicles, name) or table.HasValue(nadmin.weapons, name) or string.StartWith(name, "models/") then 
                         local ranks = {}
                         local call_rank = LocalPlayer():GetRank()
                         for id, rank in pairs(nadmin.ranks) do
-                            if not call_rank.ownerRank or call_rank.immunity < nadmin.immunity.owner then
-                                if rank.immunity >= call_rank.immunity then continue end
-                            end
+                            if rank.ownerRank or rank.immunity >= nadmin.immunity.owner then continue end
+                            if rank.immunity >= call_rank.immunity then continue end
                             table.insert(ranks, {title = rank.title, id = rank.id, immunity = rank.immunity, restrictions = rank.restrictions, loadout = rank.loadout})
                         end
                         table.sort(ranks, function(a, b) return a.immunity < b.immunity end)
 
-                        local sub = orig:AddSubMenu("Add to loadout")
+                        local menu = nadmin.spawnMenuRightClick
+                        if self.GetModelName then menu = nadmin.prevPrevSpawnMenuRightClick end
+
+                        local sub = menu:AddSubMenu("Restrict from rank")
                         for i, rank in ipairs(ranks) do
                             local line = sub:AddOption(rank.title, function()
                                 net.Start("nadmin_restrict_perm")
-                                    net.WriteString("Loadout")
+                                    net.WriteString("Restrict")
                                     net.WriteString(rank.id)
                                     net.WriteString(name)
                                 net.SendToServer()
                             end)
-                            if table.HasValue(rank.loadout, name) then
-                                line:SetIcon("icon16/accept.png")
+                            if table.HasValue(rank.restrictions, name) then
+                                line:SetIcon("icon16/lock.png")
+                            else
+                                line:SetIcon("icon16/lock_open.png")
+                            end
+                        end
+
+                        if table.HasValue(nadmin.weapons, name) and nadmin.plugins.loadouts then
+                            local ranks = {}
+                            local call_rank = LocalPlayer():GetRank()
+                            for id, rank in pairs(nadmin.ranks) do
+                                if not call_rank.ownerRank or call_rank.immunity < nadmin.immunity.owner then
+                                    if rank.immunity >= call_rank.immunity then continue end
+                                end
+                                table.insert(ranks, {title = rank.title, id = rank.id, immunity = rank.immunity, restrictions = rank.restrictions, loadout = rank.loadout})
+                            end
+                            table.sort(ranks, function(a, b) return a.immunity < b.immunity end)
+
+                            local sub = menu:AddSubMenu("Add to loadout")
+                            for i, rank in ipairs(ranks) do
+                                local line = sub:AddOption(rank.title, function()
+                                    net.Start("nadmin_restrict_perm")
+                                        net.WriteString("Loadout")
+                                        net.WriteString(rank.id)
+                                        net.WriteString(name)
+                                    net.SendToServer()
+                                end)
+                                if table.HasValue(rank.loadout, name) then
+                                    line:SetIcon("icon16/accept.png")
+                                end
                             end
                         end
                     end
                 end
             end
         end
+
+        local spawn = vgui.GetControlTable("SpawnIcon")
+        spawn.nadmin_oldInit = spawn.Init
+        spawn.Init = icon.Init
     end)
 else
     net.Receive("nadmin_manage_member", function(len, ply)
@@ -1755,7 +1837,7 @@ else
             return
         end
 
-        if not (table.HasValue(nadmin.entities, item) or table.HasValue(nadmin.npcs, item) or table.HasValue(nadmin.vehicles, item) or table.HasValue(nadmin.weapons, item)) then
+        if not (table.HasValue(nadmin.entities, item) or table.HasValue(nadmin.npcs, item) or table.HasValue(nadmin.vehicles, item) or table.HasValue(nadmin.weapons, item)) and not string.StartWith(item, "models/") then
             nadmin:Notify(ply, nadmin.colors.red, "You can't restrict/loadout an invalid item.")
             return
         end

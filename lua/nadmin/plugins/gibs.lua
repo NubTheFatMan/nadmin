@@ -8,7 +8,9 @@ COMMAND.call = "gibs"
 COMMAND.server = function(caller, args)
     local myCol = nadmin:GetNameColor(caller) or nadmin.colors.blue
 
-    local msg = {myCol, caller:Nick(), nadmin.colors.white, " has removed all gibs."}
+    game.RemoveRagdolls()
+
+    local msg = {myCol, caller:Nick(), nadmin.colors.white, " has removed all gibs and ragdolls."}
     nadmin:Notify(unpack(msg))
     net.Start("nadmin_gibs") net.Broadcast()
 end
@@ -21,6 +23,7 @@ else
         LocalPlayer():ConCommand("r_cleardecals;r_cleardecals")
 
         -- Remove ragdolls
+        game.RemoveRagdolls()
         for i, r in pairs(ents.FindByClass("class C_ClientRagdoll")) do r:SetNoDraw(true) end
 	    for i, r in pairs(ents.FindByClass("class C_BaseAnimating")) do r:SetNoDraw(true) end
     end

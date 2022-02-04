@@ -6,7 +6,7 @@ COMMAND.timeCreated = "Tuesday, September 1st, 2020 @ 8:53 PM"
 COMMAND.category = "Menu"
 COMMAND.call = "discord"
 
-COMMAND.url = "https://discord.gg/pjbemj4"
+COMMAND.url = "https://discord.gg/jgWx4m4pKH"
 
 COMMAND.client = function(caller, args)
     gui.OpenURL(COMMAND.url)

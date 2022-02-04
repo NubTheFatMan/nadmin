@@ -1,6 +1,7 @@
 if CLIENT then
     nadmin.menu:RegisterTab({
         title = "Commands",
+        forcedPriv = true,
         content = function(parent, data)
             local w = math.Round(parent:GetWide()/5)
             local h = parent:GetTall()

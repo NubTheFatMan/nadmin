@@ -55,7 +55,7 @@ cmd.scoreboard.iconRender = function(panel, w, h, ply)
     surface.DrawTexturedRect(w/2 - 10, 4, 20, 20)
 end
 cmd.scoreboard.OnClick = function(ply, rmb)
-    LocalPlayer():ConCommand("nadmin" .. nadmin:Ternary(rmb, "s", "") .. " cleanup " .. ply:SteamID())
+    LocalPlayer():ConCommand("nadmin" .. nadmin:Ternary(rmb, "s", "") .. " slap " .. ply:SteamID())
 end
 
 

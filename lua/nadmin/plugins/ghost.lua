@@ -121,20 +121,20 @@ COMMAND.advUsage = {
     }
 }
 
-local god = Material("icon16/user.png")
+local user = Material("icon16/user.png")
 local ungod = Material("icon16/shield.png")
 
 COMMAND.scoreboard = {}
 COMMAND.scoreboard.targetMode = nadmin.MODE_BELOW
 COMMAND.scoreboard.iconRender = function(panel, w, h, ply)
     surface.SetDrawColor(255, 255, 255)
-    surface.SetMaterial(nadmin:Ternary(ply:HasGodMode(), ungod, god))
+    surface.SetMaterial(user)
     surface.DrawTexturedRect(w/2 - 10, 4, 20, 20)
 
-    panel:SetText(nadmin:Ternary(ply:HasGodMode(), "Ungod", "God"))
+    panel:SetText("Toggle Ghosted")
 end
 COMMAND.scoreboard.OnClick = function(ply, rmb)
-    LocalPlayer():ConCommand("nadmin" .. nadmin:Ternary(rmb, "s", "") .. " god " .. ply:SteamID())
+    LocalPlayer():ConCommand("nadmin" .. nadmin:Ternary(rmb, "s", "") .. " ghost " .. ply:SteamID())
 end
 
 nadmin:RegisterCommand(COMMAND)

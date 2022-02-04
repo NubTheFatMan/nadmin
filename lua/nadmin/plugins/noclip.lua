@@ -34,18 +34,18 @@ cmd.server = function(caller, args)
             end
         end
 
-        if #granted > 0 then
-            local msg = {myCol, caller:Nick(), nadmin.colors.white, " has noclipped "}
-            table.Add(msg, nadmin:FormatPlayerList(targs, "and"))
-            table.Add(msg, {nadmin.colors.white, "."})
-            nadmin:Notify(unpack(msg))
-        end
-        if #revoked > 0 then
-            local msg = {myCol, caller:Nick(), nadmin.colors.white, " has removed noclip from "}
-            table.Add(msg, nadmin:FormatPlayerList(targs, "and"))
-            table.Add(msg, {nadmin.colors.white, "."})
-            nadmin:Notify(unpack(msg))
-        end
+        -- if #granted > 0 then
+        --     local msg = {myCol, caller:Nick(), nadmin.colors.white, " has noclipped "}
+        --     table.Add(msg, nadmin:FormatPlayerList(targs, "and"))
+        --     table.Add(msg, {nadmin.colors.white, "."})
+        --     nadmin:Notify(unpack(msg))
+        -- end
+        -- if #revoked > 0 then
+        --     local msg = {myCol, caller:Nick(), nadmin.colors.white, " has removed noclip from "}
+        --     table.Add(msg, nadmin:FormatPlayerList(targs, "and"))
+        --     table.Add(msg, {nadmin.colors.white, "."})
+        --     nadmin:Notify(unpack(msg))
+        -- end
     else
         nadmin:Notify(caller, nadmin.colors.red, nadmin.errors.noTargLess)
     end

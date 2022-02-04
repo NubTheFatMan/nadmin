@@ -35,7 +35,7 @@ cmd.server = function(caller, args)
     end
 
     if #args > 0 then
-        local targ = nadmin:FindPlayer(args[1], caller, nadmin.MODE_SAME)
+        local targ = nadmin:FindPlayer(args[1], caller, nadmin.MODE_BELOW)
 
         if table.HasValue(targ, caller) then
             for i, ply in ipairs(targ) do

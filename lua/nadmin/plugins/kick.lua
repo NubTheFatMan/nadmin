@@ -24,7 +24,7 @@ cmd.server = function(caller, args)
             table.Add(msg, {nadmin.colors.white, "."})
             nadmin:Notify(unpack(msg))
 
-            local list = nadmin:FormatPlayerListNoColor(targ, "and")
+            local list = nadmin:FormatPlayerListNoColor(targ, "and", "nick (steamid)<ipaddress>")
             nadmin:Log("administration", caller:PlayerToString("nick (steamid)<ipaddress>") .. " has kicked " .. list)
 
             local reason = nil

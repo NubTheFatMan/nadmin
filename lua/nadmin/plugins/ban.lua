@@ -106,7 +106,7 @@ cmd.server = function(caller, args, advArgs)
     if not callCol then callCol = nadmin.colors.blue end
 
     nadmin:Notify(callCol, caller:Nick(), nadmin.colors.white, " has banned ", banCol, nick or "[Unkown]", nadmin.colors.white, ".")
-    nadmin:Log("administration", (IsValid(caller) and caller:PlayerToString("nick (steamid)<ipaddress>") or "[CONSOLE]") .. " has banned " .. (nick or id))
+    nadmin:Log("administration", caller:PlayerToString("nick (steamid)<ipaddress>") .. " has banned " .. (nick or id))
 end
 
 local dis = Material("icon16/disconnect.png")

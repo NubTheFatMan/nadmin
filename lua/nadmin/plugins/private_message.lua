@@ -7,26 +7,32 @@ COMMAND.category = "Utility"
 COMMAND.usage = "<player> {message}"
 COMMAND.call = "pm"
 
-COMMAND.client = function(caller, args)
-    if #args == 0 then
-        -- nadmin.pm:Open()
-    else
-        if #args > 1 then
-            local targ = nadmin:FindPlayer(table.remove(args, 1))
-            if #targ == 1 then
-                if targ[1] ~= LocalPlayer() then
-                    nadmin.pm:Send(targ[1], table.concat(args, " "))
-                else
-                    nadmin:Notify(nadmin.colors.red, nadmin.errors.noTargSelf)
-                end
-            elseif #targ > 1 then
-                nadmin:Notify(nadmin.colors.red, nadmin.errors.TooManyTargs)
-            else
-                nadmin:Notify(nadmin.colors.red, nadmin.errors.noTargets)
-            end
-        else
-            nadmin:Notify(nadmin.colors.red, "You need at least 2 arguments.")
+COMMAND.server = function(caller, args)
+    if #args < 2 then 
+        nadmin:Notify(caller, nadmin.colors.red, "You need at least 2 arguments.")
+        return
+    end
+
+    local targs = nadmin:FindPlayer(args[1], caller, nadmin.MODE_ALL)
+    if #targs == 1 then 
+        local targ = targs[1]
+        if targ ~= caller then 
+            local targCol = nadmin:GetNameColor(targ) or nadmin.colors.red
+            local callCol = nadmin:GetNameColor(caller) or nadmin.colors.blue
+
+            local msg = table.concat(args, " ", 2)
+
+            nadmin.SilentNotify = false
+            nadmin:Notify(caller, nadmin.colors.white, '[', callCol, 'You', nadmin.colors.white, ' to ', targCol, targ:Nick(), nadmin.colors.white, '] ' .. msg)
+            nadmin.SilentNotify = false
+            nadmin:Notify(targ, nadmin.colors.white, '[', callCol, caller:Nick(), nadmin.colors.white, ' to ', targCol, "You", nadmin.colors.white, '] ' .. msg)
+        else 
+            nadmin:Notify(caller, nadmin.colors.red, nadmin.errors.noTargSelf)
         end
+    elseif #targs > 1 then 
+        nadmin:Notify(caller, nadmin.colors.red, nadmin.errors.TooManyTargs)
+    else 
+        nadmin:Notify(caller, nadmin.colors.red, nadmin.errors.noTargets)
     end
 end
 
