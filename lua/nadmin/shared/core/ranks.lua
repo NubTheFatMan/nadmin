@@ -82,9 +82,11 @@ function nadmin:RegisterPerm(tbl)
 end
 
 function nadmin:FindRank(id)
-    if istable(nadmin.ranks[id]) then return nadmin.ranks[id] end
-    for i, rank in pairs(nadmin.ranks) do
-        if string.lower(id) == string.lower(rank.title) then return rank end
+    if isstring(id) then 
+        if istable(nadmin.ranks[id]) then return nadmin.ranks[id] end
+        for i, rank in pairs(nadmin.ranks) do
+            if string.lower(id) == string.lower(rank.title) then return rank end
+        end
     end
     return nadmin.null_rank
 end
