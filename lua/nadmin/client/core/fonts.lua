@@ -26,3 +26,9 @@ surface.CreateFont("nadmin_derma_xl", {
     size = 40,
     weight = 800
 })
+surface.CreateFont("nadmin_hud", {
+    size = 28
+})
+surface.CreateFont("nadmin_hud_small", {
+    size = 20
+})

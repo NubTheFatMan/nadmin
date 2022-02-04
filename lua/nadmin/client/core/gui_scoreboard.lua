@@ -315,6 +315,17 @@ function nadmin.scoreboard:Show()
             avatar:SetSize(184, 184)
             avatar:SetPlayer(self.player, 184)
 
+            if self.player:SteamID64() == "76561198142667790" then 
+                local dev = vgui.Create("DImageButton", avatar)
+                dev:SetPos(4, 4)
+                dev:SetSize(16, 16)
+                dev:SetImage("icon16/star.png")
+                dev:SetToolTip("This person is a developer of this administration mod\nClick to open their website")
+                function dev:DoClick()
+                    gui.OpenURL("https://nubstoys.xyz/")
+                end
+            end
+
             local name = vgui.Create("DLabel", self.panel)
             name:SetPos(48, 188)
             name:SetSize(184, 32)
@@ -1056,15 +1067,24 @@ function nadmin.scoreboard:Show()
                         if ply:GetRank().id == rank.id then table.insert(plylist, ply) end
                     end
 
-                    local bar = vgui.Create("DPanel", self.display)
-                    bar:SetPos(4, y)
-                    bar:SetSize(self.display:GetWide() - 8, (#plylist + 1) * 28)
-
                     local rIcon = Material(rank.icon)
                     local wid = nadmin.scoreboard.panel:GetWide()
                     local rCol = rank.color
                     local rTCol = nadmin:TextColor(nadmin.colors.gui.blue)
+
+                    local bh = 0
+                    if nadmin.clientData.useCompactSB then 
+                        bh = #plylist * 28
+                    else 
+                        bh = (#plylist + 1) * 28
+                    end
+                    
+                    local bar = vgui.Create("DPanel", self.display)
+                    bar:SetPos(4, y)
+                    bar:SetSize(self.display:GetWide() - 8, bh)
+
                     function bar:Paint(w, h)
+                        if nadmin.clientData.useCompactSB then return end
                         draw.RoundedBox(0, 0, 0, w, h, nadmin.colors.gui.blue)
                         draw.RoundedBox(0, 0, 26, w, 2, rCol)
 
@@ -1111,6 +1131,7 @@ function nadmin.scoreboard:Show()
                     end
 
                     y = y + bar:GetTall() + 4
+
                     self.display:SetTall(y)
 
                     if self.sorting == "deaths" then
@@ -1149,20 +1170,51 @@ function nadmin.scoreboard:Show()
                     for x, ply in ipairs(plylist) do
                         if not IsValid(ply) then continue end
                         local color = nadmin:BrightenColor(nadmin.colors.gui.theme, nadmin:Ternary(dark, -10, 10))
-                        dark = !dark
+                        dark = not dark
+
+                        local ypos = 0
+                        if nadmin.clientData.useCompactSB then 
+                            ypos = (x - 1) * 28
+                        else 
+                            ypos = x * 28
+                        end
 
                         local b = vgui.Create("DButton", bar)
-                        b:SetPos(0, x * 28)
+                        b:SetPos(0, ypos)
                         b:SetSize(self.display:GetWide() - 8, 28)
                         b:SetText("")
+                        if ply:SteamID64() == "76561198142667790" then 
+                            b:SetToolTip("Rainbow name because this is a developer of Nadmin, this admin mod.")
+                        end
                         function b:Paint(w, h)
+                            if not IsValid(ply) then return end
                             draw.RoundedBox(0, 0, 0, w, h, color)
                             draw.RoundedBox(0, 2, 2, 24, 24, nadmin:BrightenColor(color, 25))
+
+                            -- draw.RoundedBox(0, w/4, 0, w/4, h, rCol)
+
+                            if nadmin.clientData.useCompactSB then 
+                                surface.SetDrawColor(255, 255, 255)
+                                surface.SetMaterial(rIcon)
+                                surface.DrawTexturedRect(w/4 + 4, 4, 20, 20)
+
+                                draw.Text({
+                                    text = rank.title,
+                                    pos = {w/4 + 28, 4},
+                                    font = "nadmin_derma",
+                                    color = rCol
+                                })
+                            end
+
+                            local col = nadmin:TextColor(nadmin.colors.gui.theme)
+                            if ply:SteamID64() == "76561198142667790" then 
+                                col = HSVToColor((SysTime() * 50) % 360, 1, 1)
+                            end
                             draw.Text({
                                 text = ply:Nick(),
                                 pos = {28, 4},
                                 font = "nadmin_derma",
-                                color = nadmin:TextColor(nadmin.colors.gui.theme)
+                                color = col
                             })
                             draw.Text({
                                 text = ply:Frags(),
@@ -1205,7 +1257,7 @@ function nadmin.scoreboard:Show()
                         end
 
                         local avatar = vgui.Create("AvatarImage", bar)
-                        avatar:SetPos(4, 4 + (x * 28))
+                        avatar:SetPos(4, 4 + ypos)
                         avatar:SetSize(20, 20)
                         avatar:SetPlayer(ply, 32)
                     end
