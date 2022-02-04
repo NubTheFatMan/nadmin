@@ -15,6 +15,11 @@ for _, handler in pairs(handlers) do
     include("nadmin/client/handlers/" .. handler)
 end
 
+local handlersShared, _ = file.Find("nadmin/shared/handlers/*.lua", "LUA")
+for _, handler in pairs(handlersShared) do
+    include("nadmin/shared/handlers/" .. handler)
+end
+
 local plugins, _ = file.Find("nadmin/plugins/*.lua", "LUA")
 for _, plug in pairs(plugins) do
     include("nadmin/plugins/" .. plug)

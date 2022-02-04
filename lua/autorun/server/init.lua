@@ -29,7 +29,12 @@ for _, handler in pairs(handlers) do
     hi = hi + 1
     include("nadmin/server/handlers/" .. handler)
 end
--- local handlerShared = file.Find("nadmin/shared/handlers/*.lua", "LUA")
+local handlerShared = file.Find("nadmin/shared/handlers/*.lua", "LUA")
+for _, handler in pairs(handlerShared) do 
+    hi = hi + 1
+    include("nadmin/shared/handlers/" .. handler)
+    AddCSLuaFile("nadmin/shared/handlers/" .. handler)
+end
 MsgN(tostring(hi) .. " handler files loaded!")
 
 local plugins, _ = file.Find("nadmin/plugins/*.lua", "LUA")
@@ -60,6 +65,10 @@ MsgN(tostring(sf) .. " client files marked for download.")
 
 include("nadmin/default_ranks.lua")
 MsgN("Ranks loaded!")
+
+-- Sounds
+resource.AddFile("sound/nadmin/clickdown.ogg")
+resource.AddFile("sound/nadmin/clickup.ogg")
 
 MsgN("|----------------------------------------|")
 MsgN("\\--               Nadmin               --/")
