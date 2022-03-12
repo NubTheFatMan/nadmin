@@ -283,15 +283,25 @@ if CLIENT then
                 {"Command Echoes", "icon16/comment.png", function()
                     local sendEcho = nadmin.vgui:DCheckBox(nil, {content:GetWide() - 8, 32}, content)
                     sendEcho:Dock(TOP)
-                    sendEcho:DockMargin(4, 4, 4, 0)
+                    sendEcho:DockMargin(4, 4, 4, 4)
                     sendEcho:SetText("Send Command Echos")
                     sendEcho:SetToolTip("When a player runs a command, should the command be echoed?")
 
-                    local hideCommand = nadmin.vgui:DCheckBox(nil, {content:GetWide() - 8, 32}, content)
-                    hideCommand:Dock(TOP)
-                    hideCommand:DockMargin(4, 4, 4, 0)
-                    hideCommand:SetText("Hide Command Calls")
-                    hideCommand:SetToolTip("When a player runs a command, should their message be hidden?\nFor example, should !menu be hidden from the chat?")
+                    local div = nadmin.vgui:DPanel(nil, {content:GetWide() - 8, 2}, content)
+                    div:Dock(TOP)
+                    div:DockMargin(4, 4, 4, 4)
+
+                    local hideCaller = nadmin.vgui:DCheckBox(nil, {content:GetWide() - 8, 32}, content)
+                    hideCaller:Dock(TOP)
+                    hideCaller:DockMargin(4, 4, 4, 0)
+                    hideCaller:SetText("Hide Command Caller")
+                    hideCaller:SetToolTip("When a player runs a command, should their name be hidden?")
+                    
+                    local hideTarget = nadmin.vgui:DCheckBox(nil, {content:GetWide() - 8, 32}, content)
+                    hideTarget:Dock(TOP)
+                    hideTarget:DockMargin(4, 4, 4, 0)
+                    hideTarget:SetText("Hide Command Target")
+                    hideTarget:SetToolTip("When a player runs a command, should their target's name be hidden?")
                 end},
                 {"Logs", "icon16/database.png"},
                 {"MOTD", "icon16/layout.png", function()

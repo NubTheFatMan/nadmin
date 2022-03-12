@@ -78,14 +78,23 @@ function PLAYER:SetRank(rank)
     if not IsValid(self) then return false end
 
     self:CheckData()
-    local r = nadmin:FindRank(rank)
-    if istable(r) then
-        self:SetNWString("nadmin_rank", r.id)
-        if not self:IsBot() then
-            nadmin.userdata[self:SteamID()].rank = r.id
+    if istable(rank) then 
+        self:SetNWString("nadmin_rank", rank.id)
+        if not self:IsBot() and rank.id ~= "NULL" then
+            nadmin.userdata[self:SteamID()].rank = rank.id
         end
-        self:SetUserGroup(r.id)
+        self:SetUserGroup(rank.id)
         return true
+    else 
+        local r = nadmin:FindRank(rank)
+        if istable(r) then
+            self:SetNWString("nadmin_rank", r.id)
+            if not self:IsBot() and rank.id ~= "NULL" then
+                nadmin.userdata[self:SteamID()].rank = r.id
+            end
+            self:SetUserGroup(r.id)
+            return true
+        end
     end
     return false
 end

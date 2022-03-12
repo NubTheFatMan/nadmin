@@ -1,9 +1,9 @@
 nadmin.null_rank = {
     title = "Unranked",
-    id = NULL, 
+    id = "DEFAULT", 
     icon = "no_texture",
     immunity = 0,
-    access = 0,
+    access = nadmin.access.default,
     autoPromote = {when = 0, rank = "", enabled = false},
     loadout = {},
     color = Color(255, 255, 255),
@@ -82,16 +82,35 @@ function nadmin:RegisterPerm(tbl)
 end
 
 function nadmin:FindRank(id)
-    if isstring(id) then 
-        if istable(nadmin.ranks[id]) then return nadmin.ranks[id] end
-        for i, rank in pairs(nadmin.ranks) do
-            if string.lower(id) == string.lower(rank.title) then return rank end
-        end
+    if istable(nadmin.ranks[id]) then return nadmin.ranks[id] end
+    for i, rank in pairs(nadmin.ranks) do
+        if string.lower(id) == string.lower(rank.title) then return rank end
     end
     return nadmin.null_rank
 end
 
-function nadmin:DefaultRank()
+function nadmin:RankBetterThan(c, t)
+    if istable(c) and istable(t) then 
+        if c.access == t.access then 
+            return c.immunity > t.immunity
+        else
+            return c.access > t.access
+        end
+    end
+    return false
+end
+function nadmin:RankBetterThanOrEqual(c, t)
+    if istable(c) and istable(t) then 
+        if c.access == t.access then 
+            return c.immunity >= t.immunity
+        else
+            return c.access > t.access
+        end
+    end
+    return false
+end
+
+function nadmin:DefaultRankDeprecated()
     ranks = {}
     for i, rank in pairs(nadmin.ranks) do --Convert to numeric indexed table (for `ipairs()`)
         table.insert(ranks, rank)
@@ -100,7 +119,7 @@ function nadmin:DefaultRank()
     return ranks[1]
 end
 
-function nadmin:DefaultRankUpdated()
+function nadmin:DefaultRank()
     for id, rank in pairs(nadmin.ranks) do
         if rank.access == nadmin.access.default then
             return rank

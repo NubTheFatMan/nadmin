@@ -78,11 +78,6 @@ if CLIENT then
                         blue = nadmin.defaults.colors.gui.blue,
                         red  = nadmin.defaults.colors.gui.red
                     })
-                    preset:AddChoice("Classic/Retro", {
-                        main = nadmin:HexToColor("#282726"),
-                        blue = nadmin:HexToColor("#6a8a82"),
-                        red  = nadmin:HexToColor("#a7414a")
-                    })
                     preset:AddChoice("Orange Sunset", {
                         main = nadmin:HexToColor("#a3586d"),
                         blue = nadmin:HexToColor("#5c4a72"),
@@ -97,11 +92,6 @@ if CLIENT then
                         main = nadmin:HexToColor("#132226"),
                         blue = nadmin:HexToColor("#525b56"),
                         red  = nadmin:HexToColor("#be9063")
-                    })
-                    preset:AddChoice("Summer Blueberries", {
-                        main = nadmin:HexToColor("#f4f3f4"),
-                        blue = nadmin:HexToColor("#824ca7"),
-                        red  = nadmin:HexToColor("#d50b53")
                     })
                     preset:AddChoice("Sunset over Swamp", {
                         main = nadmin:HexToColor("#6465a5"),

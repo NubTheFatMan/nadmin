@@ -6,7 +6,7 @@ function nadmin:FindPlayer(needle, caller, mode)
     if isstring(needle) then --Is the needle a string?
         for i, ply in ipairs(player.GetAll()) do --Loop through players
             --Does the needle contain their name or steam id?
-            if string.find(string.lower(ply:Nick()), string.lower(needle), 1, true) or string.find(string.lower(ply:SteamID()),     string.lower(needle), 1, true) then
+            if string.find(string.lower(ply:Nick()), string.lower(needle), 1, true) or string.find(string.lower(ply:SteamID()), string.lower(needle), 1, true) then
                 table.insert(found, ply) --Add them to our table.
             end
         end
@@ -92,8 +92,8 @@ end
 
 --Rank stuff
 function PLAYER:GetRank()
-    if not IsValid(self) then return NULL end
-    return nadmin:FindRank(self:GetNWString("nadmin_rank", nadmin:DefaultRank().id))
+    if not IsValid(self) then return nadmin.null_rank end
+    return nadmin:FindRank(self:GetNWString("nadmin_rank", nadmin.null_rank.id))
 end
 
 function PLAYER:HasPerm(perm)
@@ -128,7 +128,11 @@ function PLAYER:BetterThan(ply)
         local callRank = self:GetRank()
         if not callRank then return false end
 
-        return callRank.immunity > targRank.immunity
+        if callRank.access == targRank.access then 
+            return callRank.immunity > targRank.immunity
+        else 
+            return callRank.access > targRank.access
+        end
     elseif isstring(ply) then 
         local targ = nadmin.userdata[ply]
         if istable(targ) then 
@@ -138,7 +142,11 @@ function PLAYER:BetterThan(ply)
             local callRank = self:GetRank()
             if not callRank then return false end
 
-            return callRank.immunity > targRank.immunity
+            if callRank.access == targRank.access then 
+                return callRank.immunity > targRank.immunity
+            else 
+                return callRank.access > targRank.access
+            end
         end
     end
     return false
@@ -153,7 +161,11 @@ function PLAYER:BetterThanOrEqual(ply)
         local callRank = self:GetRank()
         if not callRank then return false end
 
-        return callRank.immunity >= targRank.immunity
+        if callRank.access == targRank.access then 
+            return callRank.immunity >= targRank.immunity
+        else 
+            return callRank.access > targRank.access
+        end
     elseif isstring(ply) then 
         local targ = nadmin.userdata[ply]
         if istable(targ) then 
@@ -163,7 +175,11 @@ function PLAYER:BetterThanOrEqual(ply)
             local callRank = self:GetRank()
             if not callRank then return false end
 
-            return callRank.immunity >= targRank.immunity
+            if callRank.access == targRank.access then 
+                return callRank.immunity >= targRank.immunity
+            else 
+                return callRank.access > targRank.access
+            end
         end
     end
     return false
@@ -209,9 +225,9 @@ function PLAYER:IsAdmin()
     local rank = self:GetRank()
     if not rank then return false end
 
-    if self:GetUserGroup() == "admin" or rank.immunity >= nadmin.immunity.admin then return true end
-    if self:GetUserGroup() == "superadmin" or rank.immunity >= nadmin.immunity.superadmin then return true end
-    if self:GetUserGroup() == "owner" or rank.immunity >= nadmin.immunity.owner or rank.ownerRank then return true end
+    if self:GetUserGroup() == "admin" or rank.access >= nadmin.access.admin then return true end
+    if self:GetUserGroup() == "superadmin" or rank.access >= nadmin.access.superadmin then return true end
+    if self:GetUserGroup() == "owner" or rank.access >= nadmin.access.owner then return true end
     return false
 end
 function PLAYER:IsSuperAdmin()
@@ -220,8 +236,8 @@ function PLAYER:IsSuperAdmin()
     local rank = self:GetRank()
     if not rank then return false end
 
-    if self:GetUserGroup() == "superadmin" or rank.immunity >= nadmin.immunity.superadmin then return true end
-    if self:GetUserGroup() == "owner" or rank.immunity >= nadmin.immunity.owner or rank.ownerRank then return true end
+    if self:GetUserGroup() == "superadmin" or rank.access >= nadmin.access.superadmin then return true end
+    if self:GetUserGroup() == "owner" or rank.access >= nadmin.access.owner then return true end
     return false
 end
 function PLAYER:IsOwner()
@@ -230,7 +246,7 @@ function PLAYER:IsOwner()
     local rank = self:GetRank()
     if not rank then return false end
 
-    if self:GetUserGroup() == "owner" or rank.immunity >= nadmin.immunity.owner or rank.ownerRank then return true end
+    if self:GetUserGroup() == "owner" or rank.access >= nadmin.access.owner then return true end
     return false
 end
 

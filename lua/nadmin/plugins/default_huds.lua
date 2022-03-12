@@ -143,7 +143,7 @@ if CLIENT then
                 local ar = math.Clamp(LocalPlayer():Armor() / 100, 0, 1)
 
                 local r = h/2
-                local res = 160
+                local res = 45
                 -- Main
                 draw.Circle(h/2, h/2, r, res, 360, 0, nadmin.colors.gui.theme)
 
@@ -213,7 +213,7 @@ if CLIENT then
                 local ammo = math.Clamp(wep:Clip1() / wep:GetMaxClip1(), 0, 1)
 
                 local r = h/2
-                local res = 60
+                local res = 45
 
                 draw.NoTexture()
 

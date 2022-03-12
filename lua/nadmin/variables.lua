@@ -47,9 +47,10 @@ nadmin.colors.chat.dead = Color(255, 62, 62)   --The color of *DEAD* in chat.
 nadmin.colors.chat.team = Color(127, 255, 127) --The color of (TEAM) in chat.
 nadmin.colors.chat.tag  = Color(255, 255, 255) --The color of peoples ranks in chat.
 
-nadmin.colors.gui.blue  = Color(0, 150, 255)   --The color of buttons on the gui.
-nadmin.colors.gui.red   = Color(255, 62, 62)   --The color of buttons like "Are you sure" or something is invalid
-nadmin.colors.gui.theme = Color(75, 75, 75)    --The main color of the gui. Uses `nadmin:DarkenColor` and `nadmin:BrightenColor` to adapt
+nadmin.colors.gui.blue  = Color(0, 150, 255)    -- The color of buttons on the gui.
+nadmin.colors.gui.red   = Color(255, 62, 62)    -- The color of buttons like "Are you sure" or something is invalid
+nadmin.colors.gui.warning = Color(230, 230, 62) -- The color of warnings in text entries
+nadmin.colors.gui.theme = Color(75, 75, 75)     -- The main color of the gui. Uses `nadmin:DarkenColor` and `nadmin:BrightenColor` to adapt
 
 nadmin.colors.gui.health = Color(255, 62, 62)  --The color of your health.
 nadmin.colors.gui.armor  = Color(98, 176, 255) --The color of your armor.
@@ -135,14 +136,18 @@ nadmin.time.y = (3600*24)*365
 nadmin.levelReq.base = 400 -- The base amount of XP required for a levelup
 nadmin.levelReq.mult = 200 -- This number * their level added onto the base (mult*lvl + base)
 
-nadmin.xp.amount = 5 -- How much xp to give
-nadmin.xp.rate   = 60 -- How often to give xp (in seconds)
+nadmin.xp.amount   = 5 -- How much xp to give in the rate below
+nadmin.xp.rate     = 60 -- How often to give xp (in seconds)
+nadmin.xp.rateKill = 10 -- How much XP to give for killing another player
 
 -- INTERNAL BEYOND THIS POINT, DON'T CHANGE!!
 
 nadmin.MODE_BELOW = 0 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_SAME  = 1 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_ALL   = 2 --Used in nadmin:FindPlayer(), argument 3
+
+nadmin.STYLE_BOX    = 0 -- Used in checkbox styles 
+nadmin.STYLE_SWITCH = 1
 
 nadmin.version = "v3.7"
 

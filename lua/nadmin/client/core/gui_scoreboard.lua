@@ -672,7 +672,7 @@ function nadmin.scoreboard:Show()
                     font = font_normal,
                     pos = {wid + 24, h/2},
                     yalign = TEXT_ALIGN_CENTER,
-                    color = nadmin:TextColor(nadmin.colors.gui.theme)
+                    color = nadmin.scoreboard.player:GetRank().color
                 })
             end
             y = y + copyRank:GetTall() + 4
@@ -1189,7 +1189,7 @@ function nadmin.scoreboard:Show()
                         function b:Paint(w, h)
                             if not IsValid(ply) then return end
                             draw.RoundedBox(0, 0, 0, w, h, color)
-                            draw.RoundedBox(0, 2, 2, 24, 24, nadmin:BrightenColor(color, 25))
+                            draw.RoundedBox(0, 2, 2, 24, 24, rCol) -- Avatar background
 
                             -- draw.RoundedBox(0, w/4, 0, w/4, h, rCol)
 

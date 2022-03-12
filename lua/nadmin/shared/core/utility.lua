@@ -60,3 +60,16 @@ function nadmin:Lerp(s, e, p)
 
     return s * (1 - p) + e * p
 end
+
+-- Easing in and out animations
+-- Want to see a demo of this function in action? Check my website
+-- https://nubstoys.xyz/gfd/animation_graph_visualizer/
+function nadmin:EaseInOut(value, exp)
+    if not isnumber(value) then error("nadmin:EaseInOut: Bad argument #1: Expected a number, got " .. type(value)) end
+    if not isnumber(exp)   then error("nadmin:EaseInOut: Bad argument #2: Expected a number, got " .. type(exp)) end
+    if value < 0.5 then 
+        return (2 ^ (exp - 1)) * (value ^ exp)
+    else 
+        return 1 - ((-2 * value + 2) ^ exp) / 2
+    end
+end

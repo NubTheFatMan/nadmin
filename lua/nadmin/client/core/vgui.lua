@@ -1,3 +1,7 @@
+-- Honestly I have no clue why I made the VGUI system like this. 
+-- There is a vgui2.lua file that I will eventually switch to, 
+-- but I'm too lazy and will get to it eventually.
+
 -- This file contains all the vgui functions
 nadmin.vgui = nadmin.vgui or {}
 
@@ -87,6 +91,7 @@ function nadmin.vgui:DButton(pos, size, parent)
     btn.icon = ""
     btn.showIcon = false
     btn.xalign = TEXT_ALIGN_CENTER
+    btn.reactiveColor = true
 
     function btn:SetColor(col, no_update)
         if IsColor(col) then
@@ -133,13 +138,28 @@ function nadmin.vgui:DButton(pos, size, parent)
     end
     function btn:GetTextAlign() return self.xalign end
 
+    function btn:SetColorReactivity(bool)
+        if isbool(bool) then 
+            self.reactiveColor = bool
+        end
+    end
+    function btn:GetColorReactivity() return self.reactiveColor end
+
     function btn:Paint(w, h)
         if isfunction(self.RenderCondition) then if not self:RenderCondition() then return end end
 
-        if self:IsMouseInputEnabled() then
-            draw.RoundedBox(0, 0, 0, w, h, nadmin:BrightenColor(self:GetColor(), self:IsDown() and 10 or (self:IsHovered() and 25 or 0)))
-        else
-            draw.RoundedBox(0, 0, 0, w, h, nadmin:DarkenColor(self:GetColor(), 25))
+        if not isfunction(self.BackgroundDraw) then 
+            if self:GetColorReactivity() then 
+                if self:IsMouseInputEnabled() then
+                    draw.RoundedBox(0, 0, 0, w, h, nadmin:BrightenColor(self:GetColor(), self:IsDown() and 10 or (self:IsHovered() and 25 or 0)))
+                else
+                    draw.RoundedBox(0, 0, 0, w, h, nadmin:DarkenColor(self:GetColor(), 25))
+                end
+            else 
+                draw.RoundedBox(0, 0, 0, w, h, self:GetColor())
+            end
+        else 
+            self:BackgroundDraw(w, h)
         end
 
         local ico
@@ -843,131 +863,3 @@ function nadmin.vgui:DFrame(pos, size, parent)
 
     return frame
 end
-
--- Proper panels, I want to change everything to use normal conventions at some point
-
--- NadminButton
-local PANEL = {}
-
-function PANEL:Init()
-    self.text = "Button"
-    self.font = "nadmin_derma"
-
-    self.color = {}
-    self.color.normal  = nadmin.colors.gui.blue
-    self.color.hovered = nadmin:BrightenColor(self.color.normal, 25)
-    self.color.down    = nadmin:BrightenColor(self.color.normal, 10)
-    self.color.text    = nadmin:TextColor(self.color.normal)
-    self.color.shadow  = nadmin:BrightenColor(self.color.normal, -50)
-
-
-    self.buttonSounds = { -- You can add custom sounds by adding to this list :^)
-        {"nadmin/clickdown.ogg", "nadmin/clickup.ogg"}
-    }
-    self.selectedSound = 1
-
-    self:SetText("")
-    self:SetTall(32)
-
-    -- These functions are inside to allow the SetText function above work without conflicts
-    function self:SetText(text)
-        if not isstring(text) then return end
-
-        self.text = text
-    end
-    function self:GetText()
-        return self.text
-    end
-    function self:SetFont(font)
-        if not isstring(font) then return end
-        self.font = font
-    end
-    function self:GetFont()
-        return self.font
-    end
-
-    function self:SetColor(color, noText)
-        if not IsColor(color) then return end
-
-        self.color.normal  = color
-        self.color.hovered = nadmin:BrightenColor(self.color.normal, 25)
-        self.color.down    = nadmin:BrightenColor(self.color.normal, 10)
-        self.color.shadow  = nadmin:BrightenColor(self.color.normal, -50)
-
-        if not noText then
-            self.color.text = nadmin:TextColor(self.color.normal)
-        end
-    end
-    function self:GetColor()
-        return self.color.normal
-    end
-
-    function self:SetTextColor(color)
-        if not IsColor(color) then return end
-
-        self.color.text = color
-    end
-    function self:GetTextColor()
-        return self.color.text
-    end
-
-    function self:GetPressSounds()
-        if isnumber(self.selectedSound) then
-            return self.buttonSounds[self.selectedSound]
-        end
-    end
-
-    function self:SetPressSounds(ind)
-        if not isnumber(ind) then return end
-
-        self.selectedSound = ind
-    end
-
-    function self:PlayDown()
-        local sounds = self:GetPressSounds()
-        if istable(sounds) and isstring(sounds[1]) then
-            surface.PlaySound(sounds[1])
-        end
-    end
-
-    function self:PlayUp()
-        local sounds = self:GetPressSounds()
-        if istable(sounds) and isstring(sounds[2]) then
-            surface.PlaySound(sounds[2])
-        end
-    end
-
-    function self:OnDepressed()
-        self:PlayDown()
-    end
-    function self:OnReleased()
-        self:PlayUp()
-    end
-
-    function self:Paint(w, h)
-        local offset = (self:IsEnabled() and (self:IsDown() and 2 or 0)) or 0
-
-        local color = self:GetColor()
-        local tc = self:GetTextColor()
-
-        if self:IsEnabled() then
-            if self:IsDown() then
-                color = self.color.down
-            elseif self:IsHovered() then
-                color = self.color.hovered
-            end
-        else 
-            color = sc(color, -15)
-        end
-
-        draw.RoundedBox(0, 0, offset, w, h, color)
-
-        if self:IsEnabled() and not self:IsDown() then
-            draw.RoundedBox(0, 0, h-2, w, 2, self.color.shadow)
-        end
-
-        draw.SimpleText(self:GetText(), self:GetFont(), w/2, h/2 + offset - 1, tc, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-    end
-end
-
-vgui.Register("NadminButton", PANEL, "DButton")
