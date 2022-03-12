@@ -367,7 +367,6 @@ vgui.Register("NadminScrollPanel", NadminScrollPanel, "DScrollPanel")
 
 local NadminCheckBox = {}
 function NadminCheckBox:Init() 
-    self.checked = false
     self.text = "Check Box"
     self.checkColor = nadmin.colors.gui.blue
     self.color = nadmin.colors.gui.theme
@@ -415,13 +414,6 @@ function NadminCheckBox:SetTextColor(col)
     end
 end
 function NadminCheckBox:GetTextColor() return self.textColor end
-
-function NadminCheckBox:SetChecked(checked)
-    if isbool(checked) then 
-        self.checked = checked 
-    end
-end
-function NadminCheckBox:GetChecked() return self.checked end 
 
 function NadminCheckBox:SetCheckColor(col)
     if IsColor(col) then 
@@ -476,12 +468,7 @@ function NadminCheckBox:Paint(w, h)
     end
 end
 
-function NadminCheckBox:DoClick()
-    self.checked = not self.checked 
-    if isfunction(self.OnChecked) then self:OnChecked(self.checked) end
-end
-
-vgui.Register("NadminCheckBox", NadminCheckBox, "DButton")
+vgui.Register("NadminCheckBox", NadminCheckBox, "DCheckBox")
 
 
 local NadminTextEntry = {}

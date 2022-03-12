@@ -112,7 +112,7 @@ if CLIENT then
                     arg:SetText(us.text)
                     arg.value = "0"
 
-                    function arg:OnChecked(checked)
+                    function arg:OnChange(checked)
                         self.value = (checked and "1" or "0")
                     end
                 elseif us.type == "string" then
