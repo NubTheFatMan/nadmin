@@ -4,6 +4,7 @@ if CLIENT then
         sort = 1,
         content = function(parent, data)
             local localRank = LocalPlayer():GetRank()
+            local selectedRankId = ""
 
             local manager = vgui.Create("NadminTabMenu", parent)
             manager:SetPos(4, 4)
@@ -165,17 +166,18 @@ if CLIENT then
             inheritSelect:SetSortItems(false)
             inheritSelect:SetValue("None - Not functional, select to copy from a rank")
 
-            local ranks = {}
+            -- tRanks - The ranks that the local player can target
+            local tRanks = {}
             for id, rank in pairs(nadmin.ranks) do 
                 if localRank.access < nadmin.access.owner then -- The owner rank shouldn't have any restrictions on creating ranks
                     if rank.access > localRank.access then continue end 
                     if rank.access == localRank.access and rank.immunity >= localRank.immunity then continue end
                 end 
 
-                table.insert(ranks, rank)
+                table.insert(tRanks, rank)
             end
-            table.sort(ranks, function(a, b) return a.access == b.access and a.immunity < b.immunity or a.access < b.access end)
-            for i, rank in ipairs(ranks) do 
+            table.sort(tRanks, function(a, b) return a.access == b.access and a.immunity < b.immunity or a.access < b.access end)
+            for i, rank in ipairs(tRanks) do 
                 inheritSelect:AddChoice(rank.title .. " (" .. rank.id .. ")", rank.id)
             end
 
@@ -206,16 +208,40 @@ if CLIENT then
             idEntry:Dock(FILL)
             idEntry:DockMargin(4, 0, 0, 0)
             idEntry:SetPlaceholderText("True identifier of the rank")
+
+            -- To avoid copy and paste and shortening my code, I just made this a function 
+            function idEntry.setErrored(err)
+                if err and not table.HasValue(configErrors, "id") then 
+                    table.insert(configErrors, "id")
+                elseif not err and table.HasValue(configErrors, "id") then 
+                    table.RemoveByValue(configErrors, "id")
+                end
+            end
+
             function idEntry:ErrorCondition()
                 local trim = string.Trim(self:GetText())
-                if trim == "" then return "Cannot be blank" end 
-                if trim == nadmin.null_rank.id then return self:GetText() .. " is reserved" end
+
+                if trim == "" then 
+                    self.setErrored(true)
+                    return "Cannot be blank" 
+                end 
+
+
+                -- This shouldn't be possible since capital letters are made lowercase and null_rank.id is "DEFAULT"
+                if trim == nadmin.null_rank.id then
+                    self.setErrored(true)
+                    return self:GetText() .. " is reserved" 
+                end 
 
                 for id, rank in pairs(nadmin.ranks) do 
-                    if trim == id then 
+                    if trim == id and selectedRankId ~= id then 
+                        self.setErrored(true)
                         return "A rank with this ID exists"
                     end
                 end
+
+                -- If there was an error, the function would have returned by now, so it must not be 
+                self.setErrored(false)
             end
             function idEntry:WarningCondition() 
                 if input.IsKeyDown(KEY_LSHIFT) or input.IsKeyDown(KEY_RSHIFT) then return "No capitals allowed" end
@@ -230,7 +256,7 @@ if CLIENT then
                 -- If the ID is currently invalid, then we need to disable the button with some feedback 
                 if self:IsErrored() and not table.HasValue(configErrors, "id") then 
                     table.insert(configErrors, "id")
-                elseif table.HasValue(configErrors, "id") and not self:IsErrored() then 
+                elseif not self:IsErrored() and table.HasValue(configErrors, "id") then 
                     table.RemoveByValue(configErrors, "id")
                 end
             end
@@ -255,14 +281,16 @@ if CLIENT then
             titleEntry:DockMargin(4, 0, 0, 0)
             titleEntry:SetPlaceholderText("What players will see in chat and scoreboard")
             function titleEntry:ErrorCondition()
-                if string.Trim(self:GetText()) == "" then return "Cannot be blank" end 
-            end
-            function titleEntry:OnChange()
-                if self:IsErrored() and not table.HasValue(configErrors, "title") then 
-                    table.insert(configErrors, "title")
-                elseif table.HasValue(configErrors, "title") and not self:IsErrored() then 
+                if string.Trim(self:GetText()) == "" then
+                    -- Since this function ErrorCondition is called every frame, we are going to use it to modify the save button
+                    if not table.HasValue(configErrors, "title") then 
+                        table.insert(configErrors, "title") 
+                    end
+
+                    return "Cannot be blank" 
+                elseif table.HasValue(configErrors, "title") then 
                     table.RemoveByValue(configErrors, "title")
-                end
+                end 
             end
 
 
@@ -295,7 +323,7 @@ if CLIENT then
             local accessList = {
                 {"Restricted - Entity blacklist becomes a whitelist",           nadmin.access.restricted},
                 {"Default - Given to newcomers, only one rank can have this",   nadmin.access.default   },
-                {"User - Equal to Default, except has to be assigned manually", nadmin.access.user      },
+                {"User - Similar to Default, but assigned manually",            nadmin.access.user      },
                 {"Administrator - Moderators of the server",                    nadmin.access.admin     },          
                 {"SuperAdministrators - Almost equal to Owner, but not quite",  nadmin.access.superadmin},     
                 {"Owner - Highest power, no restrictions",                      nadmin.access.owner     }          
@@ -325,13 +353,28 @@ if CLIENT then
             imEntry:DockMargin(4, 0, 0, 0)
             imEntry:SetPlaceholderText("Immunity to other ranks")
             imEntry:SetNumeric(true)
+
+            function imEntry.setErrored(err)
+                if err and not table.HasValue(configErrors, "im") then 
+                    table.insert(configErrors, "im")
+                elseif not err and table.HasValue(configErrors, "im") then 
+                    table.RemoveByValue(configErrors, "im")
+                end
+            end
+
             function imEntry:ErrorCondition() 
-                if self:GetText() == "" then return "Immunity must be a number" end
+                if self:GetText() == "" then 
+                    self.setErrored(true)
+                    return "Immunity must be a number" 
+                end
                 
                 local _, access = accessSelect:GetSelected()
                 if access == localRank.access then 
-                    if tonumber(self:GetText()) >= localRank.access then return "You can't set a rank higher than yourself" end
+                    self.setErrored(true)
+                    if tonumber(self:GetText()) >= localRank.access then return "Can't set a rank higher or equal to yourself" end
                 end
+
+                self.setErrored(false)
             end
 
             
@@ -538,7 +581,23 @@ if CLIENT then
             apToSelect:DockMargin(4, 0, 0, 0)
             apToSelect:SetColor(nadmin.colors.gui.theme)
             apToSelect:SetSortItems(false)
-            apToSelect:AddChoice("Rank", nil, true)
+            apToSelect:SetText("Select a rank (required)...")
+            for i, rank in ipairs(tRanks) do 
+                apToSelect:AddChoice(rank.title .. " (" .. rank.id .. ")", rank.id)
+            end
+
+            -- Ap rank error validation
+            apToSelect.normalPaint = apToSelect.Paint
+            function apToSelect:Paint(w, h)
+                self:normalPaint(w, h)
+
+                local _, id = self:GetSelected()
+                if not isstring(id) and not table.HasValue(configErrors, "apr") then 
+                    table.insert(configErrors, "apr")
+                elseif isstring(id) and table.HasValue(configErrors, "apr") then 
+                    table.RemoveByValue(configErrors, "apr")
+                end
+            end
 
 
             local apAfterContainer = vgui.Create("NadminPanel", apContainer)
@@ -561,15 +620,35 @@ if CLIENT then
             apAfterEntry:DockMargin(4, 0, 0, 0)
             apAfterEntry:SetColor(nadmin.colors.gui.theme)
             apAfterEntry:SetPlaceholderText("When should this rank be promoted?")
+
+            function apAfterEntry.setErrored(err) 
+                if err and not table.HasValue(configErrors, "apto") then 
+                    table.insert(configErrors, "apto")
+                elseif not err and table.HasValue(configErrors, "apto") then 
+                    table.RemoveByValue(configErrors, "apto")
+                end
+            end
+
             function apAfterEntry:ErrorCondition() 
                 -- Should only error if auto promotion is enabled
                 if apToggle:GetChecked() then 
-                    if string.Trim(self:GetText()) == "" then return "Cannot be blank" end 
+                    if string.Trim(self:GetText()) == "" then 
+                        self.setErrored(true)
+                        return "Cannot be blank" 
+                    end 
 
                     local time = nadmin:ParseTime(self:GetText())
-                    if not isnumber(time) then return "Invalid time" end
-                    if time <= 0 then return "Must be at least 1 second" end
+                    if not isnumber(time) then 
+                        self.setErrored(true)
+                        return "Invalid time" 
+                    end
+                    if time <= 0 then 
+                        self.setErrored(true)
+                        return "Must be at least 1 second" 
+                    end
                 end 
+
+                self.setErrored(false)
             end
 
             -- A text overlay to help the user know the time they input
@@ -600,13 +679,15 @@ if CLIENT then
             apTime:SetStyle(nadmin.STYLE_SWITCH)
 
             apContainer:SetVisible(false)
-            function apToggle:OnChecked(checked)
-                if checked then 
-                    apContainer:SetVisible(true)
-                else 
-                    apContainer:SetVisible(false)
-                end
+            function apToggle:OnChange(checked)
+                apContainer:SetVisible(checked)
                 configContainer:InvalidateChildren()
+
+                -- The paint methods for fields in the apContainer aren't called, so I'll set errors off if unchecked :^)
+                if not checked then 
+                    if table.HasValue(configErrors, "apr") then table.RemoveByValue(configErrors, "apr") end 
+                    if table.HasValue(configErrors, "apto") then table.RemoveByValue(configErrors, "apto") end 
+                end 
             end
 
             
@@ -626,42 +707,105 @@ if CLIENT then
             end
 
             function save:DoClick()
-                -- Values that don't need validation, we just need to send them to the server
+                -- Do nothing if any of the text entries above are errored. Nothing else really needs to be validated, we'll leave that to the server 
+                if #configErrors > 0 then return end
+
+                -- All the values we need to send to the server
                 local _, inheritFrom = inheritSelect:GetSelected() 
+                local newId          = string.Trim(idEntry:GetText())
+                local title          = string.Trim(titleEntry:GetText())
                 local _, accessLevel = accessSelect:GetSelected() 
+                local immunity       = tonumber(imEntry:GetText())
                 local icon           = iconPreview:GetImage()
                 local apEnabled      = apToggle:GetChecked()
                 local _, apRank      = apToSelect:GetSelected()
+                local apAfter        = nadmin:ParseTime(apAfterEntry:GetText())
                 local apTimeBasis    = apTime:GetChecked()
                 
-                -- ID validation
-                local id = string.Trim(idEntry:GetText())
-                if id == "" then return end
-                if string.find(id, " ", 1, true) then string.Replace(id, " ", "_") end
-                if string.upper(id) ~= id then id = string.lower(id) end
+                net.Start("NadminManageRank")
+                    net.WriteString("edit")
+                    net.WriteString(selectedRankId)
+                    net.WriteString(newId)
+                    net.WriteString(title)
+                    net.WriteString(inheritFrom)
+                    net.WriteInt(accessLevel, 3) -- 3 bits can make a number between 0-7, the access range is 0-5
+                    net.WriteInt(immunity, 32)
+                    net.WriteString(icon)
+                    net.WriteBool(apEnabled)
+                    if apEnabled then -- We should only send auto promotion info if it's enabled
+                        net.WriteString(apRank)
+                        net.WriteInt(apAfter, 32)
+                        net.WriteBool(apTimeBasis)
+                    end
+                net.SendToServer()
+            end
 
-                -- Title validation 
-                local title = string.Trim(titleEntry:GetText())
-                if title == "" then return end
 
-                -- Immunity validation 
-                local immunity = tonumber(imEntry:GetText())
-                if not isnumber(immunity) then return end 
-                if accessLevel == localRank.access and immunity > localRank.immunity then return end 
+            -- We are gonna use this function to fill in the form data.
+            function drawRankInfo(rank)
+                local rankInherit = ""
+                local rankId = ""
+                local rankTitle = ""
+                local rankAccess = nadmin.access.user
+                local rankImmunity = 0
+                local rankIcon = "icon16/user.png"
+                local apEnabled = false
+                local apRank = ""
+                local apTimeN = 0
+                local apTimeB = false
 
-                -- Auto promo after validation
-                local apAfter = nadmin:ParseTime(apAfterEntry:GetText())
-                local saveApAfter = true
-                if not isnumber(apAfter) then saveApAfter = false end
-                if saveApAfter and apAfter < 1 then saveApAfter = false end
-                if apEnabled and not saveApAfter then return end
-                
-                nadmin:Notify(nadmin.colors.blue, "Saved!")
+                if istable(rank) then 
+                    -- By doing `or`, it will fall back to it's old value defined above
+                    rankInherit  = rank.inheritFrom                  or rankInherit
+                    rankId       = rank.id                           or rankId
+                    rankTitle    = rank.title                        or rankTitle
+                    rankAccess   = rank.access                       or rankAccess
+                    rankImmunity = rank.immunity                     or rankImmunity 
+                    rankIcon     = rank.icon                         or rankIcon
+                    apEnabled    = rank.autoPromote.enabled          or apEnabled
+                    apRank       = rank.autoPromote.rank             or apRank
+                    apTimeN      = rank.autoPromote.when             or apTimeN 
+                    apTimeB      = rank.autoPromote.timeBasedOverall or apTimeB
+                end
+
+                selectedRankId = rankId
+
+                idEntry:SetValue(rankId)
+                titleEntry:SetValue(rankTitle)
+
+                accessSelect:ChooseOptionID(rankAccess + 1)
+                imEntry:SetValue(rankImmunity)
+
+                iconPreview:SetImage(rankIcon)
+
+                apToggle:SetChecked(apEnabled)
+                apContainer:SetVisible(apEnabled)
+
+                if istable(rank) then 
+                    for i, data in ipairs(apToSelect.Data) do
+                        if data == apRank then 
+                            local tRank = nadmin:FindRank(apRank)
+
+                            apToSelect:ChooseOption(tRank.title .. " (" .. tRank.id .. ")", data)
+                            break
+                        end
+                    end
+                else 
+                    apToSelect:SetValue("Select a rank..")
+                    apToSelect.selected = nil
+                end
+
+                local time = nadmin:TimeToString(apTimeN)
+                apAfterEntry:SetValue(time)
+
+                apTime:SetChecked(apTimeB)
+
+                configContainer:InvalidateChildren()
             end
 
 
             local newRank = manager:AddTab("New Rank", function()
-                
+                drawRankInfo()
             end, true)
 
             local ranks = {}
@@ -684,7 +828,7 @@ if CLIENT then
 
             for i, rank in ipairs(ranks) do 
                 local rankTab = manager:AddTab(rank.title, function()
-                
+                    drawRankInfo(rank)
                 end)
                 rankTab:SetSelectedColor(rank.color)
                 rankTab:SetUnselectedTextColor(rank.color)
@@ -693,7 +837,51 @@ if CLIENT then
         end
     })
 else
-    
+    -- Used for when a client submits changes for a rank
+    util.AddNetworkString("NadminManageRank")
+
+    net.Receive("NadminManageRank", function(len, ply)
+        if not ply:HasPerm("manage_ranks") then 
+            namin:Notify(ply, nadmin.colors.red, "You don't have permission to manage ranks.")
+            return
+        end
+
+        local plyRank = ply:GetRank()
+        local mode = net.ReadString()
+        
+        if mode == "edit" then -- Edit can be used for updating or creating a rank
+            local targetRankId = net.ReadString()
+            local targetRank = nadmin:FindRank(targetRankId)
+
+            -- Owners don't have restrictions
+            if not ply:IsOwner() and targetRank ~= nadmin.null_rank then 
+                if targetRank.access > plyRank.access or (targetRank.access == plyRank.access and targetRank.immunity >= plyRank.immunity) then 
+                    nadmin:Notify(ply, nadmin.colors.red, "You can't edit/create a rank higher than or equal to you.")
+                    return
+                end
+            end
+
+            if targetRank ~= nadmin.null_rank then -- If it's already a rank, we are going to want to change some stuff.
+                for id, rank in pairs(nadmin.ranks) do
+                    
+                end
+            else -- Since it's a new rank, we don't need to check some things
+                
+            end
+            -- net.WriteString(inheritFrom)
+            -- net.WriteInt(accessLevel, 3) -- 3 bits can make a number between 0-7, the access range is 0-5
+            -- net.WriteInt(immunity, 32)
+            -- net.WriteString(icon)
+            -- net.WriteBool(apEnabled)
+            -- if apEnabled then -- We should only send auto promotion info if it's enabled
+            --     net.WriteString(apRank)
+            --     net.WriteInt(apAfter, 32)
+            --     net.WriteBool(apTimeBasis)
+            -- end
+        elseif mode == "delete" then 
+
+        end
+    end)
 end
 
 nadmin:RegisterPerm({

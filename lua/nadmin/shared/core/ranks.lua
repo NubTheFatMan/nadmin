@@ -20,7 +20,7 @@ function nadmin:RegisterRank(tbl)
     rank.immunity    = isnumber(tbl.immunity)   and tbl.immunity    or nadmin.immunity.everyone
     rank.access      = isnumber(tbl.access)     and tbl.access      or nadmin.access.user
     rank.inheritFrom = istable(tbl.inheritFrom) and tbl.inheritFrom or null
-    rank.autoPromote = istable(tbl.autoPromote) and tbl.autoPromote or {when = 0, rank = "", enabled = false}
+    rank.autoPromote = istable(tbl.autoPromote) and tbl.autoPromote or {when = 0, rank = "", enabled = false, timeBasedOverall = false}
 
     -- Default gmod loadout
     rank.loadout = (istable(tbl.loadout) and table.IsSequential(tbl.loadout)) and tbl.loadout, {"weapon_crowbar", "weapon_physcannon", "weapon_physgun", "weapon_pistol", "weapon_357", "weapon_smg1", "weapon_ar2", "weapon_shotgun", "weapon_crossbow", "weapon_frag", "weapon_rpg", "gmod_camera", "gmod_tool"}
