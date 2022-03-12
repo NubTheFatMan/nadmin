@@ -107,12 +107,12 @@ nadmin.immunity.superadmin = 80  --Immunity of superadministrators.
 nadmin.immunity.owner      = 100 --Immunity of owners.
 
 -- Access levels, like immunity but less precise. These actual tell if the player is admin or superadmin while immunity is who can target who
-nadmin.access.restricted = -1 -- This access level restricts everything, and the restrictions acts as a whitelist. Like a psuedo ban
-nadmin.access.default    = 0  -- This signifies that a rank is the default rank. Only one rank can have this
-nadmin.access.user       = 1  -- This signifies that they're just a regular user with no special access
-nadmin.access.admin      = 2  -- This rank has administration access on the server
-nadmin.access.superadmin = 3  -- This rank has super admin access on the server
-nadmin.access.owner      = 4  -- This rank has owner access. They have access to everything and nothing can be restricted from them
+nadmin.access.restricted = 0 -- This access level restricts everything, and the restrictions acts as a whitelist. Like a psuedo ban
+nadmin.access.default    = 1  -- This signifies that a rank is the default rank. Only one rank can have this
+nadmin.access.user       = 2  -- This signifies that they're just a regular user with no special access
+nadmin.access.admin      = 3  -- This rank has administration access on the server
+nadmin.access.superadmin = 4  -- This rank has super admin access on the server
+nadmin.access.owner      = 5  -- This rank has owner access. They have access to everything and nothing can be restricted from them
 
 nadmin.plugins.afk          = true  --Enables AFK system that stops players from gaining playtime.
 nadmin.plugins.badges       = true  --Enabled the use of custom badges.
