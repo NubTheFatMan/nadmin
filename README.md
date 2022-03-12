@@ -13,7 +13,7 @@ Want to keep up-to-date with Nadmin's progression? You can find the Trello for i
 - Removed a few UI color presets because they didn't look very good.
 
 # Installation
-Check the releases section on the right.
+Check the releases section on the right. If you download this repository as is, you'll sort of get a beta, but it may have more bugs.
 
 # Documentation
 No documentation has been created yet.
@@ -24,3 +24,4 @@ This addon was devoloped by me, Nub. Have any questions? Concerns? Suggestions? 
 Discord: NubTheFatMan#6969\
 Discord Guild: https://discord.gg/P8Un9Drm8p \
 Steam: Nub (https://steamcommunity.com/id/nubthefatman/)
+Website: https://nubstoys.xyz/
