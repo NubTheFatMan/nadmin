@@ -385,6 +385,93 @@ if CLIENT then
             accessDiv:SetColor(nadmin:BrightenColor(nadmin.colors.gui.theme, 25))
 
 
+            local colorPreview = vgui.Create("DPanel", configContainer)
+            local colorPicker = vgui.Create("DColorMixer", configContainer)
+            colorPreview:Dock(TOP)
+            colorPreview:DockMargin(0, 8, 0, 0)
+            colorPreview:DockPadding(0, 0, 4, 0)
+            colorPreview:SetTall(idContainer:GetTall())
+            function colorPreview:Paint(w, h)
+                local trim = string.Trim(titleEntry:GetText())
+
+                local tc = nadmin:TextColor(nadmin.colors.gui.theme)
+
+                local x = 4
+                x = x + draw.Text({
+                    text = "Chat: ",
+                    font = "nadmin_derma",
+                    pos = {x, h/2},
+                    yalign = TEXT_ALIGN_CENTER,
+                    color = tc
+                })
+                x = x + draw.Text({
+                    text = "(" .. (trim == "" and "Title" or trim) .. ") ",
+                    font = "ChatFont",
+                    pos = {x, h/2},
+                    yalign = TEXT_ALIGN_CENTER,
+                    color = tc
+                })
+                x = x + draw.Text({
+                    text = LocalPlayer():Nick(),
+                    font = "ChatFont",
+                    pos = {x, h/2},
+                    yalign = TEXT_ALIGN_CENTER,
+                    color = colorPicker:GetColor()
+                })
+                x = x + draw.Text({
+                    text = ": Example message!",
+                    font = "ChatFont",
+                    pos = {x, h/2},
+                    yalign = TEXT_ALIGN_CENTER,
+                    color = tc
+                })
+            end
+
+            local colToggle = vgui.Create("NadminButton", colorPreview)
+            colToggle:Dock(RIGHT)
+            colToggle:SetText("")
+            colToggle:SetToolTip("Show color picker")
+            colToggle:SetWide(colorPreview:GetTall())
+            colToggle:SetIcon("icon16/color_wheel.png")
+            function colToggle:DoClick() 
+                if colorPicker:IsVisible() then 
+                    colorPicker:SetVisible(false)
+                    self:SetToolTip("Show color picker")
+                else 
+                    colorPicker:SetVisible(true)
+                    self:SetToolTip("Hide color picker")
+                end
+
+                configContainer:InvalidateChildren()
+            end
+
+            local randColor = vgui.Create("NadminButton", colorPreview)
+            randColor:Dock(RIGHT)
+            randColor:DockMargin(0, 0, 4, 0)
+            randColor:SetToolTip("Random Color")
+            randColor:SetText("")
+            randColor:SetIcon("icon16/palette.png")
+            randColor:SetWide(colToggle:GetWide())
+            function randColor:DoClick()
+                colorPicker:SetColor(Color(math.random(0, 255), math.random(0, 255), math.random(0, 255)))
+            end
+
+            colorPicker:Dock(TOP)
+            colorPicker:DockMargin(4, 4, 4, 0)
+            colorPicker:SetAlphaBar(false)
+            colorPicker:SetPalette(false)
+            colorPicker:SetColor(Color(math.random(0, 255), math.random(0, 255), math.random(0, 255)))
+            colorPicker:SetTall(68)
+            colorPicker:SetVisible(false)
+
+
+            local colorDiv = vgui.Create("NadminPanel", configContainer)
+            colorDiv:Dock(TOP)
+            colorDiv:DockMargin(4, 8, 4, 0)
+            colorDiv:SetTall(3)
+            colorDiv:SetColor(nadmin:BrightenColor(nadmin.colors.gui.theme, 25))
+
+
             local iconContainer = vgui.Create("NadminPanel", configContainer)
             iconContainer:Dock(TOP)
             iconContainer:DockPadding(4, 0, 4, 0)
@@ -743,16 +830,17 @@ if CLIENT then
 
             -- We are gonna use this function to fill in the form data.
             function drawRankInfo(rank)
-                local rankInherit = ""
-                local rankId = ""
-                local rankTitle = ""
-                local rankAccess = nadmin.access.user
+                local rankInherit  = ""
+                local rankId       = ""
+                local rankTitle    = ""
+                local rankAccess   = nadmin.access.user
                 local rankImmunity = 0
-                local rankIcon = "icon16/user.png"
-                local apEnabled = false
-                local apRank = ""
-                local apTimeN = 0
-                local apTimeB = false
+                local rankColor    = Color(math.random(0, 255), math.random(0, 255), math.random(0, 255))
+                local rankIcon     = "icon16/user.png"
+                local apEnabled    = false
+                local apRank       = ""
+                local apTimeN      = 0
+                local apTimeB      = false
 
                 if istable(rank) then 
                     -- By doing `or`, it will fall back to it's old value defined above
@@ -761,6 +849,7 @@ if CLIENT then
                     rankTitle    = rank.title                        or rankTitle
                     rankAccess   = rank.access                       or rankAccess
                     rankImmunity = rank.immunity                     or rankImmunity 
+                    rankColor    = rank.color                        or rankColor
                     rankIcon     = rank.icon                         or rankIcon
                     apEnabled    = rank.autoPromote.enabled          or apEnabled
                     apRank       = rank.autoPromote.rank             or apRank
@@ -775,6 +864,8 @@ if CLIENT then
 
                 accessSelect:ChooseOptionID(rankAccess + 1)
                 imEntry:SetValue(rankImmunity)
+
+                colorPicker:SetColor(rankColor)
 
                 iconPreview:SetImage(rankIcon)
 
@@ -848,36 +939,124 @@ else
 
         local plyRank = ply:GetRank()
         local mode = net.ReadString()
+
+        local targetRankId = net.ReadString()
+
         
         if mode == "edit" then -- Edit can be used for updating or creating a rank
-            local targetRankId = net.ReadString()
             local targetRank = nadmin:FindRank(targetRankId)
 
+            local newRankId   = net.ReadString()
+            local title       = net.ReadString()
+            local inheritFrom = net.ReadString()
+            local access      = net.ReadInt(3)
+            local immunity    = net.ReadInt(32)
+            local icon        = net.ReadString()
+            
+            local apEnabled = net.ReadBool()
+            local apTo, apAfter, apTimeBasis
+            if apEnabled then 
+                apTo        = net.ReadString()
+                apAfter     = net.ReadInt(32)
+                apTimeBasis = net.ReadBool()
+            end
+
             -- Owners don't have restrictions
-            if not ply:IsOwner() and targetRank ~= nadmin.null_rank then 
+            if not ply:IsOwner() then 
+                -- Overall restriction logic: 
+                -- We double check anything since well, we can't really trust the client. Not fully :^)
+                -- Inherit:
+                --     Target must have lower power than the current rank. Can't have a "user" rank inherit from "owner"
+                --     Can't be higher than the player's rank
+                --     If blank, then no inheritance
+                -- ID: 
+                --     No spaces, no capitals
+                --     Can't be blank
+                --     Can't be the same as another ank
+                -- Title: 
+                --     Can't be blank
+                -- Access:
+                --     Can't be higher than the player's rank
+                -- Immunity: 
+                --     If the access level is equal to the player's rank, this number must be less than the player's immunity
+                --     Must be > 0
+                -- Icon: 
+                --     No restriction
+                -- Auto Promotion: Restrictions only apply if enabled
+                --     Rank:
+                --         Can't be blank
+                --         Can't be higher than or equal to the player's rank
+                --     When:
+                --         Must be a number greator than 1
+                --     Time Based on Rank Received:
+                --         No restriction. It's just a boolean :^) 
+            
+
+                -- Attempting to set the rank to a higher power than themself
                 if targetRank.access > plyRank.access or (targetRank.access == plyRank.access and targetRank.immunity >= plyRank.immunity) then 
                     nadmin:Notify(ply, nadmin.colors.red, "You can't edit/create a rank higher than or equal to you.")
                     return
                 end
+
+                -- A rank already exists
+                for id, rank in pairs(nadmin.ranks) do
+                    if id == newRankId then 
+                        nadmin:Notify(ply, nadmin.colors.red, "Unable to change rank ID - A rank already exists with the new ID.")
+                        return
+                    end
+                end
+
+                if inheritFrom ~= "" then 
+                    local iRank = nadmin:FindRank(inheritFrom) 
+
+                    -- Can't inherit from a rank that's higher than itself
+                    if access > iRank.access or (access == iRank.access and immunity >= iRank.immunity) then 
+                        nadmin:Notify(ply, nadmin.colors.red, "Can't set the rank to inherit from something higher or equal to itself.")
+                        return
+                    end
+                end
+            end
+            
+            -- If we're editing the ID of an existing rank, we need to modify all other ranks that reference this one
+            if targetRank.id ~= nadmin.null_rank.id and targetRankId ~= newRankId then 
+                for id, rank in pairs(nadmin.ranks) do
+                    -- We don't need to try and change references in the target rank, skip 
+                    if id == targetRankId then continue end 
+
+                    if rank.inheritFrom == targetRankId then rank.inheritFrom = newRankId end 
+                    if rank.autoPromote.rank == targetRankId then rank.autoPromote.rank = newRankId end
+                end
             end
 
-            if targetRank ~= nadmin.null_rank then -- If it's already a rank, we are going to want to change some stuff.
-                for id, rank in pairs(nadmin.ranks) do
-                    
-                end
-            else -- Since it's a new rank, we don't need to check some things
-                
+            nadmin.ranks[newRankId] = table.Copy(targetRank) -- We don't care if it's null, we just want it to have the base values of a rank.
+            local newRank = nadmin.ranks[newRankId]
+            newRank.inheritFrom = inheritFrom
+            newRank.id = newRankId
+            newRank.title = title
+            newRank.access = access 
+            newRank.immunity = immunity
+            newRank.icon = icon
+
+            newRank.autoPromote.enabled = apEnabled
+            if apEnabled then 
+                local ap = newRank.autoPromote
+                ap.rank = apTo 
+                ap.when = apTime
+                ap.timeBasedOverall = apTimeBasis
             end
-            -- net.WriteString(inheritFrom)
-            -- net.WriteInt(accessLevel, 3) -- 3 bits can make a number between 0-7, the access range is 0-5
-            -- net.WriteInt(immunity, 32)
-            -- net.WriteString(icon)
-            -- net.WriteBool(apEnabled)
-            -- if apEnabled then -- We should only send auto promotion info if it's enabled
-            --     net.WriteString(apRank)
-            --     net.WriteInt(apAfter, 32)
-            --     net.WriteBool(apTimeBasis)
-            -- end
+
+            -- Delete the old rank so there isn't a duplicate (if it was already an existing rank)
+            if targetRank.id ~= nadmin.null_rank.id then 
+                nadmin.ranks[targetRank.id] = nil
+            end
+
+            -- Send a message saying that the rank has been modified.
+            local action = (targetRank.id == nadmin.null_rank.id and "created" or "edited")
+            local plyCol = plyRank.color
+            nadmin:Notify(plyCol, ply:Nick(), nadmin.colors.white, " has ", nadmin.colors.blue, action, nadmin.colors.white, " rank ", newRank.color, newRank.title, nadmin.colors.white, ".")
+
+            -- Send another message if the default rank has been changed
+
         elseif mode == "delete" then 
 
         end

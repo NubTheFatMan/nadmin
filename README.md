@@ -4,6 +4,8 @@ Nadmin is an administration mod for the Steam game Garry's Mod. I have two inspi
 - - - - 
 
 # Current additions that haven't been released
+The following changes will be released in 3.8 once I finish the `tab_ranks.lua` refactor.
+
 ## Previously (date isn't logged)
 - Added rank access. Before, everything was based purely off immunity. Now, it first checks access, then immunity. Any owner rank will always be better than superadmin, etc. 
 - Owners can change all ranks immunities. Before, owners couldn't set it above 100 or their own rank.
@@ -20,6 +22,9 @@ Nadmin is an administration mod for the Steam game Garry's Mod. I have two inspi
 - Made some optimizations to the new VGUI system. Converted the NadminCheckBox to be based off of DCheckBox instead of DButton.
 - Shifted access variables in `variables.lua` to be 0-5 instead of -1-4.
 - Some work put into `tab_ranks.lua` refactor.
+
+## 3/13/22
+- More work into `tab_ranks.lua` refactor. I'll finish it one of these days :^)
 
 - - - -
 
