@@ -41,8 +41,6 @@ No documentation has been created yet. Please check back later.
 # Addon Created by NubTheFatMan
 Have any questions? Concerns? Suggestions? (All related to Nadmin)
 
-- - - -
-
 Discord: NubTheFatMan#6969\
 Discord Guild: https://discord.gg/P8Un9Drm8p \
 Steam: NubTheFatMan (https://steamcommunity.com/id/nubthefatman/)
