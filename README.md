@@ -48,7 +48,7 @@ Have any questions? Concerns? Suggestions? (All related to Nadmin)
 
 Discord: NubTheFatMan#6969\
 Discord Guild: https://discord.gg/P8Un9Drm8p \
-Steam: NubTheFatMan (https://steamcommunity.com/id/nubthefatman/)
+Steam: NubTheFatMan (https://steamcommunity.com/id/nubthefatman/) \
 Website: https://nubstoys.xyz/
 
 - - - -
