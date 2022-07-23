@@ -26,6 +26,11 @@ The following changes will be released in 3.8 once I finish the `tab_ranks.lua` 
 ## 3/13/22
 - More work into `tab_ranks.lua` refactor. I'll finish it one of these days :^)
 
+## 7/22/22
+I took a long break and also moved half way across the US. Finally started getting back into programming, however am postponing working on the `tab_ranks.lua` refactor.
+- New votegag command. 
+- New votemute command. 
+
 - - - -
 
 # Installation
@@ -54,8 +59,6 @@ Here are some notable things I want to at some point, implement.
 ### Commands:
 - Force Spawn Point: There is a command for someone to set their spawn point, but admins can't change or remove it. This would allow for that.
 - Force Remove Spawn Point: Read above.
-- Vote Gag: Creates a server-wide vote where everyone can vote to mute a player's mic for a short period of time.
-- Vote Mute: Craetes a server-wide vote where everyone can vote to mute messages from a certain player for a short period of time.
 
 ### Profiles
 I started on a profiles tab a long time ago and I eventually want to make it functional. Meant for server management, the profiles tool allows admins to search through all players who have every played the server and manage information about them. They could view warning history (when implemented), change rank, set a forced name when they join again, or even just add notes about them that other staff management can see. Banning would be a thing too if the admin has permission.
