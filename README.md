@@ -31,6 +31,10 @@ I took a long break and also moved half way across the US. Finally started getti
 - New votegag command. 
 - New votemute command. 
 
+## 1/6/23
+Progress has been real slow and I'm lazy.
+- Optimized `nadmin/default_ranks.lua`. Instead of always loading the default ranks into memory, it will just cut straight to existing ranks.
+
 - - - -
 
 # Installation
