@@ -1,4 +1,3 @@
-
 if not file.Exists("nadmin", "DATA") then
     file.CreateDir("nadmin/userdata")
     file.CreateDir("nadmin/logs")
