@@ -13,29 +13,23 @@ The following changes will be released in 3.8 once I finish the `tab_ranks.lua` 
 - Made a new VGUI system.
 - Began refactoring all of the UI to use the new UI system. For whatever reason, I made some weird VGUI library instead of using traditional methods.
 
-## 3/11/22
+## March 2022
 - Optimized the "Circular" HUD option. The number of faces on all circles was ridiculously high, now it shouldn't impact performance too much.
 - Removed a few UI color presets because they didn't look very good.
 - Some work put into `tab_ranks.lua` refactor.
-
-## 3/12/22
 - Made some optimizations to the new VGUI system. Converted the NadminCheckBox to be based off of DCheckBox instead of DButton.
 - Shifted access variables in `variables.lua` to be 0-5 instead of -1-4.
 - Some work put into `tab_ranks.lua` refactor.
-
-## 3/13/22
 - More work into `tab_ranks.lua` refactor. I'll finish it one of these days :^)
 
-## 7/22/22
+## July 2022
 I took a long break and also moved half way across the US. Finally started getting back into programming, however am postponing working on the `tab_ranks.lua` refactor.
 - New votegag command. 
 - New votemute command. 
 
-## 1/6/23
+## January 2023
 Progress has been real slow and I'm lazy.
 - Optimized `nadmin/default_ranks.lua`. Instead of always loading the default ranks into memory, it will just cut straight to existing ranks.
-
-## 1/9/23
 - Files that had under 10 or 20 lines of code were combined. There were multiple files that were super short, inflating the file count.
 
 - - - -
