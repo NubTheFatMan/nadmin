@@ -16,11 +16,9 @@ The following changes will be released in 3.8 once I finish the `tab_ranks.lua` 
 ## March 2022
 - Optimized the "Circular" HUD option. The number of faces on all circles was ridiculously high, now it shouldn't impact performance too much.
 - Removed a few UI color presets because they didn't look very good.
-- Some work put into `tab_ranks.lua` refactor.
 - Made some optimizations to the new VGUI system. Converted the NadminCheckBox to be based off of DCheckBox instead of DButton.
 - Shifted access variables in `variables.lua` to be 0-5 instead of -1-4.
-- Some work put into `tab_ranks.lua` refactor.
-- More work into `tab_ranks.lua` refactor. I'll finish it one of these days :^)
+- Work into `tab_ranks.lua` refactor. I'll finish it eventually :^)
 
 ## July 2022
 I took a long break and also moved half way across the US. Finally started getting back into programming, however am postponing working on the `tab_ranks.lua` refactor.
