@@ -11,11 +11,11 @@ COMMAND.server = function(caller, args)
     if #targs > 0 then
         local granted = {}
         local revoked = {}
+        local enabled = nadmin:IntToBool(tonumber(args[2]))
         for i, ply in ipairs(targs) do
-            local enabled = tonumber(args[2])
             local grant = false
             if isnumber(enabled) then
-                grant = nadmin:IntToBool(enabled)
+                grant = enabled
             else
                 grant = not ply.n_administrating
             end
