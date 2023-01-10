@@ -12,47 +12,43 @@ COMMAND.server = function(caller, args)
         local granted = {}
         local revoked = {}
         for i, ply in ipairs(targs) do
-            if tonumber(args[2]) then
-                local en = nadmin:IntToBool(tonumber(args[2]))
-                if en then
-                    table.insert(granted, ply)
-                    ply.n_administrating = true
-                    ply.n_Ghosted = true
-                    ply:GodEnable()
-                else
-                    table.insert(revoked, ply)
-                    ply.n_administrating = nil
-                    ply.n_Ghosted = nil
-                    ply:GodDisable()
-                    ply:SetRenderMode(RENDERMODE_NORMAL)
-                    ply:SetColor(nadmin:AlphaColor(ply:GetColor(), 255))
-                end
+            local enabled = tonumber(args[2])
+            local grant = false
+            if isnumber(enabled) then
+                grant = nadmin:IntToBool(enabled)
             else
-                if ply.n_administrating then
-                    table.insert(revoked, ply)
-                    ply.n_administrating = nil
-                    ply.n_Ghosted = nil
-                    ply:GodDisable()
-                    ply:SetRenderMode(RENDERMODE_NORMAL)
-                    ply:SetColor(nadmin:AlphaColor(ply:GetColor(), 255))
-                else
-                    table.insert(granted, ply)
-                    ply.n_administrating = true
-                    ply.n_Ghosted = true
-                    ply:GodEnable()
-                end
+                grant = not ply.n_administrating
+            end
+
+            if grant then
+                table.insert(granted, ply)
+            else
+                table.insert(revoked, ply)
             end
         end
 
         local myCol = nadmin:GetNameColor(caller) or nadmin.colors.blue
         if #granted > 0 then
+            for i, ply in ipairs(granted) do
+                ply.n_administrating = true
+                ply.n_Ghosted = true
+                ply:GodEnable()
+            end
+
             local msg = {myCol, caller:Nick(), nadmin.colors.white, " has administrated "}
             table.Add(msg, nadmin:FormatPlayerList(granted, "and"))
             table.Add(msg, {nadmin.colors.white, "."})
             nadmin:Notify(unpack(msg))
-
         end
         if #revoked > 0 then
+            for i, ply in ipairs(revoked) do 
+                ply.n_administrating = nil
+                ply.n_Ghosted = nil
+                ply:GodDisable()
+                ply:SetRenderMode(RENDERMODE_NORMAL)
+                ply:SetColor(nadmin:AlphaColor(ply:GetColor(), 255))
+            end
+
             local msg = {myCol, caller:Nick(), nadmin.colors.white, " has removed administration from "}
             table.Add(msg, nadmin:FormatPlayerList(revoked, "and"))
             table.Add(msg, {nadmin.colors.white, "."})
@@ -88,7 +84,7 @@ COMMAND.scoreboard.iconRender = function(panel, w, h, ply)
     panel:SetText(nadmin:Ternary(ply:HasGodMode(), "Ungod", "God"))
 end
 COMMAND.scoreboard.OnClick = function(ply, rmb)
-    LocalPlayer():ConCommand("nadmin" .. nadmin:Ternary(rmb, "s", "") .. " god " .. ply:SteamID())
+    LocalPlayer():ConCommand("nadmin" .. nadmin:Ternary(rmb, "s", "") .. " administrate " .. ply:SteamID())
 end
 
 nadmin:RegisterCommand(COMMAND)
