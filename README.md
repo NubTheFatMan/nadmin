@@ -29,6 +29,7 @@ I took a long break and also moved half way across the US. Finally started getti
 Progress has been real slow and I'm lazy.
 - Optimized `nadmin/default_ranks.lua`. Instead of always loading the default ranks into memory, it will just cut straight to existing ranks.
 - Files that had under 10 or 20 lines of code were combined. There were multiple files that were super short, inflating the file count.
+- Removed 3 commands: Discord, Addons, Donation Received. Also removed a test command that never gets registered
 
 - - - -
 
