@@ -3,7 +3,7 @@ nadmin.clientData = nadmin.clientData or {}
 if not file.Exists("nadmin_config.txt", "DATA") then    
     nadmin.clientData.allowNoclip   = true 
     nadmin.clientData.physgunOthers = true 
-    nadmin.clientData.afkTime       = true 
+    nadmin.clientData.afkTime       = false 
     nadmin.clientData.silentNotifs  = true
     nadmin.clientData.hpRegen       = true
     nadmin.clientData.useCompactSB  = false
@@ -24,13 +24,22 @@ else
     local json = file.Read("nadmin_config.txt", "DATA")
     json = util.JSONToTable(json)
 
-    nadmin.clientData.allowNoclip   = json.allowNoclip   or true
-    nadmin.clientData.physgunOthers = json.physgunOthers or true
-    nadmin.clientData.afkTime       = json.afkTime       or true
-    nadmin.clientData.silentNotifs  = json.silentNotifs  or true
-    nadmin.clientData.hpRegen       = json.hpRegen       or true
-    nadmin.clientData.useCompactSB  = json.useCompactSB  or false
-    nadmin.clientData.useCustomHud  = json.useCustomHud  or true
+    -- lua "ternary" is weird. (condition) and (truthy_value) or (falsey_value)
+    nadmin.clientData.allowNoclip   = not isbool(json.allowNoclip)   and true              or json.allowNoclip
+    nadmin.clientData.physgunOthers = not isbool(json.physgunOthers) and true              or json.physgunOthers
+    nadmin.clientData.afkTime       =     isbool(json.afkTime)       and json.afkTime      or false
+    nadmin.clientData.silentNotifs  = not isbool(json.silentNotifs)  and true              or json.silentNotifs
+    nadmin.clientData.hpRegen       = not isbool(json.hpRegen)       and true              or json.hpRegen
+    nadmin.clientData.useCompactSB  =     isbool(json.useCompactSB)  and json.useCompactSB or false
+    nadmin.clientData.useCustomHud  = not isbool(json.useCustomHud)  and true              or json.useCustomHud
+
+    -- nadmin.clientData.allowNoclip   = nadmin:Ternary(isbool(json.allowNoclip),   json.allowNoclip,   true)
+    -- nadmin.clientData.physgunOthers = nadmin:Ternary(isbool(json.physgunOthers), json.physgunOthers, true)
+    -- nadmin.clientData.afkTime       = nadmin:Ternary(isbool(json.afkTime),       json.afkTime,       false)
+    -- nadmin.clientData.silentNotifs  = nadmin:Ternary(isbool(json.silentNotifs),  json.silentNotifs,  true)
+    -- nadmin.clientData.hpRegen       = nadmin:Ternary(isbool(json.hpRegen),       json.hpRegen,       true)
+    -- nadmin.clientData.useCompactSB  = nadmin:Ternary(isbool(json.useCompactSB),  json.useCompactSB,  false)
+    -- nadmin.clientData.useCustomHud  = nadmin:Ternary(isbool(json.useCustomHud),  json.useCustomHud,  true)
     
     nadmin.clientData.hudStyle = json.hudStyle or "Fluid"
     

@@ -28,7 +28,6 @@ nadmin.plyReturns    = nadmin.plyReturns    or {}
 nadmin.pm            = nadmin.pm            or {}
 nadmin.profile       = nadmin.profile       or {}
 nadmin.ranks         = nadmin.ranks         or {}
-nadmin.scoreboard    = nadmin.scoreboard    or {}
 nadmin.time          = nadmin.time          or {}
 nadmin.perms         = nadmin.perms         or {}
 nadmin.plyToSave     = nadmin.plyToSave     or {}
@@ -47,10 +46,11 @@ nadmin.colors.chat.dead = Color(255, 62, 62)   --The color of *DEAD* in chat.
 nadmin.colors.chat.team = Color(127, 255, 127) --The color of (TEAM) in chat.
 nadmin.colors.chat.tag  = Color(255, 255, 255) --The color of peoples ranks in chat.
 
-nadmin.colors.gui.blue  = Color(0, 150, 255)    -- The color of buttons on the gui.
-nadmin.colors.gui.red   = Color(255, 62, 62)    -- The color of buttons like "Are you sure" or something is invalid
+nadmin.colors.gui.green   = Color(62, 255, 62)
+nadmin.colors.gui.blue    = Color(0, 150, 255)  -- The color of buttons on the gui.
+nadmin.colors.gui.red     = Color(255, 62, 62)  -- The color of buttons like "Are you sure" or something is invalid
 nadmin.colors.gui.warning = Color(230, 230, 62) -- The color of warnings in text entries
-nadmin.colors.gui.theme = Color(75, 75, 75)     -- The main color of the gui. Uses `nadmin:DarkenColor` and `nadmin:BrightenColor` to adapt
+nadmin.colors.gui.theme   = Color(75, 75, 75)   -- The main color of the gui. Uses `nadmin:DarkenColor` and `nadmin:BrightenColor` to add variance
 
 nadmin.colors.gui.health = Color(255, 62, 62)  --The color of your health.
 nadmin.colors.gui.armor  = Color(98, 176, 255) --The color of your armor.
@@ -67,7 +67,7 @@ nadmin.config.saveInterval = 30 --How often to save player data
 
 nadmin.config.steamIDMatch = "STEAM_[0-5]:[0-9]:[0-9]+" --SteamID pattern
 
-nadmin.config.banPerPage = 50
+nadmin.config.banPerPage = 10
 nadmin.config.banMessage = [[
 ----==[Banned]==----
 For: {{REASON}}
@@ -99,6 +99,7 @@ nadmin.hpRegen.rate   = 3              -- How long to wait before adding health
 nadmin.hpRegen.perm   = "health_regen" -- The permission the player must have to get health
 
 --Feel free to define your own immunities, either here or elsewhere!
+-- Deprecated. Most of the default ranks will just have 0 for immunity. Instead they are based off of access
 nadmin.immunity.everyone   = 0   --Default immunity of players.
 nadmin.immunity.regular    = 20  --Immunity of regulars.
 nadmin.immunity.respected  = 40  --Immunity of respected players.
@@ -107,6 +108,8 @@ nadmin.immunity.superadmin = 80  --Immunity of superadministrators.
 nadmin.immunity.owner      = 100 --Immunity of owners.
 
 -- Access levels, like immunity but less precise. These actual tell if the player is admin or superadmin while immunity is who can target who
+-- WARNING: If you add your own access variables, they must be in sequential order with no gaps and start from 0, otherwise you will encounter errors!
+--          Any access variables you add won't show up in the ranks tab. The buttons are hard coded. Really this should be all you need.
 nadmin.access.restricted = 0 -- This access level restricts everything, and the restrictions acts as a whitelist. Like a psuedo ban
 nadmin.access.default    = 1  -- This signifies that a rank is the default rank. Only one rank can have this
 nadmin.access.user       = 2  -- This signifies that they're just a regular user with no special access
@@ -114,15 +117,15 @@ nadmin.access.admin      = 3  -- This rank has administration access on the serv
 nadmin.access.superadmin = 4  -- This rank has super admin access on the server
 nadmin.access.owner      = 5  -- This rank has owner access. They have access to everything and nothing can be restricted from them
 
-nadmin.plugins.afk          = true  --Enables AFK system that stops players from gaining playtime.
-nadmin.plugins.badges       = true  --Enabled the use of custom badges.
-nadmin.plugins.joinMessages = true  --Enables join and leave messages.
-nadmin.plugins.levels       = true  --Enables people to have levels.
-nadmin.plugins.logs         = true  --Makes `nadmin:Log()` save to a file.
-nadmin.plugins.scoreboard   = true  --Enables the custom scoreboard.
-nadmin.plugins.loadouts     = false --Enables loadouts per rank.
-nadmin.plugins.propprotec   = true  --Enables the prop protection module.
-nadmin.plugins.hud          = true  --Enables the custom HUD
+nadmin.plugins.afk          = true  -- Enables AFK system that stops players from gaining playtime.
+nadmin.plugins.badges       = true  -- Enabled the use of custom badges.
+nadmin.plugins.joinMessages = true  -- Enables join and leave messages.
+nadmin.plugins.levels       = false  -- Enables people to have levels.
+nadmin.plugins.logs         = true  -- Makes `nadmin:Log()` save to a file.
+nadmin.plugins.scoreboard   = true  -- Enables the custom scoreboard.
+nadmin.plugins.loadouts     = false -- Enables loadouts per rank.
+nadmin.plugins.propprotec   = true  -- Enables the prop protection module.
+nadmin.plugins.hud          = true  -- Enables the custom HUD
 
 --These are using when parsing time (4d2h, for example. It does (4 * nadmin.time.d) + (2 * nadmin.time.h))
 nadmin.time.s = 1
@@ -146,7 +149,8 @@ nadmin.MODE_BELOW = 0 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_SAME  = 1 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_ALL   = 2 --Used in nadmin:FindPlayer(), argument 3
 
-nadmin.STYLE_BOX    = 0 -- Used in checkbox styles 
+-- Used in checkbox styles
+nadmin.STYLE_BOX    = 0  
 nadmin.STYLE_SWITCH = 1
 
 nadmin.version = "v3.7"

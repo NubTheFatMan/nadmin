@@ -1,6 +1,6 @@
-function nadmin:Ternary(cond, tret, fret)
-    if cond then return tret end
-    return fret
+function nadmin:Ternary(condition, a, b)
+    if condition then return a end
+    return b
 end
 
 function nadmin:BoolToInt(bool)
@@ -18,9 +18,11 @@ function table.length(tbl)
     return count
 end
 
-function nadmin:GetNameColor(obj)
+-- Set absolute to "true" to get their actual name color. False/nil will return their display rank color
+function nadmin:GetNameColor(obj, absolute)
     if isentity(obj) and obj:IsPlayer() then
-        return obj:GetRank().color
+        if absolute then return obj:GetRank().color end
+        return obj:GetDisplayRank().color
     elseif isstring(obj) and SERVER then
         local data = nadmin.userdata[obj]
         if istable(data) then

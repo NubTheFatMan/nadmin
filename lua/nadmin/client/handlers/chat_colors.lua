@@ -12,23 +12,19 @@ hook.Add("OnPlayerChat", "nadmin_hud_replacement", function(ply, msg, isTeam, is
             table.insert(tbl, "(TEAM) ")
         end
         if IsValid(ply) then
-            if not nadmin.plugins.chatbox then
-                local rank = ply:GetRank()
-                if rank and rank.title then
-                    table.insert(tbl, nadmin.colors.chat.tag)
-                    table.insert(tbl, nadmin.config.chat.tagLeft .. rank.title .. nadmin.config.chat.tagRight .. " ")
-                end
-
-                if rank and rank.color then
-                    table.insert(tbl, rank.color)
-                else
-                    table.insert(tbl, nadmin.colors.white)
-                end
-
-                table.insert(tbl, ply:Nick())
-            else
-                table.insert(tbl, ply)
+            local rank = ply:GetDisplayRank()
+            if rank and rank.title then
+                table.insert(tbl, nadmin.colors.chat.tag)
+                table.insert(tbl, nadmin.config.chat.tagLeft .. rank.title .. nadmin.config.chat.tagRight .. " ")
             end
+
+            if rank and rank.color then
+                table.insert(tbl, rank.color)
+            else
+                table.insert(tbl, nadmin.colors.white)
+            end
+
+            table.insert(tbl, ply:Nick())
         else
             table.insert(tbl, nadmin.colors.white)
             table.insert(tbl, "CONSOLE")

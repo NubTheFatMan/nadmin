@@ -21,6 +21,15 @@ if not nadmin.createdFonts then
         size = 15,
         weight = 800
     })
+    surface.CreateFont("nadmin_derma_small_i", {
+        size = 15,
+        italic = true
+    })
+    surface.CreateFont("nadmin_derma_small_bi", {
+        size = 15,
+        weight = 800,
+        italic = true
+    })
     surface.CreateFont("nadmin_derma", {
         size = 20
     })

@@ -12,7 +12,7 @@ if CLIENT then
     local content
     nadmin.menu:RegisterTab({
         title = "Server Settings",
-        sort = 2,
+        sort = 4,
         content = function(parent, data)
             local tc = nadmin:TextColor(nadmin.colors.gui.theme)
             local function loadingAnim(w, h)

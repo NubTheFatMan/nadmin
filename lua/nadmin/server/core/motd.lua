@@ -6,8 +6,7 @@ nadmin.config.motd = nadmin.config.motd or {}
 
 local loaded = file.Read("nadmin/config/motd.txt", "DATA")
 if isstring(loaded) then
-    loaded = util.JSONToTable(loaded)
-    motd = loaded
+    nadmin.config.motd = util.JSONToTable(loaded)
 end
 
 if not isbool(nadmin.config.motd.enabled) then nadmin.config.motd.enabled = true end

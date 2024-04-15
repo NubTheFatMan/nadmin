@@ -1,24 +1,23 @@
 hook.Add("Initialize", "nadmin_add_right_click_perms", function()
     -- This way of adding right click spawn menu functionality could be considered hacky
-    local oldDermaMenu = DermaMenu
+    if not isfunction(nadmin.oldDermaMenu) then nadmin.oldDermaMenu = DermaMenu end
     function DermaMenu(parentmenu, parent)
         nadmin.prevPrevSpawnMenuRightClick = nadmin.prevSpawnMenuRightClick
         nadmin.prevSpawnMenuRightClick = nadmin.spawnMenuRightClick
-        nadmin.spawnMenuRightClick = oldDermaMenu(parentmenu, parent)
+        nadmin.spawnMenuRightClick = nadmin.oldDermaMenu(parentmenu, parent)
         return nadmin.spawnMenuRightClick
     end
 
     local icon = vgui.GetControlTable("ContentIcon")
-    icon.nadmin_oldInit = icon.Init
+    if not isfunction(icon.nadmin_oldInit) then icon.nadmin_oldInit = icon.Init end
     function icon:Init()
         self:nadmin_oldInit()
         function self:DoRightClick()
             if isfunction(self.OpenMenu) then
                 self:OpenMenu(self)
             end
+            if not LocalPlayer():HasPerm("manage_ranks") then return end
             if IsValid(nadmin.spawnMenuRightClick) then
-                if not LocalPlayer():HasPerm("manage_ranks") then return end
-
                 local name
                 if self.GetSpawnName then name = self:GetSpawnName() 
                 elseif self.GetModelName then name = self:GetModelName() end
