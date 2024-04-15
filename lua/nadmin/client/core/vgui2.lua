@@ -97,13 +97,17 @@ function NadminButton:Paint(w, h)
             color = self.color.hovered
         end
     else 
-        color = nadmin:BrightenColor(color, -15)
+        color = self.color.shadow
     end
 
     draw.RoundedBox(0, 0, offset, w, h, color)
 
     if self:IsEnabled() and not self:IsDown() then
         draw.RoundedBox(0, 0, h-2, w, 2, self.color.shadow)
+    end
+
+    if isfunction(self.BackgroundDraw) then 
+        self:BackgroundDraw(w, h)
     end
 
     -- Icon 
@@ -542,6 +546,10 @@ function NadminTextEntry:Paint(w, h)
     end
 
     draw.RoundedBox(0, 0, 0, w, h, self:GetColor())
+
+    if isfunction(self.BackgroundDraw) then 
+        self:BackgroundDraw(w, h)
+    end
 
     local textCol = self:GetTextColor() 
     local errored = self:IsErrored()
@@ -1219,6 +1227,343 @@ function NadminTabMenu:Paint(w, h)
 end
 
 vgui.Register("NadminTabMenu", NadminTabMenu, "DPanel")
+
+
+local NadminForm = {}
+function NadminForm:Init()
+    -- Init() the inherited class
+    self.BaseClass:Init()
+    self:GetCanvas():DockPadding(4, 4, 4, 0)
+
+    self.fields = {}
+end
+
+function NadminForm:AddField(id, fieldType, label, defaultValue)
+    if not isstring(id) then error("Bad argument #1: Expected a string identifier, got " .. type(id)) end
+    if not isstring(fieldType) then error("Bad argument #2: Expected a string field type, got " .. type(fieldType)) end 
+
+    local container = vgui.Create("Panel", self)
+    container:Dock(TOP)
+    container:DockMargin(0, 0, 0, 4)
+
+    local lbl = vgui.Create("NadminLabel", container)
+    lbl:Dock(LEFT)
+
+    lbl.setText = lbl.SetText 
+    function lbl:SetText(text)
+        if not isstring(text) then error("Bad argument #1: Expected a string, got " .. type(text)) end
+        self:setText(text)
+
+        if text == "" then 
+            self:SetWide(0)
+            self:DockMargin(0, 0, 0, 0)
+        else 
+            self:SizeToContentsX()
+            self:DockMargin(0, 0, 4, 0)
+        end
+    end
+
+    lbl:SetText(isstring(label) and label or "")
+
+    local field = vgui.Create(fieldType, self)
+
+    container.label = lbl
+    container.field = field
+end
+
+vgui.Register("NadminForm", NadminForm, "NadminScrollPanel")
+
+
+local NadminRichText = {}
+function NadminRichText:Init()
+    self.color = nadmin:DarkenColor(nadmin.colors.gui.theme, 25) -- Inherited property from NadminPanel that needs to be set
+    
+    -- Editable attributes
+    self.cacheLength = 100
+    self.font = "nadmin_derma_small"
+    self.textColor = nadmin:TextColor(nadmin.colors.gui.theme)
+    self.linkColor = nadmin.colors.gui.blue
+
+    -- Internal
+    self.cache = {}
+
+    self.scrollPanel = vgui.Create("NadminScrollPanel", self)
+    self.scrollPanel:Dock(FILL)
+    self.scrollPanel:GetCanvas():DockPadding(4, 4, 4, 4)
+    function self.scrollPanel:Paint(w, h) end -- Want the background to be blank so self.color is shown instead
+end
+
+function NadminRichText:SetCacheSize(size)
+    if not isnumber(size) then error("Bad argument #1: Expected a number, got " .. type(size)) end
+    self.cacheLength = size
+end
+function NadminRichText:GetCacheSize() return self.cacheLength end
+
+function NadminRichText:SetFont(font)
+    if not isstring(font) then error("Bad argument #1: Expected a string, got " .. type(font)) end
+    self.font = font 
+end
+function NadminRichText:GetFont() return self.font end
+
+function NadminRichText:SetColor(color, notText)
+    if not IsColor(color) then error("Bad argument #1, expected a color, got " .. type(color)) end
+    self.color = color
+    self.scrollPanel:SetColor(nadmin:BrightenColor(color, 25))
+
+    if not (isbool(notText) and notText) then 
+        self.textColor = Nadmin:TextColor(color)
+    end
+end
+-- GetColor is already set from inheriting from NadminPanel
+
+function NadminRichText:SetTextColor(color) 
+    if not IsColor(color) then error("Bad argument #1, expected a color, got " .. type(color)) end
+    self.textColor = color
+end
+function NadminRichText:GetTextColor() return self.textColor end
+
+function NadminRichText:SetLinkColor(color) 
+    if not IsColor(color) then error("Bad argument #1, expected a color, got " .. type(color)) end
+    self.linkColor = color
+end
+function NadminRichText:GetLinkColor() return self.linkColor end
+
+-- Think of this like chat.AddText. You can input a color to change the color of any following text,
+-- strings will be in the default text font. It also accepts a few additional argument types
+--    Player - Shows their Steam avatar, rank title, and colors their name with their rank
+
+--    Table with the following parameters. First the important ones, you can have one or both but not neither:
+
+--        string text: The text to show. Not required if iconPath is set.
+--        string iconPath: Uses this path to create a Material() to draw within the text. 
+--                         Must be square, size depends on the font size. No parameters are applied with this. 
+
+--    The following paremeters only apply if there is text:
+--        Color overrideColor: Forces the color of the text to this.
+--        boolean resetColor: Resets the color to self.textColor. If overrideColor is set, it will apply on the next text.
+--        Color setColor: Changes the color of all future text. If overrideColor is set, it will apply on the next text.
+--        boolean link: If true, the text will be the set link color unless overrideColor is set.
+--                      If clicked, it will call gui.OpenURL(). The text should start with http or https
+--        boolean underline: If true, draws a line under the text
+--        boolean strikethrough: If true, draws a line through the text
+--        string overrideFont: Overides the set font. To remove the amount of font combinations, 
+--                             I've created the underline and strikethrough variables above that just draw boxes over the text.
+--        boolean resetFont: Resets the font to self.font.
+--        string setFont: Sets the font of future text.
+local transparentColor = Color(0, 0, 0, 0)
+local materialCache = {}
+function NadminRichText:AddText(...)
+    local input = {...}
+
+    local textBox = vgui.Create("DButton", self)
+    textBox:SetText("")
+    textBox:Dock(TOP)
+
+    textBox.rawInput        = table.Copy(input)
+    textBox.rawText         = ""
+    textBox.parsedRender    = {}
+    textBox.bgColor         = transparentColor
+    textBox.contentsValid   = false
+    textBox.panelWidth      = 0
+    textBox.panelWidthCache = NULL
+
+    -- Recalculates parsedRender
+    function textBox:Invalidate() 
+        textBox.rawText = ""
+        textBox.parsedRender = {}
+        textBox.contentsValid = true
+
+        local tempFont  = NULL 
+        local tempColor = NULL
+
+        local x, y = 0, 0
+        local maxWidth = self.panelWidth
+        local lineHeight = 0
+        local boundingBoxH = 0
+
+        local line = {}
+        local lastLineBreaker = 0
+        for i, arg in ipairs(self.rawInput) do 
+            if IsColor(arg) then 
+                tempColor = arg
+                continue
+            end
+
+            local parsed = {
+                pos      = {x, y},
+                text     = NULL,
+                icon     = NULL,
+                iconPath = NULL, 
+                font     = tempFont or self.font,
+                color    = tempColor or self.textColor,
+                link     = false,
+                under    = false,
+                strike   = false
+            }
+
+            if isstring(arg) then 
+                textBox.rawText = textBox.rawText .. arg
+                parsed.text = arg
+            elseif IsValid(arg) and arg:IsPlayer() then 
+                local rank = arg:GetRank()
+                local newText = "(" .. rank.title .. ") " .. arg:Nick()
+
+                textBox.rawText = textBox.rawText .. newText
+                parsed.text = newText
+
+                parsed.iconPath = rank.icon
+            elseif istable(arg) then 
+                if isstring(arg.iconPath) then parsed.iconPath = arg.iconPath end
+
+                if isstring(arg.text) then 
+                    parsed.text = arg.text
+                    textBox.rawText = textBox.rawText .. arg.text
+
+                    -- Font management
+                    if isstring(arg.setFont) then 
+                        tempFont = arg.setFont
+                        parsed.font = tempFont
+                    elseif isbool(arg.resetFont) and arg.resetFont then 
+                        tempFont = NULL
+                        parsed.font = self.font
+                    end
+
+                    if isstring(arg.overrideFont) then
+                        parsed.font = arg.overrideFont
+                    end
+
+                    -- Color management
+                    if IsColor(arg.setColor) then 
+                        tempColor = arg.setColor
+                        parsed.color = tempColor
+                    elseif isbool(arg.resetColor) and arg.resetColor then 
+                        tempColor = NULL
+                        parsed.color = self.textColor
+                    end
+
+                    if IsColor(arg.overrideColor) then 
+                        parsed.color = arg.overrideColor
+                    elseif isbool(arg.link) and arg.link then 
+                        parsed.color = self.linkColor
+                    end
+
+                    -- Extra stuff for text
+                    if isbool(arg.link) then parsed.link = arg.link end
+                    if isbool(arg.underline) then parsed.under = arg.underline end 
+                    if isbool(arg.strikethrough) then parsed.strike = arg.strikethrough end
+                end
+            end
+
+            if isstring(parsed.iconPath) then 
+                local path = parsed.iconPath
+                if not materialCache[path] then 
+                    materialCache[path] = Material(path)
+                end
+                parsed.icon = materialCache[path]
+
+                local toInsert = table.Copy(parsed)
+                toInsert.text = ""
+                
+                surface.SetFont(parsed.font)
+                local _, h = surface.GetTextSize("|") -- Tallest QWERTY letter, icons will be that size
+                lineHeight = math.max(lineHeight, y + h)
+                
+                if x + h > maxWidth and x > 0 then 
+                    table.insert(self.parsedRender, table.Copy(line))
+                    line = {}
+
+                    boundingBoxH = boundingBoxH .. lineHeight
+                    lineHeight = 0
+
+                    x, y = 0, y + h
+                    parsed.pos = {x, y}
+                end
+                x = x + h
+                table.insert(line, toInsert)
+            end
+
+            if isstring(parsed.text) then 
+                local toInsert = table.Copy(parsed)
+                
+                surface.SetFont(parsed.font)
+                local remainingText = parsed.text
+                local tries, maxTries = 0, 64
+                
+                while remainingText ~= "" and tries < maxTries do
+                    tries = tries + 1
+                    
+                    local w, h = surface.GetTextSize(remainingText)
+                    lineHeight = math.max(lineHeight, y + h)
+                    if x + w <= maxWidth then 
+                        x = x + w
+                        toInsert.text = remainingText
+                        table.insert(line, table.Copy(toInsert))
+                        remainingText = ""
+                        break
+                    else 
+                        local splitBySpace = string.Explode(" ", remainingText)
+                        for j = #splitBySpace, 1, -1 do 
+                            -- To do later
+                        end
+                    end
+                end
+
+
+                -- local w, h = surface.GetTextSize(parsed.text)
+                -- if x + w <= maxWidth then 
+                --     x = x + w
+                --     table.insert(line, toInsert)
+                -- else 
+                --     local remainingText = parsed.text
+                    
+                --     local tries, maxTries = 0, 64
+                    
+                --     while remainingText ~= "" and tries < maxTries do 
+                --         tries = tries + 1
+                        
+                --         local splitBySpace = string.Explode(" ", remainingText)
+                --         for j = #splitBySpace, 1, -1 do -- Loop backwards and find the most text that fits
+                --             local text = table.concat(splitBySpace, " ", 1, j)
+                --             local tw, th = surface.GetTextSize(text)
+                --             if x + tw <= maxWidth then 
+                --                 toInsert.text = text
+                --                 table.insert(line, table.Copy(toInsert))
+    
+                --                 table.insert(self.parsedRender, table.Copy(line))
+                --                 line = {}
+                --                 remainingText = table.concat(splitBySpace, " ", j + 1)
+                --             end
+                --         end
+                --     end
+                -- end
+
+            end
+        end
+    end
+    textBox:Invalidate()
+
+    -- Text renderer
+    function textBox:Paint(w, h)
+        self.panelWidth = w
+        if self.panelWidth ~= self.panelWidthCache or not self.contentsValid then 
+            self.panelWidthCache = self.panelWidth
+            self:Invalidate()
+        end
+
+
+    end
+
+    if #self.cache >= self.cacheLength then 
+        self.cache[1]:Remove()
+        table.remove(self.cache, 1)
+    end
+    table.insert(self.cache, textBox)
+
+    return textBox
+end
+
+
+vgui.Register("NadminRichText", NadminRichText, "NadminPanel")
 
 
 -- Never made this use VGUI conventions, ended up not using it. Just holding onto the code just in case I decide I want to keep it
