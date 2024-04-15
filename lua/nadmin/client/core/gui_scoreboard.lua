@@ -1,3 +1,7 @@
+nadmin.scoreboard = nadmin.scoreboard or {}
+
+nadmin.scoreboard.rankIconCache = nadmin.scoreboard.rankIconCache or {}
+
 function nadmin.scoreboard:Show()
     if IsValid(self.panel) then return end --We don't want duplicates
 
@@ -640,7 +644,7 @@ function nadmin.scoreboard:Show()
                 surface.DrawTexturedRect(4, 4, 16, 16)
             end
             function copyRank:DoClick()
-                SetClipboardText(nadmin.scoreboard.player:GetRank().title)
+                SetClipboardText(nadmin.scoreboard.player:GetDisplayRank().title)
                 notification.AddLegacy("Rank copied to clipboard!", NOTIFY_HINT, 3)
                 surface.PlaySound("ambient/levels/canals/drip" .. tostring(math.random(1, 4)) .. ".wav")
             end
@@ -648,6 +652,7 @@ function nadmin.scoreboard:Show()
             copyRankL:SetPos(32, y)
             copyRankL:SetSize(info:GetWide() - 36, 24)
             copyRankL:SetText("")
+            copyRankL.rank = nadmin.scoreboard.player:GetDisplayRank()
             local ranks = {}
             for i, rank in pairs(nadmin.ranks) do
                 ranks[rank.id] = Material(rank.icon)
@@ -664,15 +669,15 @@ function nadmin.scoreboard:Show()
                 })
 
                 surface.SetDrawColor(255, 255, 255)
-                surface.SetMaterial(ranks[nadmin.scoreboard.player:GetRank().id])
+                surface.SetMaterial(ranks[self.rank.id])
                 surface.DrawTexturedRect(wid + 4, 4, 16, 16)
 
                 draw.Text({
-                    text = nadmin.scoreboard.player:GetRank().title,
+                    text = self.rank.title,
                     font = font_normal,
                     pos = {wid + 24, h/2},
                     yalign = TEXT_ALIGN_CENTER,
-                    color = nadmin.scoreboard.player:GetRank().color
+                    color = self.rank.color
                 })
             end
             y = y + copyRank:GetTall() + 4
@@ -708,7 +713,7 @@ function nadmin.scoreboard:Show()
                 str = str .. "\n" .. "Deaths: " .. ply:Deaths()
                 str = str .. "\n" .. "Playtime: " .. nadmin:TimeToString(ply:GetPlayTime(), true)
                 str = str .. "\n" .. "Ping: " .. ply:Ping()
-                str = str .. "\n" .. "Rank: " .. ply:GetRank().title
+                str = str .. "\n" .. "Rank: " .. ply:GetDisplayRank().title
                 str = str .. "\n" .. "Level: " .. tostring(info.level) .. " (XP: " .. tostring(info.xp) .. "/" .. tostring(info.need) .. ")"
                 SetClipboardText(str)
                 notification.AddLegacy("All player info copied to clipboard!", NOTIFY_HINT, 3)
@@ -823,52 +828,67 @@ function nadmin.scoreboard:Show()
         end
     else
         if self.shouldClose then self:Hide() self.shouldClose = false end
+        self.panel.headerColor = nadmin:BrightenColor(nadmin.colors.gui.theme, 25)
+        self.panel.textColor = nadmin:TextColor(nadmin.colors.gui.theme)
+        self.panel.textColorDarker = nadmin:BrightenColor(self.panel.textColor, -25)
         function self.panel:Paint(w, h)
-            draw.RoundedBoxEx(34, 0, 0, w, h, nadmin.colors.gui.theme, true, false, false, false)
-            draw.RoundedBoxEx(34, 0, 0, w, 92, nadmin.colors.gui.blue, true, false, false, false)
-
-            surface.SetDrawColor(255, 255, 255)
-            surface.SetMaterial(icon)
-            surface.DrawTexturedRect(4, 4, 64, 64)
+            if nadmin.clientData.useCompactSB then 
+                draw.RoundedBox(0, 0, 0, w, h, nadmin.colors.gui.theme)
+                draw.RoundedBox(0, 0, 0, w, 56, self.headerColor)
+            else 
+                draw.RoundedBoxEx(34, 0, 0, w, h, nadmin.colors.gui.theme, true, false, false, false)
+                draw.RoundedBoxEx(34, 0, 0, w, 92, self.headerColor, true, false, false, false)
+            end
 
             surface.SetFont(font_large)
             local tw, th = surface.GetTextSize(GetHostName())
-            surface.SetFont(font_normal)
-            local sw, sh = surface.GetTextSize(game.GetIPAddress())
 
             draw.Text({
                 text = GetHostName(),
                 pos = {w/2, 4},
                 xalign = TEXT_ALIGN_CENTER,
                 font = font_large,
-                color = nadmin:TextColor(nadmin.colors.gui.blue)
+                color = self.textColor
             })
-            draw.Text({
-                text = game.GetIPAddress(),
-                pos = {w/2, th/2 + sh/2 + 12},
-                xalign = TEXT_ALIGN_CENTER,
-                font = font_normal,
-                color = nadmin:DarkenColor(nadmin:TextColor(nadmin.colors.gui.blue), 25)
-            })
-            draw.Text({
-                text = "TPS: " .. tostring(math.Round(1/engine.ServerFrameTime())),
-                pos = {w - 4, th/2 + sh/2 + 12},
-                xalign = TEXT_ALIGN_RIGHT,
-                font = font_normal,
-                color = nadmin:DarkenColor(nadmin:TextColor(nadmin.colors.gui.blue), 25)
-            })
+
+            if not nadmin.clientData.useCompactSB then
+                surface.SetDrawColor(255, 255, 255)
+                surface.SetMaterial(icon)
+                surface.DrawTexturedRect(4, 4, 64, 64)
+
+                surface.SetFont(font_normal)
+                local sw, sh = surface.GetTextSize(game.GetIPAddress()) 
+
+                draw.Text({
+                    text = game.GetIPAddress(),
+                    pos = {w/2, th/2 + sh/2 + 12},
+                    xalign = TEXT_ALIGN_CENTER,
+                    font = font_normal,
+                    color = self.textColorDarker
+                })
+                draw.Text({
+                    text = "TPS: " .. tostring(math.Round(1/engine.ServerFrameTime())),
+                    pos = {w - 4, th/2 + sh/2 + 12},
+                    xalign = TEXT_ALIGN_RIGHT,
+                    font = font_normal,
+                    color = self.textColorDarker
+                })
+            end
         end
 
-        local txtcol = nadmin:TextColor(nadmin.colors.gui.blue)
+        local txtcol = self.panel.textColor
+        local baseColor = self.panel.headerColor
+        local hoverColor = nadmin:BrightenColor(baseColor)
+        local sortButtonsYPos = nadmin.clientData.useCompactSB and 36 or 72
         -- Sorting options: Name, Kills, Deaths, Playtime, Ping
         local sort_names = vgui.Create("DButton", self.panel)
-        sort_names:SetPos(32, 72)
+        sort_names:SetPos(32, sortButtonsYPos)
         sort_names:SetSize(self.panel:GetWide()/2 - 32, 16)
         sort_names:SetText("Name")
         sort_names:SetFont(font_small)
         sort_names:SetTextColor(txtcol)
         function sort_names:Paint(w, h)
-            draw.RoundedBox(0, 0, 0, w, h, nadmin:Ternary(self:IsHovered(), nadmin:BrightenColor(nadmin.colors.gui.blue, 25), nadmin.colors.gui.blue))
+            draw.RoundedBox(0, 0, 0, w, h, self:IsHovered() and hoverColor or baseColor)
             if nadmin.scoreboard.sorting == "name" then
                 local points = {}
                 surface.SetDrawColor(txtcol.r, txtcol.g, txtcol.b)
@@ -898,13 +918,13 @@ function nadmin.scoreboard:Show()
         end
 
         local sort_kills = vgui.Create("DButton", self.panel)
-        sort_kills:SetPos(self.panel:GetWide()/2, 72)
+        sort_kills:SetPos(self.panel:GetWide()/2, sortButtonsYPos)
         sort_kills:SetSize(self.panel:GetWide()/8, 16)
         sort_kills:SetText("Kills")
         sort_kills:SetFont(font_small)
         sort_kills:SetTextColor(txtcol)
         function sort_kills:Paint(w, h)
-            draw.RoundedBox(0, 0, 0, w, h, nadmin:BrightenColor(nadmin.colors.gui.blue, nadmin:Ternary(self:IsHovered(), 25, 0)))
+            draw.RoundedBox(0, 0, 0, w, h, self:IsHovered() and hoverColor or baseColor)
             if nadmin.scoreboard.sorting == "kills" then
                 local points = {}
                 surface.SetDrawColor(txtcol.r, txtcol.g, txtcol.b)
@@ -935,12 +955,12 @@ function nadmin.scoreboard:Show()
 
         local sort_deaths = vgui.Create("DButton", self.panel)
         sort_deaths:SetSize(self.panel:GetWide()/8, 16)
-        sort_deaths:SetPos(self.panel:GetWide()/2 + sort_deaths:GetWide(), 72)
+        sort_deaths:SetPos(self.panel:GetWide()/2 + sort_deaths:GetWide(), sortButtonsYPos)
         sort_deaths:SetText("Deaths")
         sort_deaths:SetFont(font_small)
         sort_deaths:SetTextColor(txtcol)
         function sort_deaths:Paint(w, h)
-            draw.RoundedBox(0, 0, 0, w, h, nadmin:BrightenColor(nadmin.colors.gui.blue, nadmin:Ternary(self:IsHovered(), 25, 0)))
+            draw.RoundedBox(0, 0, 0, w, h, self:IsHovered() and hoverColor or baseColor)
             if nadmin.scoreboard.sorting == "deaths" then
                 local points = {}
                 surface.SetDrawColor(txtcol.r, txtcol.g, txtcol.b)
@@ -971,12 +991,12 @@ function nadmin.scoreboard:Show()
 
         local sort_playtime = vgui.Create("DButton", self.panel)
         sort_playtime:SetSize(self.panel:GetWide()/8, 16)
-        sort_playtime:SetPos(self.panel:GetWide()/2 + sort_deaths:GetWide()*2, 72)
+        sort_playtime:SetPos(self.panel:GetWide()/2 + sort_deaths:GetWide()*2, sortButtonsYPos)
         sort_playtime:SetText("Playtime")
         sort_playtime:SetFont(font_small)
         sort_playtime:SetTextColor(txtcol)
         function sort_playtime:Paint(w, h)
-            draw.RoundedBox(0, 0, 0, w, h, nadmin:BrightenColor(nadmin.colors.gui.blue, nadmin:Ternary(self:IsHovered(), 25, 0)))
+            draw.RoundedBox(0, 0, 0, w, h, self:IsHovered() and hoverColor or baseColor)
             if nadmin.scoreboard.sorting == "playtime" then
                 local points = {}
                 surface.SetDrawColor(txtcol.r, txtcol.g, txtcol.b)
@@ -1007,12 +1027,12 @@ function nadmin.scoreboard:Show()
 
         local sort_ping = vgui.Create("DButton", self.panel)
         sort_ping:SetSize(self.panel:GetWide()/8 - 4, 16)
-        sort_ping:SetPos(self.panel:GetWide()/2 + sort_deaths:GetWide()*3, 72)
+        sort_ping:SetPos(self.panel:GetWide()/2 + sort_deaths:GetWide()*3, sortButtonsYPos)
         sort_ping:SetText("Ping")
         sort_ping:SetFont(font_small)
         sort_ping:SetTextColor(txtcol)
         function sort_ping:Paint(w, h)
-            draw.RoundedBox(0, 0, 0, w, h, nadmin:BrightenColor(nadmin.colors.gui.blue, nadmin:Ternary(self:IsHovered(), 25, 0)))
+            draw.RoundedBox(0, 0, 0, w, h, self:IsHovered() and hoverColor or baseColor)
             if nadmin.scoreboard.sorting == "ping" then
                 local points = {}
                 surface.SetDrawColor(txtcol.r, txtcol.g, txtcol.b)
@@ -1042,14 +1062,14 @@ function nadmin.scoreboard:Show()
         end
 
         self.display = vgui.Create("DPanel", self.panel)
-        self.display:SetPos(0, 96)
+        self.display:SetPos(0, sortButtonsYPos + 24)
         self.display:SetWide(self.panel:GetWide())
         function self.display:Paint() end
 
         self.lastPlayerCount = 0
         timer.Create("nadmin_update_scoreboard", 0.1, 0, function()
-            if #player.GetAll() ~= self.lastPlayerCount then --Refresh
-                self.lastPlayerCount = #player.GetAll()
+            -- if #player.GetAll() ~= self.lastPlayerCount then --Refresh
+            --     self.lastPlayerCount = #player.GetAll()
                 self.display:Clear()
 
                 local y = 0
@@ -1057,20 +1077,29 @@ function nadmin.scoreboard:Show()
                 -- Rank bar
                 local ranks = {}
                 for i, ply in ipairs(player.GetAll()) do
-                    if not table.HasValue(ranks, ply:GetRank()) then table.insert(ranks, ply:GetRank()) end
+                    local rank = ply:GetDisplayRank()
+                    if not table.HasValue(ranks, rank) then table.insert(ranks, rank) end
                 end
                 table.sort(ranks, function(a, b) return a.immunity > b.immunity end)
 
                 for i, rank in ipairs(ranks) do
                     local plylist = {}
                     for x, ply in ipairs(player.GetAll()) do
-                        if ply:GetRank().id == rank.id then table.insert(plylist, ply) end
+                        if ply:GetDisplayRank().id == rank.id then table.insert(plylist, ply) end
                     end
+
+                    local rIcon
+                    if nadmin.scoreboard.rankIconCache[rank.icon] then 
+                        rIcon = nadmin.scoreboard.rankIconCache[rank.icon]
+                    else 
+                        rIcon = Material(rank.icon)
+                        nadmin.scoreboard.rankIconCache[rank.icon] = rIcon
+                    end 
 
                     local rIcon = Material(rank.icon)
                     local wid = nadmin.scoreboard.panel:GetWide()
                     local rCol = rank.color
-                    local rTCol = nadmin:TextColor(nadmin.colors.gui.blue)
+                    local rTCol = nadmin:TextColor(nadmin.colors.gui.theme)
 
                     local bh = 0
                     if nadmin.clientData.useCompactSB then 
@@ -1085,7 +1114,7 @@ function nadmin.scoreboard:Show()
 
                     function bar:Paint(w, h)
                         if nadmin.clientData.useCompactSB then return end
-                        draw.RoundedBox(0, 0, 0, w, h, nadmin.colors.gui.blue)
+                        draw.RoundedBox(0, 0, 0, w, h, nadmin.scoreboard.panel.headerColor)
                         draw.RoundedBox(0, 0, 26, w, 2, rCol)
 
                         surface.SetDrawColor(255, 255, 255)
@@ -1108,7 +1137,8 @@ function nadmin.scoreboard:Show()
                         draw.Text({
                             text = "Deaths",
                             pos = {sort_deaths:GetPos() + sort_deaths:GetWide()/2, 14},
-                            font = "nadmin_derma", xalign = TEXT_ALIGN_CENTER,
+                            font = "nadmin_derma", 
+                            xalign = TEXT_ALIGN_CENTER,
                             yalign= TEXT_ALIGN_CENTER,
                             color = rTCol
                         })
@@ -1263,9 +1293,9 @@ function nadmin.scoreboard:Show()
                     end
                 end
 
-                self.panel:SetTall(96 + self.display:GetTall())
+                self.panel:SetTall(sortButtonsYPos + 24 + self.display:GetTall())
                 self.panel:Center()
-            end
+            -- end
         end)
     end
 end
