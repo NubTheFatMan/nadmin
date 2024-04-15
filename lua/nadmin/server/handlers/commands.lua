@@ -94,6 +94,7 @@ hook.Add("PlayerSay", "nadmin_chat", function(ply, msg, isTeam)
 end)
 
 concommand.Add("nadmin", function(ply, comm, argList, argStr)
+    if string.Trim(argStr) == "" then return MsgN("You must specify a command!") end
     local advArgs, args = nadmin:ParseArgs(argStr)
     local com = table.remove(args, 1)
 

@@ -52,12 +52,14 @@ Progress has been real slow and I'm lazy.
 # Installation
 Check the releases section on the right. If you download this repository as is, you'll sort of get a beta, but anything in the process of being refactored will be broken and there will be more untested stuff.
 
+To give yourself elevated access to the server and to manage this mod, run "`nadmin rank \[your_name_or_steamid] owner`" on the server console. This will give you full access to the server. 
+
 - - - -
 
 # Addon Created by NubTheFatMan
 Have any questions? Concerns? Suggestions? (All related to Nadmin)
 
-Discord: NubTheFatMan#6969\
+Discord: nubthefatman\
 Discord Guild: https://discord.gg/P8Un9Drm8p \
 Steam: NubTheFatMan (https://steamcommunity.com/id/nubthefatman/) \
 Website: https://nubstoys.xyz/
