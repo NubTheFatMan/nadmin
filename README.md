@@ -33,6 +33,15 @@ Progress has been real slow and I'm lazy.
 - Optimized the Administrate command.
 - Refactored the Announce command.
 
+## July 2023
+- Fixed client settings HUD options not saving correctly. Disabling the custom HUD would still show it upon rejoining.
+- Fixed the MOTD not saving properly.
+
+## February 2024
+- Made the scoreboard easier on the eyes, made the blue areas gray.
+- Made a display rank command. Work still needs to be done to make sure all commands support it.
+- Yet again restarting a tab_ranks refactor 💀
+
 - - - -
 
 # Installation
