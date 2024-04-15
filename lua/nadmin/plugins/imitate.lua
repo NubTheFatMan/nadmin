@@ -22,8 +22,10 @@ COMMAND.server = function(caller, args)
                 local tc = nadmin:GetNameColor(targ[1])
                 nadmin:Notify(mc, caller:Nick(), nadmin.colors.white, " has imitated ", tc, targ[1]:Nick(), nadmin.colors.white, ".")
 
-                targ[1].n_Imitated = true
-                targ[1]:Say(table.concat(args, " "))
+                net.Start("nadmin_imitate")
+                    net.WriteEntity(targ[1])
+                    net.WriteString(table.concat(args, " "))
+                net.Broadcast()
             else
                 nadmin:Notify(caller, nadmin.colors.red, nadmin.errors.notEnoughArgs)
             end
@@ -32,8 +34,6 @@ COMMAND.server = function(caller, args)
         else
             nadmin:Notify(caller, nadmin.colors.red, nadmin.errors.noTargLess)
         end
-        -- nadmin.SilentNotify = false
-        -- nadmin:Notify(nadmin:GetNameColor(caller) or nadmin.colors.blue, caller:Nick(), nadmin.colors.white, " ", table.concat(args, " "))
     else
         nadmin:Notify(caller, nadmin.colors.red, nadmin.errors.notEnoughArgs)
     end
@@ -48,7 +48,7 @@ COMMAND.advUsage = {
     },
     {
         type = "string",
-        text = "Action"
+        text = "Message"
     }
 }
 
@@ -70,3 +70,15 @@ COMMAND.scoreboard.OnClick = function(ply, rmb)
 end
 
 nadmin:RegisterCommand(COMMAND)
+
+if SERVER then 
+    util.AddNetworkString("nadmin_imitate")
+else 
+    net.Receive("nadmin_imitate", function()
+        local ply = net.ReadEntity()
+        local msg = net.ReadString()
+
+        -- ply, msg, isTeam, isDead
+        hook.Run("OnPlayerChat", ply, msg, false, not ply:Alive())
+    end)
+end

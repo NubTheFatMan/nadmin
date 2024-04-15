@@ -14,11 +14,6 @@ hook.Add("Think", "nadmin_cooldown_buffer", function()
 end)
 
 hook.Add("PlayerSay", "nadmin_chat", function(ply, msg, isTeam)
-    if ply.n_Imitated then
-        ply.n_Imitated = nil
-        return
-    end
-
     if nadmin.SilentNotify then nadmin.SilentNotify = false end
 
     local advArgs, args = nadmin:ParseArgs(msg)
