@@ -124,7 +124,6 @@ nadmin.plugins.levels       = false  -- Enables people to have levels.
 nadmin.plugins.logs         = true  -- Makes `nadmin:Log()` save to a file.
 nadmin.plugins.scoreboard   = true  -- Enables the custom scoreboard.
 nadmin.plugins.loadouts     = false -- Enables loadouts per rank.
-nadmin.plugins.propprotec   = true  -- Enables the prop protection module.
 nadmin.plugins.hud          = true  -- Enables the custom HUD
 
 --These are using when parsing time (4d2h, for example. It does (4 * nadmin.time.d) + (2 * nadmin.time.h))
