@@ -1,1 +1,3 @@
 cut/*
+lua/nadmin/plugins/tab_ranks.lua
+lua/nadmin/plugins/_testRichText.lua

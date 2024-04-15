@@ -1,13 +1,19 @@
+nadmin.hpRegen       = nadmin.hpRegen       or {}
+nadmin.hpRegen.cache = nadmin.hpRegen.cache or {}
+
+nadmin.hpRegen.amount = 2              -- How much health to add
+nadmin.hpRegen.rate   = 3              -- How long to wait before adding health
+
 nadmin:RegisterPerm({
     title = "Health Regeneration",
-    id = nadmin.hpRegen.perm
+    id = "hp_regen"
 })
 
 hook.Add("Think", "nadmin_hp_regen", function()
     local now = os.time()
     for i, ply in ipairs(player.GetAll()) do
         if not ply:Alive() then continue end
-        local can = ply:HasPerm(nadmin.hpRegen.perm)
+        local can = ply:HasPerm("hp_regen")
         
         if can then 
             if nadmin.plyPref and nadmin.plyPref[ply:SteamID()] and not nadmin.plyPref[ply:SteamID()].hpRegen then can = false end

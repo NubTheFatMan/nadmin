@@ -16,8 +16,6 @@ nadmin.entities      = nadmin.entities      or {}
 nadmin.errors        = nadmin.errors        or {}
 nadmin.features      = nadmin.features      or {}
 nadmin.forcedPrivs   = nadmin.forcedPrivs   or {}
-nadmin.hpRegen       = nadmin.hpRegen       or {}
-nadmin.hpRegen.cache = nadmin.hpRegen.cache or {}
 nadmin.icons         = nadmin.icons         or {}
 nadmin.immunity      = nadmin.immunity      or {}
 nadmin.menu          = nadmin.menu          or {}
@@ -91,11 +89,6 @@ nadmin.errors.noAccessTool    = "You do not have access to use this tool."
 nadmin.errors.noAccessVehicle = "You do not have access to spawn this vehicle."
 nadmin.errors.noAccessSWEP    = "You do not have access to this weapon."
 nadmin.errors.noAccessProp    = "You do not have access to this prop."
-
--- HP regeneration
-nadmin.hpRegen.amount = 2              -- How much health to add
-nadmin.hpRegen.rate   = 3              -- How long to wait before adding health
-nadmin.hpRegen.perm   = "health_regen" -- The permission the player must have to get health
 
 --Feel free to define your own immunities, either here or elsewhere!
 -- Deprecated. Most of the default ranks will just have 0 for immunity. Instead they are based off of access

@@ -4,7 +4,7 @@
 -- Formerly health_regeneration.lua
 nadmin:RegisterPerm({
     title = "Health Regeneration",
-    id = nadmin.hpRegen.perm
+    id = "hp_regen"
 })
 
 
