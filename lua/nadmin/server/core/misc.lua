@@ -2,6 +2,7 @@
 
 
 -- Formerly commands.lua
+util.AddNetworkString("nadmin_update_cmds")
 function nadmin:ReloadCommand(cmd)
     if isstring(cmd) then
         local f = "nadmin/plugins/" .. cmd .. ".lua"

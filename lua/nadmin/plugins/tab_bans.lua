@@ -792,6 +792,9 @@ if CLIENT then
         end
     end)
 else
+    util.AddNetworkString("nadmin_request_bans")
+    util.AddNetworkString("nadmin_edit_ban")
+    util.AddNetworkString("nadmin_freeze_ban")
     local function find(haystack, needle)
         return string.find(haystack, needle, 1, true)
     end

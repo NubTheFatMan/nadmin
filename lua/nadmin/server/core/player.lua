@@ -45,6 +45,7 @@ function nadmin:SaveData(id)
 end
 
 --HasGodMode fix for client
+util.AddNetworkString("nadmin_god")
 if not isfunction(PLAYER.oldGodEnable) then PLAYER.oldGodEnable = PLAYER.GodEnable end
 if not isfunction(PLAYER.oldGodDisable) then PLAYER.oldGodDisable = PLAYER.GodDisable end
 function PLAYER:GodEnable()
@@ -74,6 +75,8 @@ function PLAYER:AddReturnPosition(pos)
 end
 
 --Rank stuff
+util.AddNetworkString("nadmin_rank") 
+
 function PLAYER:SetRank(rank)
     if not IsValid(self) then return false end
 
@@ -100,6 +103,7 @@ function PLAYER:SetRank(rank)
 end
 
 --Nicknaming
+util.AddNetworkString("nadmin_nickname")
 function PLAYER:SetNick(nick, no_save)
     if not IsValid(self) then return end
 
@@ -118,6 +122,7 @@ function PLAYER:SetNick(nick, no_save)
 end
 
 -- Playtime
+util.AddNetworkString("nadmin_playtime")
 function PLAYER:SetPlayTime(time)
     if not IsValid(self) then return false end
     self:SetNWInt("nadmin_playtime", tonumber(time))

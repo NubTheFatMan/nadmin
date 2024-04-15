@@ -1,3 +1,6 @@
+util.AddNetworkString("nadmin_clientRun")
+util.AddNetworkString("nadmin_command")
+
 -- To prevent spammers/exploiters from crashing the server by spamming cmds,
 -- we need to have a cooldown to block commands
 nadmin.buffer = {}

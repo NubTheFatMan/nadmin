@@ -1,0 +1,1 @@
+util.AddNetworkString("nadmin_restrict_perm")

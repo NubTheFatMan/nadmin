@@ -1,4 +1,5 @@
---Notifications
+util.AddNetworkString("nadmin_notification")
+
 nadmin.SilentNotify = false --If true, the the notification isn't sent. Gets set false on a new message, unless it starts with a silent prefix
 function nadmin:Notify(...) --Function copied from Evolve
     local ply --Who we send the print to
@@ -79,18 +80,4 @@ function nadmin:Log(typ, str, noPrint)
             file.Append(dir .. "/" .. date .. ".txt", "\n[" .. hour .. "]" .. tostring(str))
         end
     end
-end
-
--- Announcements
-function nadmin:Announce(str, len)
-    if not isstring(str) then return end
-    if #string.Trim(str) == 0 then return end
-    if not isnumber(len) then return end
-
-    if len < 1 then return end
-
-    net.Start("nadmin_announcement")
-        net.WriteString(str)
-        net.WriteFloat(len)
-    net.Broadcast()
 end

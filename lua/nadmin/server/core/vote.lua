@@ -1,4 +1,5 @@
 nadmin.vote = nadmin.vote or {}
+util.AddNetworkString("nadmin_cast_vote")
 
 function nadmin:CreateVote(tbl)
     nadmin.vote.active = false

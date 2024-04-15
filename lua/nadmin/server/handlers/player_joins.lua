@@ -1,3 +1,5 @@
+util.AddNetworkString("nadmin_send_register")
+
 hook.Add("CheckPassword", "nadmin_disconnect_bans", function(id64, ip, svPass, clPass, nick)
     local steamID = util.SteamIDFrom64(id64)
 

@@ -3,6 +3,7 @@ function nadmin:SaveRanks()
     MsgN("[Nadmin]Saving ranks...")
 end
 
+util.AddNetworkString("nadmin_send_updated_ranks")
 function nadmin:SendRanksToClients()
     net.Start("nadmin_send_updated_ranks")
         net.WriteTable(nadmin.ranks)
