@@ -42,10 +42,12 @@ Progress has been real slow and I'm lazy.
 - Made a display rank command. Work still needs to be done to make sure all commands support it.
 - Yet again restarting a tab_ranks refactor 💀
 
-## March 2024
+## April 2024
 - Cut prop protection module since it was pretty much a copy and paste of NADMOD prop protection. Never should have been implemented in the first place.
 - Cut profiles tab (for now) because it doesn't do anything at the moment and won't be worked on for a while.
 - Cut the leveling and HUD modules because they added no value. If they come back, they will need to actually integrate with using Nadmin like the scoreboard.
+- Fixed a possible exploit with the imitate command. Before you could make someone run a command from any other mod. Now it just makes it look they spoke in chat, how it was originally supposed to work.
+- Moved network strings to their appropriate files and deleted the file that contained some but not all network strings.
 
 - - - -
 
@@ -74,7 +76,7 @@ Here are some notable things I want to at some point, implement.
 - Force Remove Spawn Point: Read above.
 
 ### Profiles
-I started on a profiles tab a long time ago and I eventually want to make it functional. Meant for server management, the profiles tool allows admins to search through all players who have every played the server and manage information about them. They could view warning history (when implemented), change rank, set a forced name when they join again, or even just add notes about them that other staff management can see. Banning would be a thing too if the admin has permission.
+*This feature was cut for now*. I started on a profiles tab a long time ago and I eventually want to make it functional. Meant for server management, the profiles tool allows admins to search through all players who have ever played the server and manage information about them. They could view warning history (when implemented), change rank, set a forced name when they join again, or even just add notes about them that other staff management can see. Banning would be a thing too if the admin has permission.
 
 ### Functionality
 These are things I want Nadmin to be able to do.
@@ -82,13 +84,8 @@ These are things I want Nadmin to be able to do.
 - Warnings: A warning system where players can be warned for misbehaving, and having a record for infractions. These can be used to automatically ban based on recent infractions.
 - Nadmin Config: I want to make a section in the Server Settings tab that allows you to change some of Nadmin's behavior:
     - Manage command argument restrictions.
-    - Manage `addons` and `discord` command link. Might just remove the commands all together, a server owner can just make adverts.
-    - Restrict commands that can be ran through the `rcon` command. Although this would sort of fall under command argument restrictions.
-    - Change the Asay command prefix (Starting a message with `@` instead of `!asay`).
+    - Restrict commands that can be ran through the `rcon` command. Although this would fall under command argument restrictions.
     - Manage prefixs that get Nadmin's attention.
-    - Change how often player data is saved.
-    - Manage health regeneration
-    - Manage plugins. I want to change plugins up a bit to where a server restart isn't necessary. Some will work without a restart, but some require a restart.
 - In addition to warnings, I want to add a general logging system. This would allow admins to go back in time and view what a player has done.
 
 ### Core
