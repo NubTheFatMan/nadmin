@@ -93,6 +93,19 @@ end
 --Rank stuff
 function PLAYER:GetRank()
     if not IsValid(self) then return nadmin.null_rank end
+    if SERVER then 
+        local data = nadmin.userdata[self:SteamID()]
+        if data then return nadmin:FindRank(data.rank) end
+
+        return nadmin.null_rank
+    else 
+        if self == LocalPlayer() and isstring(nadmin.realRank) then return nadmin:FindRank(nadmin.realRank) end
+        return nadmin:FindRank(self:GetNWString("nadmin_rank", nadmin.null_rank.id))
+    end
+end
+
+function PLAYER:GetDisplayRank()
+    if not IsValid(self) then return nadmin.null_rank end
     return nadmin:FindRank(self:GetNWString("nadmin_rank", nadmin.null_rank.id))
 end
 

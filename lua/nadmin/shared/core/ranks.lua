@@ -1,9 +1,9 @@
 nadmin.null_rank = {
     title = "Unranked",
-    id = "DEFAULT", 
+    id = "null", 
     icon = "no_texture",
     immunity = 0,
-    access = nadmin.access.default,
+    access = nadmin.access.user,
     autoPromote = {when = 0, rank = "", enabled = false},
     loadout = {},
     color = Color(255, 255, 255),
@@ -12,15 +12,15 @@ nadmin.null_rank = {
 }
 
 function nadmin:RegisterRank(tbl)
-    local rank = tbl or {}
+    local rank = table.Copy(tbl or {})
 
-    rank.title       = isstring(tbl.title)      and tbl.title       or "Undefined"
-    rank.id          = isstring(tbl.id)         and tbl.id          or string.lower(string.Replace(rank.title, " ", "_"))
-    rank.icon        = isstring(tbl.icon)       and tbl.icon        or "icon16/user.png"
-    rank.immunity    = isnumber(tbl.immunity)   and tbl.immunity    or nadmin.immunity.everyone
-    rank.access      = isnumber(tbl.access)     and tbl.access      or nadmin.access.user
-    rank.inheritFrom = istable(tbl.inheritFrom) and tbl.inheritFrom or null
-    rank.autoPromote = istable(tbl.autoPromote) and tbl.autoPromote or {when = 0, rank = "", enabled = false, timeBasedOverall = false}
+    rank.title       = isstring(tbl.title)       and tbl.title       or "Undefined"
+    rank.id          = isstring(tbl.id)          and tbl.id          or string.lower(string.Replace(rank.title, " ", "_"))
+    rank.icon        = isstring(tbl.icon)        and tbl.icon        or "icon16/user.png"
+    rank.inheritFrom = isstring(tbl.inheritFrom) and tbl.inheritFrom or ""
+    rank.access      = isnumber(tbl.access)      and tbl.access      or nadmin.access.user
+    rank.immunity    = isnumber(tbl.immunity)    and tbl.immunity    or nadmin.immunity.everyone
+    rank.autoPromote = istable(tbl.autoPromote)  and tbl.autoPromote or {when = 0, rank = "", enabled = false}
 
     -- Default gmod loadout
     rank.loadout = (istable(tbl.loadout) and table.IsSequential(tbl.loadout)) and tbl.loadout, {"weapon_crowbar", "weapon_physcannon", "weapon_physgun", "weapon_pistol", "weapon_357", "weapon_smg1", "weapon_ar2", "weapon_shotgun", "weapon_crossbow", "weapon_frag", "weapon_rpg", "gmod_camera", "gmod_tool"}
@@ -29,7 +29,10 @@ function nadmin:RegisterRank(tbl)
     elseif istable(tbl.color) then rank.color = Color(tbl.color.r, tbl.color.g, tbl.color.b, tbl.color.a)
     else rank.color = Color(255, 255, 255) end
 
+    -- Restrictions are for the spawn menu. Acts as a blacklist unless the rank access is "Restricted". Entities, Weapons, Vehicles, etc get put in here.
     rank.restrictions = (istable(tbl.restrictions) and table.IsSequential(tbl.restrictions)) and tbl.restrictions or {}
+
+    -- Privileges are for nadmin features, acts as a whitelist. Commands, permissions, tabs, etc get put in here.
     rank.privileges   = (istable(tbl.privileges)   and table.IsSequential(tbl.privileges))   and tbl.privileges   or {}
 
     nadmin.ranks[rank.id] = table.Copy(rank)
@@ -38,11 +41,14 @@ function nadmin:RegisterRank(tbl)
 end
 
 function nadmin:RegisterPerm(tbl)
-    local perm = tbl
-    if not istable(perm) then return end
+    if not istable(tbl) then return end
+    local perm = table.Copy(tbl or {})
 
     perm.title = isstring(tbl.title) and tbl.title or "Undefined"
     perm.id    = isstring(tbl.id)    and tbl.id    or string.lower(string.Replace(perm.title, " ", "_"))
+
+    perm.category = isstring(tbl.category) or "Uncategorized"
+    -- subCategory can also be defined as a string
 
     if perm.forcedPriv then
         self.forcedPrivs[perm.id] = true
