@@ -13,7 +13,6 @@ util.AddNetworkString("nadmin_updateRank")         -- Used when a role is update
 util.AddNetworkString("nadmin_update_cmds")        -- Used when reloading a command
 util.AddNetworkString("nadmin_god")                -- Used in the Player:HasGodMode bug fix
 util.AddNetworkString("nadmin_motd_request")       -- Used when the player calls the motd command
-util.AddNetworkString("nadmin_level")              -- Player's level
 util.AddNetworkString("nadmin_xp")                 -- Player's xp
 util.AddNetworkString("nadmin_cast_vote")          -- Used for votes. Server broadcast details to everyone, clients send a response back on this string
 util.AddNetworkString("nadmin_request_members")    -- Used on the ranks tab

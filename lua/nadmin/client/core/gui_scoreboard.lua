@@ -382,56 +382,6 @@ function nadmin.scoreboard:Show()
             end
             y = y + health:GetTall() + 4
 
-            if nadmin.plugins.levels then
-                local lvl = vgui.Create("DButton", info)
-                lvl:SetPos(4, y)
-                lvl:SetSize(info:GetWide() - 8, 16)
-                lvl:SetText("")
-                function lvl:Paint(w, h)
-                    local info = nadmin.scoreboard.player:GetLevel()
-                    surface.SetFont(font_small)
-
-                    local lvl = "LVL: " .. tostring(info.level) .. " (XP: " .. tostring(info.xp) .. "/" .. tostring(info.need) .. ")"
-
-                    local wid = surface.GetTextSize(lvl) + 8
-                    draw.RoundedBox(0, 0, 0, wid, h, nadmin:DarkenColor(nadmin.colors.gui.theme, 50))
-                    draw.Text({
-                        text = lvl,
-                        font = font_small,
-                        pos = {wid/2, h/2},
-                        xalign = TEXT_ALIGN_CENTER,
-                        yalign = TEXT_ALIGN_CENTER,
-                        color = nadmin:TextColor(nadmin.colors.gui.theme)
-                    })
-
-                    local wBar = w - wid - 4
-                    local xp = math.Clamp(info.xp/info.need, 0, 1)
-                    draw.RoundedBox(0, wid+4, 0, wBar, h, nadmin:AlphaColor(nadmin.colors.gui.xp, 50))
-                    draw.RoundedBox(0, wid+4, 0, wBar * xp, h, nadmin.colors.gui.xp)
-
-                    if self:IsHovered() then
-                        local copy = "Click to Copy"
-                        local width = surface.GetTextSize(copy)
-                        local xPos = math.Clamp(gui.MouseX() - self:LocalToScreen(0, 0), (wid + 8) + width/2, w - width/2 - 4)
-                        draw.Text({
-                            text = copy,
-                            font = font_small,
-                            pos = {xPos, h/2},
-                            xalign = TEXT_ALIGN_CENTER,
-                            yalign = TEXT_ALIGN_CENTER,
-                            color = Color(255, 255, 255)
-                        })
-                    end
-                end
-                function lvl:DoClick()
-                    local info = nadmin.scoreboard.player:GetLevel()
-                    SetClipboardText("LVL: " .. tostring(info.level) .. " (XP: " .. tostring(info.xp) .. "/" .. tostring(info.need) .. ")")
-                    notification.AddLegacy("Level copied to clipboard!", NOTIFY_HINT, 3)
-                    surface.PlaySound("ambient/levels/canals/drip" .. tostring(math.random(1, 4)) .. ".wav")
-                end
-                y = y + lvl:GetTall() + 4
-            end
-
             local copySteam = vgui.Create("DButton", info)
             copySteam:SetPos(4, y)
             copySteam:SetSize(24, 24)
@@ -706,7 +656,6 @@ function nadmin.scoreboard:Show()
             end
             function copyAll:DoClick()
                 local ply = nadmin.scoreboard.player
-                local info = ply:GetLevel()
                 local str = "Player: " .. ply:Nick()
                 str = str .. "\n" .. "Steam ID: " .. ply:SteamID()
                 str = str .. "\n" .. "Kills: " .. ply:Frags()
@@ -714,7 +663,6 @@ function nadmin.scoreboard:Show()
                 str = str .. "\n" .. "Playtime: " .. nadmin:TimeToString(ply:GetPlayTime(), true)
                 str = str .. "\n" .. "Ping: " .. ply:Ping()
                 str = str .. "\n" .. "Rank: " .. ply:GetDisplayRank().title
-                str = str .. "\n" .. "Level: " .. tostring(info.level) .. " (XP: " .. tostring(info.xp) .. "/" .. tostring(info.need) .. ")"
                 SetClipboardText(str)
                 notification.AddLegacy("All player info copied to clipboard!", NOTIFY_HINT, 3)
                 surface.PlaySound("ambient/levels/canals/drip" .. tostring(math.random(1, 4)) .. ".wav")

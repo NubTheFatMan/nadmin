@@ -198,22 +198,6 @@ function PLAYER:BetterThanOrEqual(ply)
     return false
 end
 
--- Level stuff
-function PLAYER:GetLevel()
-    if not IsValid(self) then return {level = 0, xp = 0, need = 40} end
-
-    local lvl = self:GetNWInt("nadmin_level", 1)
-    local xp = self:GetNWInt("nadmin_xp", 0)
-    local xpToLevel = GetXpToLevel(lvl)
-
-    return {level = lvl, xp = xp, need = xpToLevel}
-end
-
-function GetXpToLevel(level)
-    local x = nadmin:Ternary(isnumber(level), level, 0)
-    return nadmin.levelReq.mult*x + nadmin.levelReq.base
-end
-
 --Nicknaming
 if not isfunction(PLAYER.RealName) then PLAYER.RealName = PLAYER.Nick end
 function PLAYER:Nick()

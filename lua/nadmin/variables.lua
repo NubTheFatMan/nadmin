@@ -20,7 +20,6 @@ nadmin.hpRegen       = nadmin.hpRegen       or {}
 nadmin.hpRegen.cache = nadmin.hpRegen.cache or {}
 nadmin.icons         = nadmin.icons         or {}
 nadmin.immunity      = nadmin.immunity      or {}
-nadmin.levelReq      = nadmin.levelReq      or {}
 nadmin.menu          = nadmin.menu          or {}
 nadmin.npcs          = nadmin.npcs          or {}
 nadmin.plugins       = nadmin.plugins       or {}
@@ -120,7 +119,6 @@ nadmin.access.owner      = 5  -- This rank has owner access. They have access to
 nadmin.plugins.afk          = true  -- Enables AFK system that stops players from gaining playtime.
 nadmin.plugins.badges       = true  -- Enabled the use of custom badges.
 nadmin.plugins.joinMessages = true  -- Enables join and leave messages.
-nadmin.plugins.levels       = false  -- Enables people to have levels.
 nadmin.plugins.logs         = true  -- Makes `nadmin:Log()` save to a file.
 nadmin.plugins.scoreboard   = true  -- Enables the custom scoreboard.
 nadmin.plugins.loadouts     = false -- Enables loadouts per rank.
@@ -134,15 +132,6 @@ nadmin.time.d = 3600*24
 nadmin.time.w = (3600*24)*7
 nadmin.time.mo = (3600*24)*30
 nadmin.time.y = (3600*24)*365
-
-nadmin.levelReq.base = 400 -- The base amount of XP required for a levelup
-nadmin.levelReq.mult = 200 -- This number * their level added onto the base (mult*lvl + base)
-
-nadmin.xp.amount   = 5 -- How much xp to give in the rate below
-nadmin.xp.rate     = 60 -- How often to give xp (in seconds)
-nadmin.xp.rateKill = 10 -- How much XP to give for killing another player
-
--- INTERNAL BEYOND THIS POINT, DON'T CHANGE!!
 
 nadmin.MODE_BELOW = 0 --Used in nadmin:FindPlayer(), argument 3
 nadmin.MODE_SAME  = 1 --Used in nadmin:FindPlayer(), argument 3
@@ -163,10 +152,6 @@ nadmin.defaults.userdata = { --Userdata structure for a player
     lastJoined = {
         name = "",
         when = 0
-    },
-    level = {
-        lvl = 1,
-        xp = 0
     },
     ppFriends = {},
     money = 0,

@@ -80,7 +80,6 @@ hook.Add("PlayerInitialSpawn", "nadmin_spawn", function(ply)
 
             ply:SetRank(rank)
             ply:SetPlayTime(data.playtime or 0)
-            ply:SetLevel(data.level.lvl or 1, data.level.xp or 0)
             if isstring(data.forcedName) and data.forcedName ~= "" then ply:SetNick(data.forcedName, true) end
 
             -- This is done incase they leave before they are saved.
@@ -90,7 +89,6 @@ hook.Add("PlayerInitialSpawn", "nadmin_spawn", function(ply)
             local defRank = nadmin:DefaultRank()
             ply:SetRank(defRank)
             ply:SetPlayTime(0)
-            ply:SetLevel(1)
             nadmin.userdata[ply:SteamID()].lastJoined.name = ply:Nick()
         end
 
@@ -110,7 +108,6 @@ hook.Add("PlayerInitialSpawn", "nadmin_spawn", function(ply)
     else
         ply:SetRank(nadmin:DefaultRank())
         ply:SetPlayTime(0)
-        ply:SetLevel(1)
     end
 
     local lastLeft = 0

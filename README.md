@@ -49,11 +49,6 @@ Check the releases section on the right. If you download this repository as is, 
 
 - - - -
 
-# Documentation
-No documentation has been created yet. Please check back later.
-
-- - - -
-
 # Addon Created by NubTheFatMan
 Have any questions? Concerns? Suggestions? (All related to Nadmin)
 
@@ -87,7 +82,6 @@ These are things I want Nadmin to be able to do.
     - Change how often player data is saved.
     - Manage health regeneration
     - Manage plugins. I want to change plugins up a bit to where a server restart isn't necessary. Some will work without a restart, but some require a restart.
-- The leveling system could use some more things. Players should be given xp for combat. Or they get a special rank for reaching a certain level. Or items can be restricted to a certain level.
 - In addition to warnings, I want to add a general logging system. This would allow admins to go back in time and view what a player has done.
 
 ### Core
