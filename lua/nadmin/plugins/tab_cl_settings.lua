@@ -212,56 +212,6 @@ if CLIENT then
                         end)
                     end
                 end},
-                {"HUD Style", "icon16/layout.png", function() 
-                    local enabled = nadmin.vgui:DCheckBox(nil, {content:GetWide()-8, 32}, content)
-                    enabled:Dock(TOP)
-                    enabled:DockMargin(4, 4, 4, 0)
-                    enabled:SetColor(nadmin.colors.gui.theme)
-                    enabled:SetText("Use custom HUD")
-                    enabled:SetChecked(nadmin.clientData.useCustomHud)
-
-                    function enabled:OnChecked(checked)
-                        if checked then 
-                            nadmin.plugins.hud = true
-                            nadmin.hud:Show(true)
-                        else 
-                            nadmin.plugins.hud = false
-                            nadmin.hud:Hide()
-                        end
-                    end
-
-                    local style = nadmin.vgui:DLabel(nil, "Select a HUD Style:", content, true)
-                    style:Dock(TOP)
-                    style:DockMargin(4, 4, 4, 0)
-
-                    local options = nadmin.vgui:DComboBox(nil, {content:GetWide() - 8, 32}, content)
-                    options:Dock(TOP)
-                    options:DockMargin(4, 4, 4, 0)
-                    options:SetColor(nadmin.colors.gui.theme)
-                    options:SetValue("Select a HUD style...")
-
-                    for title, _ in pairs(nadmin.huds) do
-                        options:AddChoice(title, title, nadmin.clientData.hudStyle == title)
-                    end
-
-                    function options:OnSelect(ind, value, data) 
-                        nadmin.clientData.hudStyle = data
-                        if nadmin.plugins.hud and nadmin.clientData.useCustomHud then 
-                            nadmin.hud:Show(true)
-                        end
-                    end
-
-                    saveBtn = nadmin.vgui:DButton(nil, {content:GetWide()-8, 32}, content)
-                    saveBtn:Dock(TOP)
-                    saveBtn:DockMargin(4, 4, 4, 0)
-                    saveBtn:SetText("Save Configuration")
-
-                    function saveBtn:DoClick()
-                        nadmin.clientData.useCustomHud = enabled:GetChecked()
-                        nadmin.plugins.hud = enabled:GetChecked()
-                        file.Write("nadmin_config.txt", util.TableToJSON(nadmin.clientData))
-                    end
-                end},
                 {"Other", "icon16/wrench.png", function()
                     local noclipInWar = nadmin.vgui:DCheckBox(nil, {content:GetWide()-8, 32}, content)
                     noclipInWar:Dock(TOP)

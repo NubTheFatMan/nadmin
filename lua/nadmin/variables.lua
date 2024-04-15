@@ -110,12 +110,10 @@ nadmin.access.superadmin = 4  -- This rank has super admin access on the server
 nadmin.access.owner      = 5  -- This rank has owner access. They have access to everything and nothing can be restricted from them
 
 nadmin.plugins.afk          = true  -- Enables AFK system that stops players from gaining playtime.
-nadmin.plugins.badges       = true  -- Enabled the use of custom badges.
 nadmin.plugins.joinMessages = true  -- Enables join and leave messages.
 nadmin.plugins.logs         = true  -- Makes `nadmin:Log()` save to a file.
 nadmin.plugins.scoreboard   = true  -- Enables the custom scoreboard.
 nadmin.plugins.loadouts     = false -- Enables loadouts per rank.
-nadmin.plugins.hud          = true  -- Enables the custom HUD
 
 --These are using when parsing time (4d2h, for example. It does (4 * nadmin.time.d) + (2 * nadmin.time.h))
 nadmin.time.s = 1
@@ -147,6 +145,5 @@ nadmin.defaults.userdata = { --Userdata structure for a player
         when = 0
     },
     ppFriends = {},
-    money = 0,
-    badges = {}
+    money = 0
 }

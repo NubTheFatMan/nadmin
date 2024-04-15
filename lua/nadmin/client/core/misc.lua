@@ -48,12 +48,6 @@ if not nadmin.createdFonts then
         size = 40,
         weight = 800
     })
-    surface.CreateFont("nadmin_hud", {
-        size = 28
-    })
-    surface.CreateFont("nadmin_hud_small", {
-        size = 20
-    })
 end
 
 

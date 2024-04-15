@@ -29,23 +29,3 @@ hook.Add("ScoreboardHide", "nadmin_close_scoreboard", function()
     if IsValid(nadmin.scoreboard.player) and istable(nadmin.scoreboard.cmd) then nadmin.scoreboard.shouldClose = true return end
     nadmin.scoreboard:Hide()
 end)
-
-
--- Formerly hud_replacement.lua
-if CLIENT then
-    local hide = {
-        ["CHudBattery"] = true,
-        ["CHudHealth"] = true,
-        ["CHudAmmo"] = true,
-        ["CHudSecondaryAmmo"] = true
-    }
-    hook.Add("HUDShouldDraw", "nadmin_hide_default_hud", function(name)
-        if not IsValid(LocalPlayer()) then return end
-        if nadmin.plugins.hud and nadmin.clientData.useCustomHud then
-            if hide[name] then return false end
-            nadmin.hud:Show(false)
-        else
-            nadmin.hud:Hide()
-        end
-    end)
-end

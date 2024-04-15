@@ -7,9 +7,6 @@ if not file.Exists("nadmin_config.txt", "DATA") then
     nadmin.clientData.silentNotifs  = true
     nadmin.clientData.hpRegen       = true
     nadmin.clientData.useCompactSB  = false
-    nadmin.clientData.useCustomHud  = true
-    
-    nadmin.clientData.hudStyle      = "Fluid"
     
     nadmin.clientData.guiColors = {
         theme = nadmin.defaults.colors.gui.theme,
@@ -31,17 +28,6 @@ else
     nadmin.clientData.silentNotifs  = not isbool(json.silentNotifs)  and true              or json.silentNotifs
     nadmin.clientData.hpRegen       = not isbool(json.hpRegen)       and true              or json.hpRegen
     nadmin.clientData.useCompactSB  =     isbool(json.useCompactSB)  and json.useCompactSB or false
-    nadmin.clientData.useCustomHud  = not isbool(json.useCustomHud)  and true              or json.useCustomHud
-
-    -- nadmin.clientData.allowNoclip   = nadmin:Ternary(isbool(json.allowNoclip),   json.allowNoclip,   true)
-    -- nadmin.clientData.physgunOthers = nadmin:Ternary(isbool(json.physgunOthers), json.physgunOthers, true)
-    -- nadmin.clientData.afkTime       = nadmin:Ternary(isbool(json.afkTime),       json.afkTime,       false)
-    -- nadmin.clientData.silentNotifs  = nadmin:Ternary(isbool(json.silentNotifs),  json.silentNotifs,  true)
-    -- nadmin.clientData.hpRegen       = nadmin:Ternary(isbool(json.hpRegen),       json.hpRegen,       true)
-    -- nadmin.clientData.useCompactSB  = nadmin:Ternary(isbool(json.useCompactSB),  json.useCompactSB,  false)
-    -- nadmin.clientData.useCustomHud  = nadmin:Ternary(isbool(json.useCustomHud),  json.useCustomHud,  true)
-    
-    nadmin.clientData.hudStyle = json.hudStyle or "Fluid"
     
     local t = json.guiColors.theme or nadmin.defaults.colors.gui.theme
     local b = json.guiColors.blue  or nadmin.defaults.colors.gui.blue

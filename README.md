@@ -42,6 +42,11 @@ Progress has been real slow and I'm lazy.
 - Made a display rank command. Work still needs to be done to make sure all commands support it.
 - Yet again restarting a tab_ranks refactor 💀
 
+## March 2024
+- Cut prop protection module since it was pretty much a copy and paste of NADMOD prop protection. Never should have been implemented in the first place.
+- Cut profiles tab (for now) because it doesn't do anything at the moment and won't be worked on for a while.
+- Cut the leveling and HUD modules because they added no value. If they come back, they will need to actually integrate with using Nadmin like the scoreboard.
+
 - - - -
 
 # Installation

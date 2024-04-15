@@ -1,5 +1,5 @@
 -- The purpose of this file is to replace chat colors to incorperate ranks.
-hook.Add("OnPlayerChat", "nadmin_hud_replacement", function(ply, msg, isTeam, isDead)
+hook.Add("OnPlayerChat", "nadmin_chat_replacement", function(ply, msg, isTeam, isDead)
     if #string.Trim(msg) > 0 then
         local tbl = {}
 
