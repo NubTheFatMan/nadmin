@@ -1,6 +1,6 @@
 local cmd = {}
 cmd.title = "RCON"
-cmd.description = "Run a command on the console through your client (dangerous command)."
+cmd.description = "Run a command on the console through your client. This is a dangerous permission to grant as someone could basically hijack your server. Only allow ranks who are given complete trust."
 cmd.author = "Nub"
 cmd.timeCreated = "Sunday, May 24 2020 @ 12:32 AM CST"
 cmd.category = "Server Management"

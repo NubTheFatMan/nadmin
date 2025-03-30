@@ -37,6 +37,9 @@ if not nadmin.createdFonts then
         size = 20,
         weight = 800
     })
+    surface.CreateFont("nadmin_derma_bigger", {
+        size = 24
+    })
     surface.CreateFont("nadmin_derma_large", {
         size = 32
     })

@@ -62,7 +62,6 @@ hook.Add("PlayerSay", "nadmin_chat", function(ply, msg, isTeam)
                     ran = true
                     nadmin:Log("messages", ply:PlayerToString("nick (steamid)<ipaddress>") .. " has ran command \"" .. command.title .. "\" with arguments \"" .. table.concat(args, " ") .. "\"")
                     if isfunction(command.server) then
-                        lastRan = os.time()
                         local success, err = pcall(command.server, ply, args, advArgs)
                         if not success then
                             nadmin:Notify(ply, nadmin.colors.red, "Error in command \"" .. command.title .. "\":\n" .. err)
@@ -102,14 +101,13 @@ concommand.Add("nadmin", function(ply, comm, argList, argStr)
             ran = true
             if isfunction(cmd.server) then
                 nadmin:Log("messages", NULL:Nick() .. " has ran command \"" .. cmd.title .. "\" with arguments \"" .. table.concat(args, "  ") .. "\"")
-                -- cmd.server(NULL, args, advArgs) -- Debugging (errors have a stack trace)
                 local success, err = pcall(cmd.server, NULL, args, advArgs)
                 if not success then
                     nadmin:Log("messages", "Error in command \"" .. cmd.title .. "\":\n" .. err)
                 end
             end
             if isfunction(cmd.client) then
-                MsgN("Unable to run client function, as you're the console. You must do this in game.")
+                MsgN("Unable to run client callback, as you're the console. You must do this in game.")
             end
         end
     end
