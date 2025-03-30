@@ -26,8 +26,8 @@ hook.Add("Initialize", "nadmin_add_right_click_perms", function()
                     local ranks = {}
                     local call_rank = LocalPlayer():GetRank()
                     for id, rank in pairs(nadmin.ranks) do
-                        if rank.ownerRank or rank.immunity >= nadmin.immunity.owner then continue end
-                        if rank.immunity >= call_rank.immunity then continue end
+                        if rank.access >= nadmin.access.owner then continue end
+                        if rank.access > call_rank.access or (rank.access == call_rank.access and rank.immunity >= call_rank.immunity) then continue end
                         table.insert(ranks, {title = rank.title, id = rank.id, immunity = rank.immunity, restrictions = rank.restrictions, loadout = rank.loadout})
                     end
                     table.sort(ranks, function(a, b) return a.immunity < b.immunity end)
@@ -55,7 +55,7 @@ hook.Add("Initialize", "nadmin_add_right_click_perms", function()
                         local ranks = {}
                         local call_rank = LocalPlayer():GetRank()
                         for id, rank in pairs(nadmin.ranks) do
-                            if not call_rank.ownerRank or call_rank.immunity < nadmin.immunity.owner then
+                            if call_rank.immunity < nadmin.immunity.owner then
                                 if rank.immunity >= call_rank.immunity then continue end
                             end
                             table.insert(ranks, {title = rank.title, id = rank.id, immunity = rank.immunity, restrictions = rank.restrictions, loadout = rank.loadout})

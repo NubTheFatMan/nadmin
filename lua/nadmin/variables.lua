@@ -90,16 +90,6 @@ nadmin.errors.noAccessVehicle = "You do not have access to spawn this vehicle."
 nadmin.errors.noAccessSWEP    = "You do not have access to this weapon."
 nadmin.errors.noAccessProp    = "You do not have access to this prop."
 
---Feel free to define your own immunities, either here or elsewhere!
--- Deprecated. Most of the default ranks will just have 0 for immunity. Instead they are based off of access
-nadmin.immunity.everyone   = 0   --Default immunity of players.
-nadmin.immunity.regular    = 20  --Immunity of regulars.
-nadmin.immunity.respected  = 40  --Immunity of respected players.
-nadmin.immunity.admin      = 60  --Immunity of administrators.
-nadmin.immunity.superadmin = 80  --Immunity of superadministrators.
-nadmin.immunity.owner      = 100 --Immunity of owners.
-
--- Access levels, like immunity but less precise. These actual tell if the player is admin or superadmin while immunity is who can target who
 -- WARNING: If you add your own access variables, they must be in sequential order with no gaps and start from 0, otherwise you will encounter errors!
 --          Any access variables you add won't show up in the ranks tab. The buttons are hard coded. Really this should be all you need.
 nadmin.access.restricted = 0 -- This access level restricts everything, and the restrictions acts as a whitelist. Like a psuedo ban
@@ -115,7 +105,7 @@ nadmin.plugins.logs         = true  -- Makes `nadmin:Log()` save to a file.
 nadmin.plugins.scoreboard   = true  -- Enables the custom scoreboard.
 nadmin.plugins.loadouts     = false -- Enables loadouts per rank.
 
---These are using when parsing time (4d2h, for example. It does (4 * nadmin.time.d) + (2 * nadmin.time.h))
+--These are using when parsing time (4d2h, for example, is (4 * nadmin.time.d) + (2 * nadmin.time.h))
 nadmin.time.s = 1
 nadmin.time.m = 60
 nadmin.time.h = 3600

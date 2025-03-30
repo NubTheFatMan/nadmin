@@ -29,11 +29,11 @@ function nadmin:ValidateRank(rank, oid, ply)
     end
     if table.HasValue(ranks, rank.id) then return NULL, "ID already exists on another rank, can't overwrite." end --This rank already exists, we don't want to overwrite it.
 
-    if not isnumber(out.immunity) then out.immunity = nadmin.immunity.everyone end
+    if not isnumber(out.immunity) then out.immunity = 0 end
     -- Validate the immunity
     if istable(callerRank) then -- We only want to do this if the caller rank exists
         -- We don't want the immunity < 0, nor do we want this rank to be higher than the caller's rank
-        if out.immunity < 0 or (out.immunity >= callerRank.immunity and (out.immunity < nadmin.immunity.owner or not out.ownerRank)) then return NULL, "Immunity must be more than 0 or less than your immunity." end
+        -- TODO
     end
 
     if not isstring(out.icon) then out.icon = "icon16/user.png" end
@@ -52,9 +52,9 @@ function nadmin:ValidateRank(rank, oid, ply)
             ap.rank = "" --Since autopromotion isn't a critical component, we don't want to error
         else
             -- Owners should bypass all restrictions
-            if not targRank.ownerRank or targRank.immunity < nadmin.immunity.owners then
+            if targRank.access < nadmin.access.owner then
                 --We don't want to keep this rank if it's higher than the current player's rank
-                if istable(targRank) and targRank.immunity < out.immunity then ap.rank = "" end
+                -- TODO
             end
         end
     end

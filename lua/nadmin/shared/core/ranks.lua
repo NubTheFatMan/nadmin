@@ -19,7 +19,7 @@ function nadmin:RegisterRank(tbl)
     rank.icon        = isstring(tbl.icon)        and tbl.icon        or "icon16/user.png"
     rank.inheritFrom = isstring(tbl.inheritFrom) and tbl.inheritFrom or ""
     rank.access      = isnumber(tbl.access)      and tbl.access      or nadmin.access.user
-    rank.immunity    = isnumber(tbl.immunity)    and tbl.immunity    or nadmin.immunity.everyone
+    rank.immunity    = isnumber(tbl.immunity)    and tbl.immunity    or 0
     rank.autoPromote = istable(tbl.autoPromote)  and tbl.autoPromote or {when = 0, rank = "", enabled = false}
 
     -- Default gmod loadout
