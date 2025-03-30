@@ -8,7 +8,7 @@ COMMAND.call = "fpsboost"
 COMMAND.forcedPriv = true
 
 COMMAND.client = function(caller, args)
-    LocalPlayer():ConCommand("gmod_mcore_test 1;r_queued_ropes 1;cl_threaded_bone_setup 1;cl_threaded_client_leaf_system 1;mat_queue_mode -1;r_threaded_renderables 1;r_threaded_particles 1;cl_cmdrate 10")
+    LocalPlayer():ConCommand("gmod_mcore_test 1;r_queued_ropes 1;cl_threaded_bone_setup 1;mat_queue_mode -1;r_threaded_renderables 1;r_threaded_particles 1;cl_cmdrate 10")
     nadmin:Notify(nadmin.colors.blue, "Your FPS has increased and your ping has lowered!")
 end
 
