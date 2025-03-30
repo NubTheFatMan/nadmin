@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Tuesday, March 31, 2020 @ 11:36 PM"
 COMMAND.category = "Utility"
 COMMAND.usage = "<player> {message}"
 COMMAND.call = "pm"
+COMMAND.defaultAccess = nadmin.access.default
 
 COMMAND.server = function(caller, args)
     if #args < 2 then 

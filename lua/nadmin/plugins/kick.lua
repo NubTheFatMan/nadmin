@@ -6,6 +6,7 @@ cmd.timeCreated = "Apr. 1, 2020 @ 7:36 PM CST"
 cmd.category = "Player Management"
 cmd.usage = "<player> {reason}"
 cmd.call = "kick"
+cmd.defaultAccess = nadmin.access.admin
 
 cmd.server = function(caller, args)
     if #args > 0 then

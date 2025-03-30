@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Feb. 5 2024 @ 6:52 PM PST"
 COMMAND.category = "Player Management"
 COMMAND.call = "displayrank"
 COMMAND.usage = "<player> {rank}"
+COMMAND.defaultAccess = nadmin.access.superadmin
 
 if SERVER then 
     util.AddNetworkString("nadmin_client_rank")

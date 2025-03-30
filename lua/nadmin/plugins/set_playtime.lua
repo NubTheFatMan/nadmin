@@ -6,6 +6,7 @@ cmd.timeCreated = "Feb. 24 2020 @ 11:00 PM CST"
 cmd.category = "Player Management"
 cmd.call = "playtime"
 cmd.usage = "<player> [time]"
+cmd.defaultAccess = nadmin.access.superadmin
 cmd.server = function(caller, args)
     if #args > 0 then
         if #args > 1 then

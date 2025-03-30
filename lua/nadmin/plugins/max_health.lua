@@ -6,6 +6,7 @@ cmd.timeCreated = "Oct. 16 2019 @11:17 AM CST"
 cmd.category = "Fun"
 cmd.call = "mhp"
 cmd.usage = "<player> [max-health]"
+cmd.defaultAccess = nadmin.access.admin
 cmd.server = function(caller, args)
     local myCol = nadmin:GetNameColor(caller) or nadmin.colors.blue
     if #args > 0 then

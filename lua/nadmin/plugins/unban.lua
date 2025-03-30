@@ -6,6 +6,7 @@ cmd.timeCreated = "Apr. 3, 2020 @ 8:17 PM CST"
 cmd.category = "Player Management"
 cmd.usage = "{Steam ID | IP}"
 cmd.call = "unban"
+cmd.defaultAccess = nadmin.access.admin
 
 cmd.server = function(caller, args, advArgs)
     if #args > 0 then

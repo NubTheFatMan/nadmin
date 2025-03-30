@@ -6,6 +6,7 @@ cmd.timeCreated = "Sunday, May 24 2020 @ 12:32 AM CST"
 cmd.category = "Server Management"
 cmd.call = "rcon"
 cmd.usage = "{command}"
+cmd.defaultAccess = nadmin.access.superadmin
 cmd.server = function(caller, args)
     if #args > 0 then
         local col = nadmin:GetNameColor(caller) or nadmin.colors.blue

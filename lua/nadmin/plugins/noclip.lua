@@ -6,6 +6,7 @@ cmd.timeCreated = "Oct. 26 2019 @ 9:42 PM CST"
 cmd.category = "Utility"
 cmd.call = "noclip"
 cmd.usage = "<player> [1|0]"
+cmd.defaultAccess = nadmin.access.admin
 cmd.server = function(caller, args)
     local myCol = nadmin:GetNameColor(caller) or nadmin.colors.blue
 

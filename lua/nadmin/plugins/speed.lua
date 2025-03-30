@@ -6,6 +6,7 @@ cmd.timeCreated = "Oct. 26 2019 @ 11:50 PM CST"
 cmd.category = "Fun"
 cmd.call = "speed"
 cmd.usage = "<player> [walk] [run]"
+cmd.defaultAccess = nadmin.access.admin
 cmd.server = function(caller, args)
     local myCol = nadmin:GetNameColor(caller) or nadmin.colors.blue
 

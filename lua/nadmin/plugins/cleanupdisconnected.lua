@@ -5,6 +5,7 @@ cmd.author = "Nub"
 cmd.timeCreated = "Tuesday, June 29 2021 @ 10:22 AM CST"
 cmd.category = "Utility"
 cmd.call = "cleanupdisconnected"
+cmd.defaultAccess = nadmin.access.admin
 cmd.server = function(caller, args)
     if not istable(nadmin.pp) then 
         nadmin:Notify(caller, nadmin.colors.red, "The prop protection module is disabled, this won't work.")

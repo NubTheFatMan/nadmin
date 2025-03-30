@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Sunday, April 26, 2020 @ 8:13 PM"
 COMMAND.category = "Utility"
 COMMAND.call = "asay"
 COMMAND.usage = "{message}"
+COMMAND.defaultAccess = nadmin.access.default
 COMMAND.server = function(caller, args)
     if #args > 0 then
         local plys = {}

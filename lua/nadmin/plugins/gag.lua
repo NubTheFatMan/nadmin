@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Wednesday, May 20, 2020 @ 9:51 PM CST"
 COMMAND.category = "Utility"
 COMMAND.call = "gag"
 COMMAND.usage = "<player> [1|0]"
+COMMAND.defaultAccess = nadmin.access.admin
 COMMAND.server = function(caller, args)
     local targs = nadmin:FindPlayer(args[1], caller, nadmin.MODE_BELOW)
     if table.HasValue(targs, caller) then

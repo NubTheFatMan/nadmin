@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Thursday, May 21, 2020 @ 1:00 AM CT"
 COMMAND.category = "Voting"
 COMMAND.call = "votekick"
 COMMAND.usage = "<player> {reason}"
+COMMAND.defaultAccess = nadmin.access.default
 
 COMMAND.server = function(caller, args)
     local targs = nadmin:FindPlayer(table.remove(args, 1), caller, nadmin.MODE_BELOW)

@@ -6,6 +6,7 @@ cmd.timeCreated = "Oct. 25 2019 @ 10:46 PM CST"
 cmd.category = "Teleportation"
 cmd.call = "goto"
 cmd.usage = "<player>"
+cmd.defaultAccess = nadmin.access.admin
 
 cmd.positions = {Vector(0, 0, 1)}
 for i = 0, 360, 45 do table.insert(cmd.positions, Vector(math.cos(i), math.sin(i), 0)) end

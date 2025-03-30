@@ -6,6 +6,7 @@ cmd.timeCreated = "Thursday, May 21 2020 @ 12:08 AM CT"
 cmd.category = "Fun"
 cmd.call = "trainfuck"
 cmd.usage = "<player>"
+cmd.defaultAccess = nadmin.access.admin
 
 cmd.models = {
     "models/props_trainstation/train001.mdl",

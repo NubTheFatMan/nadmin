@@ -6,9 +6,11 @@ cmd.timeCreated = "Apr. 1, 2020 @ 9:19 PM CST"
 cmd.category = "Player Management"
 cmd.usage = "<player> [duration] {reason}"
 cmd.call = "ban"
+cmd.defaultAccess = nadmin.access.admin
 
 nadmin:RegisterPerm({
-    title = "IP Ban"
+    title = "IP Ban",
+    defaultAccess = nadmin.access.superadmin
 })
 
 cmd.server = function(caller, args, advArgs)

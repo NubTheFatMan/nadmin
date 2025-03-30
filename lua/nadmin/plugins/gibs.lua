@@ -5,6 +5,7 @@ COMMAND.author = "Nub"
 COMMAND.timeCreated = "Wednesday, May 20, 2020 @ 11:27 PM CST"
 COMMAND.category = "Utility"
 COMMAND.call = "gibs"
+COMMAND.defaultAccess = nadmin.access.admin
 COMMAND.server = function(caller, args)
     local myCol = nadmin:GetNameColor(caller) or nadmin.colors.blue
 

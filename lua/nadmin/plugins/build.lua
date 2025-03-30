@@ -5,6 +5,7 @@ cmd.author = "Nub"
 cmd.timeCreated = "Friday, August 21 2020 @ 11:18 PM CT"
 cmd.category = "Utility"
 cmd.call = "build"
+cmd.defaultAccess = nadmin.access.default
 cmd.server = function(caller, args)
     if IsValid(caller) then
         if not caller.n_BuildMode then

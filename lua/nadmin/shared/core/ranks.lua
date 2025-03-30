@@ -48,32 +48,21 @@ function nadmin:RegisterPerm(tbl)
 
     if perm.forcedPriv then
         self.forcedPrivs[perm.id] = true
-    elseif SERVER then -- Since this permission isn't forced, we'll automatically add it to ranks permissions if they meet certain criteria 
-        -- First check the immunity
-        if isnumber(perm.defaultImmunity) then 
-            if nadmin.defaultPermData[perm.id] ~= perm.defaultImmunity then -- Only update rank permissions if the stored value differs 
-                for id, rank in ipairs(nadmin.ranks) do 
-                    if rank.immunity >= perm.defaultImmunity then 
-                        if not table.HasValue(rank.privileges, perm.id) then 
-                            table.insert(rank.privileges, perm.id)
-                        end
-                    end
-                end
-                nadmin.defaultPermData[perm.id] = perm.defaultImmunity
-                nadmin:SaveDefaultPermData()
+    elseif SERVER and nadmin.serverInitialized then
+        if isnumber(perm.defaultAccess) then
+            -- If there is a default access set, it should only apply the first time the permission is registered
+            if table.HasValue(nadmin.defaultPermData, perm.id) then return end
+
+            for id, rank in pairs(nadmin.ranks) do 
+                if rank.access < perm.defaultAccess then continue end
+                if table.HasValue(rank.privileges, perm.id) then continue end
+                table.insert(rank.privileges, perm.id)
             end
-        elseif isnumber(perm.defaultAccess) then -- Check the default access
-            if nadmin.defaultPermData[perm.id] ~= perm.defaultAccess then -- Only update rank permissions if the stored value differs 
-                for id, rank in ipairs(nadmin.ranks) do 
-                    if rank.access >= perm.defaultAccess then 
-                        if not table.HasValue(rank.privileges, perm.id) then 
-                            table.insert(rank.privileges, perm.id)
-                        end
-                    end
-                end
-                nadmin.defaultPermData[perm.id] = perm.defaultAccess
-                nadmin:SaveDefaultPermData()
-            end
+
+            table.insert(nadmin.defaultPermData, perm.id)
+            nadmin:SaveDefaultPermData()
+            nadmin:SaveRanks()
+            nadmin:SendRanksToClients()
         end
     end
 

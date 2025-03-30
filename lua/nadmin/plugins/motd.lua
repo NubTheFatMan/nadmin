@@ -5,6 +5,7 @@ COMMAND.author = "Nub"
 COMMAND.timeCreated = "Tuesday, September 1st, 2020 @ 12:10 PM"
 COMMAND.category = "Menu"
 COMMAND.call = "motd"
+COMMAND.defaultAccess = nadmin.access.default
 
 COMMAND.server = function(caller, args)
     if not caller:Nadmin_OpenMOTD() then

@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Thursday, March 25, 2021 @ 11:12 PM CST"
 COMMAND.category = "Utility"
 COMMAND.call = "map"
 COMMAND.usage = "[map name/index]"
+COMMAND.defaultAccess = nadmin.access.admin
 
 nadmin.votemapChange = true
 

@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Thursday, May 21, 2020 @ 1:22 AM CT"
 COMMAND.category = "Voting"
 COMMAND.call = "voteban"
 COMMAND.usage = "<player> {reason}"
+COMMAND.defaultAccess = nadmin.access.default
 
 nadmin.voteBans = {}
 

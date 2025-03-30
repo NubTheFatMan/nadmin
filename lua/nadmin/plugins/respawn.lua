@@ -6,6 +6,7 @@ cmd.timeCreated = "Sunday, May 24 2020 @ 12:41 AM CST"
 cmd.category = "Utility"
 cmd.call = "respawn"
 cmd.usage = "<player>"
+cmd.defaultAccess = nadmin.access.admin
 cmd.server = function(caller, args)
     local targs = nadmin:FindPlayer(args[1], caller, nadmin.MODE_BELOW)
     if #targs > 0 then

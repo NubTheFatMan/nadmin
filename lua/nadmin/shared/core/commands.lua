@@ -13,32 +13,21 @@ function nadmin:RegisterCommand(tbl)
 
     if cmd.forcedPriv then
         self.forcedPrivs[cmd.id] = true
-    elseif SERVER then -- Since this command isn't forced, we'll automatically add it to ranks permissions if they meet certain criteria 
-        -- First check the immunity
-        if isnumber(cmd.defaultImmunity) then 
-            if nadmin.defaultPermData[cmd.id] ~= cmd.defaultImmunity then -- Only update rank permissions if the stored value differs 
-                for id, rank in ipairs(nadmin.ranks) do 
-                    if rank.immunity >= cmd.defaultImmunity then 
-                        if not table.HasValue(rank.privileges, cmd.id) then 
-                            table.insert(rank.privileges, cmd.id)
-                        end
-                    end
-                end
-                nadmin.defaultPermData[cmd.id] = cmd.defaultImmunity
-                nadmin:SaveDefaultPermData()
+    elseif SERVER then
+        if isnumber(cmd.defaultAccess) and nadmin.serverInitialized then
+            -- If there is a default access set, it should only apply the first time the permission is registered
+            if table.HasValue(nadmin.defaultPermData, cmd.id) then return end
+
+            for id, rank in pairs(nadmin.ranks) do 
+                if rank.access < cmd.defaultAccess then continue end
+                if table.HasValue(rank.privileges, cmd.id) then continue end
+                table.insert(rank.privileges, cmd.id)
             end
-        elseif isnumber(cmd.defaultAccess) then -- Check the default access
-            if nadmin.defaultPermData[cmd.id] ~= cmd.defaultAccess then -- Only update rank permissions if the stored value differs 
-                for id, rank in ipairs(nadmin.ranks) do 
-                    if rank.access >= cmd.defaultAccess then 
-                        if not table.HasValue(rank.privileges, cmd.id) then 
-                            table.insert(rank.privileges, cmd.id)
-                        end
-                    end
-                end
-                nadmin.defaultPermData[cmd.id] = cmd.defaultAccess
-                nadmin:SaveDefaultPermData()
-            end
+
+            table.insert(nadmin.defaultPermData, cmd.id)
+            nadmin:SaveDefaultPermData()
+            nadmin:SaveRanks()
+            nadmin:SendRanksToClients()
         end
     end
 

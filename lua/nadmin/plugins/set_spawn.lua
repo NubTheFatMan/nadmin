@@ -5,6 +5,7 @@ cmd.author = "Nub"
 cmd.timeCreated = "Sunday, May 24 2020 @ 12:48 AM CT"
 cmd.category = "Utility"
 cmd.call = "setspawn"
+cmd.defaultAccess = nadmin.access.default
 cmd.server = function(caller, args)
     if IsValid(caller) then
         if caller:Alive() then

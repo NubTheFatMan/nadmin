@@ -5,10 +5,12 @@ COMMAND.author = "Nub"
 COMMAND.timeCreated = "Saturday, March 22, 2020 @ 2:08 AM"
 COMMAND.category = "Voting"
 COMMAND.call = "votemode"
+COMMAND.defaultAccess = nadmin.access.default
 
 nadmin:RegisterPerm({
     title = "Bypass Votemode Cooldown",
-    id = "bypass_vm_cooldown"
+    id = "bypass_vm_cooldown",
+    defaultAccess = nadmin.access.admin
 })
 
 local lastVote = 0

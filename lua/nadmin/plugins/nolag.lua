@@ -5,6 +5,7 @@ COMMAND.author = "Nub"
 COMMAND.timeCreated = "Wednesday, July 14, 2021 @ 4:37 PM CST"
 COMMAND.category = "Utility"
 COMMAND.call = "nolag"
+COMMAND.defaultAccess = nadmin.access.admin
 COMMAND.server = function(caller, args)
     local count = 0
     for i, ent in ipairs(ents.GetAll()) do

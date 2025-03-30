@@ -6,6 +6,7 @@ cmd.timeCreated = "Apr. 1 2020 @ 3:01 PM CST"
 cmd.category = "Utility"
 cmd.call = "announce"
 cmd.usage = "[duration] {message}"
+cmd.defaultAccess = nadmin.access.admin
 cmd.server = function(caller, args)
     local numArgs = #args
     if numArgs == 0 then 

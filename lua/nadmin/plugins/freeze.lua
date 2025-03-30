@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Friday, April 17, 2020 @ 8:36 PM"
 COMMAND.category = "Player Management"
 COMMAND.call = "freeze"
 COMMAND.usage = "<player> [1|0]"
+COMMAND.defaultAccess = nadmin.access.admin
 COMMAND.server = function(caller, args)
     local targs = nadmin:FindPlayer(args[1], caller, nadmin.MODE_BELOW)
     if table.HasValue(targs, caller) then -- Remove caller from table

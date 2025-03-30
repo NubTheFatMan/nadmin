@@ -6,6 +6,7 @@ cmd.timeCreated = "Oct. 26 2019 @ 9:08 PM CST"
 cmd.category = "Server Management"
 cmd.call = "reload"
 cmd.usage = "{file}"
+cmd.defaultAccess = nadmin.access.superadmin
 cmd.server = function(caller, args)
     if #args > 0 then
         local succ = nadmin:ReloadCommand(args[1])

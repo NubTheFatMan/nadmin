@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Friday, April 17, 2020 @ 10:27 PM"
 COMMAND.category = "Fun"
 COMMAND.call = "me"
 COMMAND.usage = "{action}"
+COMMAND.defaultAccess = nadmin.access.default
 COMMAND.server = function(caller, args)
     if #args > 0 then
         nadmin.SilentNotify = false

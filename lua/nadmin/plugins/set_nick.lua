@@ -6,6 +6,7 @@ cmd.timeCreated = "Oct. 26 2019 @ 10:16 PM CST"
 cmd.category = "Player Management"
 cmd.call = "nick"
 cmd.usage = "<player> {nick}"
+cmd.defaultAccess = nadmin.access.superadmin
 cmd.server = function(caller, args)
     if #args > 0 then
         local targ = nadmin:FindPlayer(args[1], caller, nadmin.MODE_BELOW)

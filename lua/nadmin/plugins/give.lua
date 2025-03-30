@@ -6,6 +6,7 @@ cmd.timeCreated = "Tuesday, April 28 2020 @ 10:45 PM CST"
 cmd.category = "Fun"
 cmd.call = "give"
 cmd.usage = "<player> {weapon}"
+cmd.defaultAccess = nadmin.access.admin
 cmd.server = function(caller, args)
     if #args > 0 then
         local targs = nadmin:FindPlayer(args[1], caller, nadmin.MODE_SAME)

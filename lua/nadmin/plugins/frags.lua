@@ -6,6 +6,7 @@ cmd.timeCreated = "May 22 2020 @ 12:06 AM CT"
 cmd.category = "Fun"
 cmd.call = "frags"
 cmd.usage = "<player> [frags]"
+cmd.defaultAccess = nadmin.access.admin
 cmd.server = function(caller, args)
     if #args > 0 then
         if #args > 1 then

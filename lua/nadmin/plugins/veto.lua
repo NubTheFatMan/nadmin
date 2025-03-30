@@ -5,6 +5,7 @@ COMMAND.author = "Nub"
 COMMAND.timeCreated = "Wednesday, March 24, 2021 @ 11:44 PM CST"
 COMMAND.category = "Voting"
 COMMAND.call = "veto"
+COMMAND.defaultAccess = nadmin.access.admin
 
 COMMAND.server = function(caller, args)
     if nadmin.vote.active then 

@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Friday, July 22, 2022 @ 8:22 PM PT"
 COMMAND.category = "Voting"
 COMMAND.call = "votegag"
 COMMAND.usage = "<player> {reason}"
+COMMAND.defaultAccess = nadmin.access.default
 
 COMMAND.gagTime = 1800 -- 30 minutes
 

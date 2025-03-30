@@ -5,6 +5,7 @@ cmd.author = "Nub"
 cmd.timeCreated = "Sunday, May 24 2020 @ 12:58 AM CT"
 cmd.category = "Utility"
 cmd.call = "removespawn"
+cmd.defaultAccess = nadmin.access.default
 cmd.server = function(caller, args)
     if IsValid(caller) then
         if isvector(caller.n_SpawnPoint) then

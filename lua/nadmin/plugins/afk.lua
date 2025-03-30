@@ -5,6 +5,7 @@ COMMAND.author = "Nub"
 COMMAND.timeCreated = "Saturday, May 2, 2020 @ 9:16 PM"
 COMMAND.category = "Utility"
 COMMAND.call = "afk"
+COMMAND.defaultAccess = nadmin.access.default
 COMMAND.server = function(caller, args)
     if not IsValid(caller) then return end
 

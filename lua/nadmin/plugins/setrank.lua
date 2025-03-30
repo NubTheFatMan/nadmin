@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Thursday, June 13, 2019 @ 8:48 PM"
 COMMAND.category = "Player Management"
 COMMAND.call = "rank"
 COMMAND.usage = "<player> {rank}"
+COMMAND.defaultAccess = nadmin.access.superadmin
 
 COMMAND.server = function(caller, args)
     local targ = nadmin:FindPlayer(args[1], caller, nadmin.MODE_BELOW)

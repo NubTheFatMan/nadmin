@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Friday, July 22, 2022 @ 8:30 PM PT"
 COMMAND.category = "Voting"
 COMMAND.call = "votemute"
 COMMAND.usage = "<player> {reason}"
+COMMAND.defaultAccess = nadmin.access.default
 
 COMMAND.muteTime = 1800 -- 30 minutes
 

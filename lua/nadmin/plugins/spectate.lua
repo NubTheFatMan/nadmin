@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Friday, April 17, 2020 @ 11:04 PM"
 COMMAND.category = "Utility"
 COMMAND.call = "spectate"
 COMMAND.usage = "<player>"
+COMMAND.defaultAccess = nadmin.access.admin
 COMMAND.server = function(caller, args)
     if #args > 0 then
         local targ = nadmin:FindPlayer(args[1], caller, nadmin.MODE_BELOW)

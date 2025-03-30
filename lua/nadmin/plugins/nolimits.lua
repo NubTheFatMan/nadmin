@@ -5,6 +5,7 @@ COMMAND.author = "Nub"
 COMMAND.timeCreated = "Wednesday, July 14, 2021 @ 8:09 PM CST"
 COMMAND.category = "Utility"
 COMMAND.call = "nolimits"
+COMMAND.defaultAccess = nadmin.access.superadmin
 
 local notLimiting = {}
 COMMAND.server = function(caller, args)

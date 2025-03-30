@@ -6,6 +6,7 @@ COMMAND.timeCreated = "Thursday, April 30, 2020 @ 11:04 PM CST"
 COMMAND.category = "Utility"
 COMMAND.call = "arm"
 COMMAND.usage = "<player>"
+COMMAND.defaultAccess = nadmin.access.admin
 
 COMMAND.loadout = {"weapon_crowbar", "weapon_physcannon", "weapon_physgun", "weapon_pistol", "weapon_357", "weapon_smg1", "weapon_ar2", "weapon_shotgun", "weapon_crossbow", "weapon_frag", "weapon_rpg", "gmod_camera", "gmod_tool"}
 

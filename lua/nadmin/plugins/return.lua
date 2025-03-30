@@ -6,6 +6,7 @@ cmd.timeCreated = "Feb. 26 2020 @ 10:59 PM CST"
 cmd.category = "Teleportation"
 cmd.call = "return"
 cmd.usage = "<player>"
+cmd.defaultAccess = nadmin.access.admin
 
 cmd.server = function(caller, args)
     local targ = nadmin:FindPlayer(args[1] or "^", caller, nadmin.MODE_BELOW)

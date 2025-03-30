@@ -19,13 +19,8 @@ if file.Exists("nadmin/config/pp.txt", "DATA") then
     nadmin.ppData = util.JSONToTable(file.Read("nadmin/config/pp.txt"))
 end
 
-nadmin.defaultPermData = nadmin.defaultPermData or {}
-if file.Exists("nadmin/config/default_access.txt", "DATA") then 
-    nadmin.defaultPermData = util.JSONToTable(file.Read("nadmin/config/default_access.txt"))
-end
-
 function nadmin:SaveDefaultPermData()
-    file.Write("nadmin/config/default_access.txt", util.TableToJSON(nadmin.defaultPermData))
+    file.Write("nadmin/config/setperms.txt", table.concat(nadmin.defaultPermData, ","))
 end
 
 function nadmin:SavePPData()
@@ -52,10 +47,55 @@ function nadmin:SaveBans()
     MsgN("[Nadmin]Performing a save on bans.")
 end
 
-hook.Add("Initialize", "nadmin_apply_saved_ranks", function()
+nadmin.defaultPermData = nadmin.defaultPermData or {}
+if file.Exists("nadmin/config/setperms.txt", "DATA") then 
+    nadmin.defaultPermData = string.Explode(",", file.Read("nadmin/config/setperms.txt"))
+end
+
+hook.Add("Initialize", "nadmin_init", function()
+    nadmin.serverInitialized = true
+
+    -- Load ranks
     local rank = file.Read("nadmin/config/ranks.txt")
     if isstring(rank) and rank ~= "" then
         table.Merge(nadmin.ranks, util.JSONToTable(rank))
+    end
+
+    local changed = false
+    -- Make sure new first time registered permissions get access granted to their default ranks
+    for _, cmd in pairs(nadmin.commands) do
+        if not isnumber(cmd.defaultAccess) then continue end
+        if table.HasValue(nadmin.defaultPermData, cmd.id) then continue end
+        
+        for _, rank in pairs(nadmin.ranks) do 
+            if rank.access < cmd.defaultAccess then continue end
+            if table.HasValue(rank.privileges, cmd.id) then continue end
+            table.insert(rank.privileges, cmd.id)
+            MsgN("[Nadmin]Granted \"" .. cmd.id .. "\" to " .. rank.id)
+        end
+
+        table.insert(nadmin.defaultPermData, cmd.id)
+        changed = true
+    end
+
+    for _, perm in pairs(nadmin.perms) do
+        if not isnumber(perm.defaultAccess) then continue end
+        if table.HasValue(nadmin.defaultPermData, perm.id) then continue end
+        
+        for _, rank in pairs(nadmin.ranks) do 
+            if rank.access < perm.defaultAccess then continue end
+            if table.HasValue(rank.privileges, perm.id) then continue end
+            table.insert(rank.privileges, perm.id)
+            MsgN("[Nadmin]Granted \"" .. perm.id .. "\" to " .. rank.id)
+        end
+
+        table.insert(nadmin.defaultPermData, perm.id)
+        changed = true
+    end
+
+    if changed then 
+        nadmin:SaveDefaultPermData()
+        nadmin:SaveRanks()
     end
 end)
 

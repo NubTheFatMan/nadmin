@@ -6,6 +6,7 @@ cmd.timeCreated = "Oct. 16 2019 @ 2:49 PM CST"
 cmd.category = "Fun"
 cmd.call = "armor"
 cmd.usage = "<player> [armor]"
+cmd.defaultAccess = nadmin.access.admin
 cmd.server = function(caller, args)
     if #args > 0 then
         if #args > 1 then
