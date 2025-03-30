@@ -1,11 +1,14 @@
 local COMMAND = {}
 COMMAND.title = "Arm"
-COMMAND.description = "Strip a player of their weapons and give them their default loadout."
+COMMAND.description = "Strip a player of their weapons and give them the default loadout."
 COMMAND.author = "Nub"
 COMMAND.timeCreated = "Thursday, April 30, 2020 @ 11:04 PM CST"
 COMMAND.category = "Utility"
 COMMAND.call = "arm"
 COMMAND.usage = "<player>"
+
+COMMAND.loadout = {"weapon_crowbar", "weapon_physcannon", "weapon_physgun", "weapon_pistol", "weapon_357", "weapon_smg1", "weapon_ar2", "weapon_shotgun", "weapon_crossbow", "weapon_frag", "weapon_rpg", "gmod_camera", "gmod_tool"}
+
 COMMAND.server = function(caller, args)
     local targs = nadmin:FindPlayer(args[1], caller, nadmin.MODE_BELOW)
 
@@ -14,7 +17,7 @@ COMMAND.server = function(caller, args)
             ply:StripWeapons()
 
             local rank = ply:GetRank()
-            for i, wep in ipairs(rank.loadout) do
+            for i, wep in ipairs(COMMAND.loadout) do
                 ply:Give(wep)
             end
 

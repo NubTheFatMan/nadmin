@@ -103,7 +103,6 @@ nadmin.plugins.afk          = true  -- Enables AFK system that stops players fro
 nadmin.plugins.joinMessages = true  -- Enables join and leave messages.
 nadmin.plugins.logs         = true  -- Makes `nadmin:Log()` save to a file.
 nadmin.plugins.scoreboard   = true  -- Enables the custom scoreboard.
-nadmin.plugins.loadouts     = false -- Enables loadouts per rank.
 
 --These are using when parsing time (4d2h, for example, is (4 * nadmin.time.d) + (2 * nadmin.time.h))
 nadmin.time.s = 1

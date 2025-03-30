@@ -28,7 +28,7 @@ hook.Add("Initialize", "nadmin_add_right_click_perms", function()
                     for id, rank in pairs(nadmin.ranks) do
                         if rank.access >= nadmin.access.owner then continue end
                         if rank.access > call_rank.access or (rank.access == call_rank.access and rank.immunity >= call_rank.immunity) then continue end
-                        table.insert(ranks, {title = rank.title, id = rank.id, immunity = rank.immunity, restrictions = rank.restrictions, loadout = rank.loadout})
+                        table.insert(ranks, {title = rank.title, id = rank.id, immunity = rank.immunity, restrictions = rank.restrictions})
                     end
                     table.sort(ranks, function(a, b) return a.immunity < b.immunity end)
 
@@ -48,32 +48,6 @@ hook.Add("Initialize", "nadmin_add_right_click_perms", function()
                             line:SetIcon("icon16/lock.png")
                         else
                             line:SetIcon("icon16/lock_open.png")
-                        end
-                    end
-
-                    if table.HasValue(nadmin.weapons, name) and nadmin.plugins.loadouts then
-                        local ranks = {}
-                        local call_rank = LocalPlayer():GetRank()
-                        for id, rank in pairs(nadmin.ranks) do
-                            if call_rank.immunity < nadmin.immunity.owner then
-                                if rank.immunity >= call_rank.immunity then continue end
-                            end
-                            table.insert(ranks, {title = rank.title, id = rank.id, immunity = rank.immunity, restrictions = rank.restrictions, loadout = rank.loadout})
-                        end
-                        table.sort(ranks, function(a, b) return a.immunity < b.immunity end)
-
-                        local sub = menu:AddSubMenu("Add to loadout")
-                        for i, rank in ipairs(ranks) do
-                            local line = sub:AddOption(rank.title, function()
-                                net.Start("nadmin_restrict_perm")
-                                    net.WriteString("Loadout")
-                                    net.WriteString(rank.id)
-                                    net.WriteString(name)
-                                net.SendToServer()
-                            end)
-                            if table.HasValue(rank.loadout, name) then
-                                line:SetIcon("icon16/accept.png")
-                            end
                         end
                     end
                 end

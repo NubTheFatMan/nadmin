@@ -5,7 +5,6 @@ nadmin.null_rank = {
     immunity = 0,
     access = nadmin.access.user,
     autoPromote = {when = 0, rank = "", enabled = false},
-    loadout = {},
     color = Color(255, 255, 255),
     restrictions = {},
     privileges = {}
@@ -21,9 +20,6 @@ function nadmin:RegisterRank(tbl)
     rank.access      = isnumber(tbl.access)      and tbl.access      or nadmin.access.user
     rank.immunity    = isnumber(tbl.immunity)    and tbl.immunity    or 0
     rank.autoPromote = istable(tbl.autoPromote)  and tbl.autoPromote or {when = 0, rank = "", enabled = false}
-
-    -- Default gmod loadout
-    rank.loadout = (istable(tbl.loadout) and table.IsSequential(tbl.loadout)) and tbl.loadout, {"weapon_crowbar", "weapon_physcannon", "weapon_physgun", "weapon_pistol", "weapon_357", "weapon_smg1", "weapon_ar2", "weapon_shotgun", "weapon_crossbow", "weapon_frag", "weapon_rpg", "gmod_camera", "gmod_tool"}
 
     if IsColor(tbl.color) then rank.color = tbl.color
     elseif istable(tbl.color) then rank.color = Color(tbl.color.r, tbl.color.g, tbl.color.b, tbl.color.a)
