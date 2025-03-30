@@ -2,9 +2,9 @@ hook.Add("Initialize", "nadmin_add_right_click_perms", function()
     -- This way of adding right click spawn menu functionality could be considered hacky
     if not isfunction(nadmin.oldDermaMenu) then nadmin.oldDermaMenu = DermaMenu end
     function DermaMenu(parentmenu, parent)
-        nadmin.prevPrevSpawnMenuRightClick = nadmin.prevSpawnMenuRightClick
-        nadmin.prevSpawnMenuRightClick = nadmin.spawnMenuRightClick
-        nadmin.spawnMenuRightClick = nadmin.oldDermaMenu(parentmenu, parent)
+        nadmin.prevPrevSpawnMenuRightClick = nadmin.prevSpawnMenuRightClick -- For base game props
+        nadmin.prevSpawnMenuRightClick = nadmin.spawnMenuRightClick -- For SProps
+        nadmin.spawnMenuRightClick = nadmin.oldDermaMenu(parentmenu, parent) -- For weapons, ents, vehicles, etc
         return nadmin.spawnMenuRightClick
     end
 
@@ -28,16 +28,22 @@ hook.Add("Initialize", "nadmin_add_right_click_perms", function()
                     for id, rank in pairs(nadmin.ranks) do
                         if rank.access >= nadmin.access.owner then continue end
                         if rank.access > call_rank.access or (rank.access == call_rank.access and rank.immunity >= call_rank.immunity) then continue end
-                        table.insert(ranks, {title = rank.title, id = rank.id, immunity = rank.immunity, restrictions = rank.restrictions})
+                        table.insert(ranks, rank)
                     end
-                    table.sort(ranks, function(a, b) return a.immunity < b.immunity end)
+                    table.sort(ranks, function(a, b) 
+                        if a.access == b.access then 
+                            return a.immunity < b.immunity 
+                        else 
+                            return a.access < b.access 
+                        end
+                    end)
 
-                    local menu = nadmin.spawnMenuRightClick
+                    local menu = nadmin.spawnMenuRightClick -- weapons, ents, vehicles, etc
                     if self.GetModelName then
                         if IsValid(nadmin.prevPrevSpawnMenuRightClick) then 
-                            menu = nadmin.prevPrevSpawnMenuRightClick
+                            menu = nadmin.prevPrevSpawnMenuRightClick -- For base game props
                         elseif IsValid(nadmin.prevSpawnMenuRightClick) then 
-                            menu = nadmin.prevSpawnMenuRightClick
+                            menu = nadmin.prevSpawnMenuRightClick -- For SProps (no idea why)
                         end
                     end
                     

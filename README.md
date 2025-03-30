@@ -49,6 +49,16 @@ Progress has been real slow and I'm lazy.
 - Fixed a possible exploit with the imitate command. Before you could make someone run a command from any other mod. Now it just makes it look they spoke in chat, how it was originally supposed to work.
 - Moved network strings to their appropriate files and deleted the file that contained some but not all network strings.
 
+## March 2025
+- Cut the original ranks tab. One of my previous changes broke it so it didn't even work anymore. Focusing solely on the new one.
+- Cut fake disconnect command and the loadout feature.
+- Removed immunity from `variables.lua`. Everything is now based on access level.
+- Added `defaultAccess` option to permissions and commands.
+- Updated the default ranks to reflect cut features.
+- Removed a console command from the FPS Booster since the command doesn't seem to exist anymore.
+- Made the right click to restrict on the spawn menu work with SProps.
+- Removed unused tables.
+
 - - - -
 
 # Installation
@@ -62,7 +72,6 @@ To give yourself elevated access to the server and to manage this mod, run "`nad
 Have any questions? Concerns? Suggestions? (All related to Nadmin)
 
 Discord: nubthefatman\
-Discord Guild: https://discord.gg/P8Un9Drm8p \
 Steam: NubTheFatMan (https://steamcommunity.com/id/nubthefatman/) \
 Website: https://nubstoys.xyz/
 
