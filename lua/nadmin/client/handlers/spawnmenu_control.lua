@@ -33,11 +33,21 @@ hook.Add("Initialize", "nadmin_add_right_click_perms", function()
                     table.sort(ranks, function(a, b) return a.immunity < b.immunity end)
 
                     local menu = nadmin.spawnMenuRightClick
-                    if self.GetModelName then menu = nadmin.prevPrevSpawnMenuRightClick end
+                    if self.GetModelName then
+                        if IsValid(nadmin.prevPrevSpawnMenuRightClick) then 
+                            menu = nadmin.prevPrevSpawnMenuRightClick
+                        elseif IsValid(nadmin.prevSpawnMenuRightClick) then 
+                            menu = nadmin.prevSpawnMenuRightClick
+                        end
+                    end
+                    
+                    if not menu then return end
+                    if not isfunction(menu.AddSubMenu) then return end
 
                     local sub = menu:AddSubMenu("Restrict from rank")
                     for i, rank in ipairs(ranks) do
                         local line = sub:AddOption(rank.title, function()
+                            MsgN("Toggling restriction for \"" .. name .. "\" for rank " .. rank.title)
                             net.Start("nadmin_restrict_perm")
                                 net.WriteString("Restrict")
                                 net.WriteString(rank.id)
