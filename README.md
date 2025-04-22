@@ -59,6 +59,9 @@ Progress has been real slow and I'm lazy.
 - Made the right click to restrict on the spawn menu work with SProps.
 - Removed unused tables.
 
+## April 2025
+- Refactored the client settings tab to use the new VUI system.
+
 - - - -
 
 # Installation
