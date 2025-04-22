@@ -2,6 +2,7 @@ local NadminButton = {}
 function NadminButton:Init()
     self.text = "Button"
     self:SetFont("nadmin_derma")
+    self:SetTall(28)
 
     self.color = {}
     self.color.normal  = nadmin.colors.gui.blue
@@ -377,6 +378,8 @@ function NadminCheckBox:Init()
     self.textColor = nadmin:TextColor(self.color)
     self.style = nadmin.STYLE_BOX
 
+    self:SetTall(28)
+
     -- Button stuff
     self:SetFont("nadmin_derma")
 
@@ -716,6 +719,7 @@ function NadminComboBox:Init()
 
     self:SetFont("nadmin_derma")
     self:SetTextColor(nadmin:TextColor(nadmin.colors.gui.theme))
+    self:SetTall(28)
 
     function self.DropButton:Paint(w, h)
         if isfunction(self.RenderCondition) then 
@@ -897,6 +901,8 @@ vgui.Register("NadminFrame", NadminFrame, "DFrame")
 local NadminTabMenu = {}
 function NadminTabMenu:Init()
     self.backgroundColor  = nadmin:DarkenColor(nadmin.colors.gui.theme, 25) -- Background color of the scroll panel.
+    self.backgroundTextColor = nadmin:TextColor(self.backgroundColor)
+    
     self.baseTabColor     = nadmin.colors.gui.blue -- The base color for tabs, however can be overriden
     self.baseTabTextColor = nadmin:TextColor(self.baseTabColor)
 
@@ -932,6 +938,7 @@ function NadminTabMenu:GetContentPanel() return self.scrollPanel end
 function NadminTabMenu:SetColor(col) 
     if IsColor(col) then 
         self.backgroundColor = col
+        self.backgroundTextColor = nadmin:TextColor(col)
     end
 end
 function NadminTabMenu:GetColor() return self.backgroundColor end
@@ -1077,7 +1084,7 @@ function NadminTabMenu:AddTab(text, contents, selected, data)
             self.unselTextColor = col
         end
     end
-    function tab:GetUnselectedTextColor() return self.unselTextColor or self.parent.baseTabTextColor end
+    function tab:GetUnselectedTextColor() return self.unselTextColor or self.parent.backgroundTextColor end
     function tab:ResetUnselectedTextColor() self.unselTextColor = nil end 
 
     function tab:BackgroundDraw(w, h)
@@ -1108,7 +1115,7 @@ function NadminTabMenu:AddTab(text, contents, selected, data)
 
             self.active = true
         else
-            self:SetTextColor(self.unselTextColor or self.parent.baseTabTextColor)
+            self:SetTextColor(self.unselTextColor or self.parent.backgroundTextColor)
             if self:IsHovered() and not isnumber(self.animStart) then 
                 self.animStart = SysTime() 
                 self.animDown = nil

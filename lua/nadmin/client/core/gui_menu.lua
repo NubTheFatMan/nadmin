@@ -29,9 +29,9 @@ function nadmin.menu:Open(tab, data)
     panel:SetTitle("Nadmin [" .. nadmin.version .. "]")
     panel:MakePopup()
 
-    local tabMenu = vgui.Create("NadminTabMenu", panel)
-    tabMenu:Dock(FILL)
-    tabMenu:DockMargin(4, 4, 4, 4)
+    panel.tabMenu = vgui.Create("NadminTabMenu", panel)
+    panel.tabMenu:Dock(FILL)
+    panel.tabMenu:DockMargin(4, 4, 4, 4)
 
     local canSee = {}
     for i, tab in ipairs(nadmin.menu.tabs) do
@@ -41,7 +41,7 @@ function nadmin.menu:Open(tab, data)
     end
     table.sort(canSee, function(a, b) return a.sort < b.sort end)
     for i, tab in ipairs(canSee) do 
-        tabMenu:AddTab(tab.title, tab.content, i == 1, data)
+        panel.tabMenu:AddTab(tab.title, tab.content, i == 1, data)
     end
 end
 

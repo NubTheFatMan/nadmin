@@ -1,353 +1,329 @@
 if CLIENT then
+    nadmin.uiColorPresets = {
+        ["Default"] = {
+            theme = nadmin.defaults.colors.gui.theme,
+            blue = nadmin.defaults.colors.gui.blue,
+            red = nadmin.defaults.colors.gui.red
+        },
+        ["Orange Sunset"] = {
+            theme = nadmin:HexToColor("#a3586d"),
+            blue = nadmin:HexToColor("#5c4a72"),
+            red  = nadmin:HexToColor("#f3b05a")
+        },
+        ["Refreshing and Invigorating"] = {
+            theme = nadmin:HexToColor("#003d73"),
+            blue = nadmin:HexToColor("#1ecfd6"),
+            red  = nadmin:HexToColor("#c05640")
+        },
+        ["Sophisticated and Calm"] = {
+            theme = nadmin:HexToColor("#132226"),
+            blue = nadmin:HexToColor("#525b56"),
+            red  = nadmin:HexToColor("#be9063")
+        },
+        ["Sunset Over Swamp"] = {
+            theme = nadmin:HexToColor("#6465a5"),
+            blue = nadmin:HexToColor("#f3e96b"),
+            red  = nadmin:HexToColor("#f05837")
+        },
+        ["Vintage 1950s"] = {
+            theme = nadmin:HexToColor("#80add7"),
+            blue = nadmin:HexToColor("#0abda0"),
+            red  = nadmin:HexToColor("#bf9d7a")
+        }
+    }
+
     local saveBtn = nil
     nadmin.menu:RegisterTab({
         title = "Client Settings",
         sort = 5,
         forcedPriv = true,
         content = function(parent)
-            local w, h = parent:GetWide(), parent:GetTall()
+            local tabMenu = vgui.Create("NadminTabMenu", parent)
+            tabMenu:SetPos(4, 4)
+            tabMenu:SetSize(parent:GetWide() - 8, parent:GetTall() - 8)
+            tabMenu:SetTabWidth(tabMenu:GetWide()/4)
+            tabMenu:UseVerticalTabs(true)
 
-            local leftPanel = nadmin.vgui:DPanel(nil, {parent:GetWide()/6, parent:GetTall()}, parent)
-            leftPanel:Dock(LEFT)
-            leftPanel:DockPadding(0, 4, 4, 4)
-            leftPanel.btns = {}
-            leftPanel.normalPaint = leftPanel.Paint 
-            function leftPanel:Paint(w, h)
-                self:SetColor(nadmin.colors.gui.theme)
-                self:normalPaint(w, h)
-            end
+            local colorsTab = tabMenu:AddTab("UI/Colors", function(parent)
+                tabMenu:SetColor(nadmin.colors.gui.theme)
 
-            content = nadmin.vgui:DPanel(nil, {parent:GetWide() - parent:GetWide()/6, parent:GetTall()}, parent)
-            content:Dock(FILL)
-            content:SetColor(nadmin:DarkenColor(nadmin.colors.gui.theme, 25))
-            function content:Paint(w, h)
-                draw.Text({
-                    text = "Please select an option on the left.",
-                    pos = {w/2, h/2},
-                    xalign = TEXT_ALIGN_CENTER,
-                    yalign = TEXT_ALIGN_CENTER,
-                    font = "nadmin_derma",
-                    color = tc
-                })
-            end
+                local save = vgui.Create("NadminButton")
+                local simplifyScoreboard = vgui.Create("NadminCheckBox")
 
-            local categories = {
-                {"Colors", "icon16/paintbrush.png", function()
-                    -- Display for colors
-                    local display = nadmin.vgui:DPanel(nil, {content:GetWide()-8, 96}, content)
-                    display:Dock(TOP)
-                    display:DockMargin(4, 4, 4, 0)
-                    display:SetColor(Color(0, 0, 0, 0))
+                local function enableSave()
+                    save:SetText("Click to save - keep changes after closing the game")
+                    save:SetEnabled(true)
+                end
+
+                local colorDisplay = vgui.Create("DPanel", parent)
+                colorDisplay:SetTall(128)
+                colorDisplay:Dock(TOP)
+                colorDisplay:DockMargin(4, 4, 4, 0)
+                colorDisplay.black = Color(0, 0, 0) -- This is so I don't have to create the color black 3 times every frame
+                function colorDisplay:Paint(w, h)
+                    local gap = w/10
+                    local themeX = w/2 - h/2 - h - gap
+                    local inputX = w/2 - h/2
+                    local errorX = w/2 + h/2 + gap
+
+                    -- Draw background squares
+                    draw.RoundedBox(0, themeX, 0, h, h, self.black)
+                    draw.RoundedBox(0, inputX, 0, h, h, self.black)
+                    draw.RoundedBox(0, errorX, 0, h, h, self.black)
+
+                    -- Draw colors
+                    draw.RoundedBox(0, themeX + 6, 6, h - 12, h - 12, nadmin.colors.gui.theme)
+                    draw.RoundedBox(0, inputX + 6, 6, h - 12, h - 12, nadmin.colors.gui.blue)
+                    draw.RoundedBox(0, errorX + 6, 6, h - 12, h - 12, nadmin.colors.gui.red)
+
+                    -- Draw text
+                    draw.SimpleText("Theme Color", "nadmin_derma_small", themeX + h/2, h/2, nadmin:TextColor(nadmin.colors.gui.theme), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    draw.SimpleText("Input Color", "nadmin_derma_small", inputX + h/2, h/2, nadmin:TextColor(nadmin.colors.gui.blue), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    draw.SimpleText("Error Color", "nadmin_derma_small", errorX + h/2, h/2, nadmin:TextColor(nadmin.colors.gui.red), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                end
+
+                local presetColors = vgui.Create("NadminComboBox", parent)
+                presetColors:Dock(TOP)
+                presetColors:DockMargin(4, 4, 4, 0)
+                presetColors:SetValue("Select a preset...")
+
+                for name, colors in pairs(nadmin.uiColorPresets) do 
+                    presetColors:AddChoice(name, colors)
+                end
+
+                local mixerWidth = (parent:GetWide() - 8)/3 - 8
+
+                local colorMixers = vgui.Create("DPanel", parent)
+                colorMixers:Dock(TOP)
+                colorMixers:DockMargin(4, 4, 4, 0)
+                colorMixers:DockPadding(0, 28, 0, 0)
+                colorMixers:SetTall(153)
+                function colorMixers:Paint(w, h)      
+                    local textColor = nadmin:TextColor(nadmin.colors.gui.theme)         
+                    draw.SimpleText("Theme Color:", "nadmin_derma", mixerWidth/2 - 50, 12, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    draw.SimpleText("Input Color:", "nadmin_derma", w/2 - 50, 12, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                    draw.SimpleText("Error Color:", "nadmin_derma", w - mixerWidth/2 - 50, 12, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+                end
+
+                local themeMixer = vgui.Create("DColorMixer", colorMixers)
+                themeMixer:Dock(LEFT)
+                themeMixer:DockMargin(0, 0, 4, 0)
+                themeMixer:SetWide(mixerWidth)
+                themeMixer:SetAlphaBar(false)
+                themeMixer:SetColor(nadmin.colors.gui.theme)
+                themeMixer:SetPalette(false)
+                function themeMixer:ValueChanged(color)
+                    local theme = Color(color.r, color.g, color.b)
+                    nadmin.colors.gui.theme = theme
+
+                    -- Apply colors to everything open
+                    presetColors:SetColor(nadmin:DarkenColor(theme, 25))
+                    nadmin.menu.panel:SetColor(theme)
+                    nadmin.menu.panel.tabMenu:SetColor(presetColors:GetColor())
+                    tabMenu:SetColor(theme)
+                    simplifyScoreboard:SetColor(theme)
+
+                    enableSave()
+                end
+
+                local blueMixer = vgui.Create("DColorMixer", colorMixers)
+                blueMixer:Dock(FILL)
+                blueMixer:SetWide(mixerWidth)
+                blueMixer:SetAlphaBar(false)
+                blueMixer:SetColor(nadmin.colors.gui.blue)
+                blueMixer:SetPalette(false)
+                function blueMixer:ValueChanged(color)
+                    local blue = Color(color.r, color.g, color.b)
+                    nadmin.colors.gui.blue = blue
+
+                    -- Apply colors to everything open
+                    nadmin.menu.panel.closeButton:SetColor(blue)
+                    nadmin.menu.panel.tabMenu:SetTabColor(blue)
+                    tabMenu:SetTabColor(blue)
+                    save:SetColor(blue)
+
+                    enableSave()
+                end
+
+                local redMixer = vgui.Create("DColorMixer", colorMixers)
+                redMixer:Dock(RIGHT)
+                redMixer:DockMargin(4, 0, 0, 0)
+                redMixer:SetWide(mixerWidth)
+                redMixer:SetAlphaBar(false)
+                redMixer:SetColor(nadmin.colors.gui.red)
+                redMixer:SetPalette(false)
+                function redMixer:ValueChanged(color)
+                    nadmin.colors.gui.red = Color(color.r, color.g, color.b)
+                    -- Colors don't need to be applied to anything since nothing using red should be on screen
+
+                    enableSave()
+                end
+
+                function presetColors:OnSelect(ind, val, data)
+                    nadmin.colors.gui.theme = data.theme
+                    nadmin.colors.gui.blue = data.blue
+                    nadmin.colors.gui.red = data.red
+
+                    -- Apply colors to everything open
+                    self:SetColor(nadmin:DarkenColor(data.theme, 25))
                     
-                    local theme = nadmin.vgui:DPanel({display:GetWide()/2 - display:GetTall()*2, 0}, {display:GetTall(), display:GetTall()}, display)
-                    function theme:Paint(w, h)
-                        draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0))
-                        draw.RoundedBox(0, 4, 4, w-8, h-8, nadmin.colors.gui.theme)
-                        draw.SimpleText("Theme Color", "nadmin_derma_small", w/2, h/2, nadmin:TextColor(nadmin.colors.gui.theme), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                    end
+                    nadmin.menu.panel:SetColor(data.theme)
 
-                    local blue = nadmin.vgui:DPanel({display:GetWide()/2 - display:GetTall()/2, 0}, {display:GetTall(), display:GetTall()}, display)
-                    function blue:Paint(w, h)
-                        draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0))
-                        draw.RoundedBox(0, 4, 4, w-8, h-8, nadmin.colors.gui.blue)
-                        draw.SimpleText("Button Color", "nadmin_derma_small", w/2, h/2, nadmin:TextColor(nadmin.colors.gui.blue), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                    end
+                    nadmin.menu.panel.closeButton:SetColor(data.blue)
 
-                    local red = nadmin.vgui:DPanel({display:GetWide()/2 + display:GetTall(), 0}, {display:GetTall(), display:GetTall()}, display)
-                    function red:Paint(w, h)
-                        draw.RoundedBox(0, 0, 0, w, h, Color(0, 0, 0))
-                        draw.RoundedBox(0, 4, 4, w-8, h-8, nadmin.colors.gui.red)
-                        draw.SimpleText("Error Color", "nadmin_derma_small", w/2, h/2, nadmin:TextColor(nadmin.colors.gui.red), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-                    end
+                    nadmin.menu.panel.tabMenu:SetColor(self:GetColor())
+                    nadmin.menu.panel.tabMenu:SetTabColor(data.blue)
 
-                    local preset = nadmin.vgui:DComboBox(nil, {content:GetWide()-8, 32}, content)
-                    preset:Dock(TOP)
-                    preset:DockMargin(4, 4, 4, 0)
-                    preset:SetColor(nadmin.colors.gui.theme)
-                    preset:SetValue("Select a preset...")
-                    preset:SetSortItems(false)
+                    tabMenu:SetColor(data.theme)
+                    tabMenu:SetTabColor(data.blue)
 
-                    preset.normalPaint = preset.Paint 
-                    function preset:Paint(w, h)
-                        self:SetColor(nadmin.colors.gui.theme)
-                        self:normalPaint(w, h)
-                    end
+                    simplifyScoreboard:SetColor(data.theme)
 
-                    preset:AddChoice("Default", {
-                        main = nadmin.defaults.colors.gui.theme,
-                        blue = nadmin.defaults.colors.gui.blue,
-                        red  = nadmin.defaults.colors.gui.red
-                    })
-                    preset:AddChoice("Orange Sunset", {
-                        main = nadmin:HexToColor("#a3586d"),
-                        blue = nadmin:HexToColor("#5c4a72"),
-                        red  = nadmin:HexToColor("#f3b05a")
-                    })
-                    preset:AddChoice("Refreshing and Invigorating", {
-                        main = nadmin:HexToColor("#003d73"),
-                        blue = nadmin:HexToColor("#1ecfd6"),
-                        red  = nadmin:HexToColor("#c05640")
-                    })
-                    preset:AddChoice("Sophisticated and Calm", {
-                        main = nadmin:HexToColor("#132226"),
-                        blue = nadmin:HexToColor("#525b56"),
-                        red  = nadmin:HexToColor("#be9063")
-                    })
-                    preset:AddChoice("Sunset over Swamp", {
-                        main = nadmin:HexToColor("#6465a5"),
-                        blue = nadmin:HexToColor("#f3e96b"),
-                        red  = nadmin:HexToColor("#f05837")
-                    })
-                    preset:AddChoice("Vintage 1950s", {
-                        main = nadmin:HexToColor("#80add7"),
-                        blue = nadmin:HexToColor("#0abda0"),
-                        red  = nadmin:HexToColor("#bf9d7a")
-                    })
+                    save:SetColor(data.blue)
 
-                    local thText = vgui.Create("DLabel", content)
-                    thText:SetPos(4, display:GetTall() + preset:GetTall() + 16)
-                    thText:SetText("")
-                    thText:SetSize(parent:GetWide()/3, 19)
-                    thText:SetFont("nadmin_derma")
-                    function thText:Paint(w, h)
-                        draw.Text({
-                            text = "Theme Color:",
-                            font = self:GetFont(),
-                            pos = {0, h/2},
-                            yalign = TEXT_ALIGN_CENTER,
-                            color = nadmin:TextColor(nadmin.colors.gui.theme)
-                        })
-                    end
-                    local main = vgui.Create("DColorMixer", content)
-                    main:SetPos(4, display:GetTall() + preset:GetTall() + 36)
-                    main:SetSize(content:GetWide()/3 - 8, 125)
-                    main:SetAlphaBar(false)
-                    main:SetColor(nadmin.colors.gui.theme)
-                    main:SetPalette(false)
-                    function main:ValueChanged(col)
-                        nadmin.colors.gui.theme = Color(col.r, col.g, col.b)
-                    end
+                    themeMixer:SetColor(data.theme)
+                    blueMixer:SetColor(data.blue)
+                    redMixer:SetColor(data.red)
 
-                    local blText = vgui.Create("DLabel", content)
-                    blText:SetPos(content:GetWide()/3 + 2, display:GetTall() + preset:GetTall() + 16)
-                    blText:SetText("")
-                    blText:SetSize(content:GetWide()/3, 19)
-                    blText:SetFont("nadmin_derma")
-                    function blText:Paint(w, h)
-                        draw.Text({
-                            text = "Button Color:",
-                            font = self:GetFont(),
-                            pos = {0, h/2},
-                            yalign = TEXT_ALIGN_CENTER,
-                            color = nadmin:TextColor(nadmin.colors.gui.theme)
-                        })
-                    end
-                    local blueMix = vgui.Create("DColorMixer", content)
-                    blueMix:SetPos(content:GetWide()/3 + 2, display:GetTall() + preset:GetTall() + 36)
-                    blueMix:SetSize(content:GetWide()/3 - 6, 125)
-                    blueMix:SetAlphaBar(false)
-                    blueMix:SetColor(nadmin.colors.gui.blue)
-                    blueMix:SetPalette(false)
-                    function blueMix:ValueChanged(col)
-                        nadmin.colors.gui.blue = Color(col.r, col.g, col.b)
-                    end
+                    enableSave()
+                end
 
-                    local reText = vgui.Create("DLabel", content)
-                    reText:SetPos(content:GetWide() * 2/3 + 2, display:GetTall() + preset:GetTall() + 16)
-                    reText:SetText("")
-                    reText:SetSize(content:GetWide()/3, 19)
-                    reText:SetFont("nadmin_derma")
-                    function reText:Paint(w, h)
-                        draw.Text({
-                            text = "Error Color:",
-                            font = self:GetFont(),
-                            pos = {0, h/2},
-                            yalign = TEXT_ALIGN_CENTER,
-                            color = nadmin:TextColor(nadmin.colors.gui.theme)
-                        })
-                    end
-                    local redMix = vgui.Create("DColorMixer", content)
-                    redMix:SetPos(content:GetWide() * 2/3 + 2, display:GetTall() + preset:GetTall() + 36)
-                    redMix:SetSize(content:GetWide()/3 - 6, 125)
-                    redMix:SetAlphaBar(false)
-                    redMix:SetColor(nadmin.colors.gui.red)
-                    redMix:SetPalette(false)
-                    function redMix:ValueChanged(col)
-                        nadmin.colors.gui.red = Color(col.r, col.g, col.b)
-                    end
+                local divider = vgui.Create("DPanel", parent)
+                divider:Dock(TOP)
+                divider:DockMargin(0, 8, 0, 4)
+                divider:SetTall(2)
+                function divider:Paint(w, h)
+                    draw.RoundedBox(0, 0, 0, w, h, nadmin:DarkenColor(nadmin.colors.gui.theme, 25))
+                end
 
-                    function preset:OnSelect(ind, val, data)
-                        nadmin.colors.gui.theme = data.main
-                        main:SetColor(nadmin.colors.gui.theme)
-        
-                        nadmin.colors.gui.blue = data.blue
-                        blueMix:SetColor(nadmin.colors.gui.blue)
-        
-                        nadmin.colors.gui.red = data.red
-                        redMix:SetColor(nadmin.colors.gui.red)
-                    end
+                simplifyScoreboard:SetParent(parent)
+                simplifyScoreboard:Dock(TOP)
+                simplifyScoreboard:DockMargin(4, 4, 4, 0)
+                simplifyScoreboard:SetText("Use Compact Scoreboard")
+                simplifyScoreboard:SetChecked(nadmin.clientData.useCompactSB)
+                function simplifyScoreboard:OnChange(use)
+                    nadmin.clientData.useCompactSB = use
 
-                    local save = nadmin.vgui:DButton({4, display:GetTall() + preset:GetTall() + redMix:GetTall() + 40}, {content:GetWide()-8, 32}, content)
-                    save:SetText("Save Configuration")
-                    save.normalPaint = save.Paint 
-                    function save:Paint(w, h)
-                        self:SetColor(nadmin.colors.gui.blue)
-                        self:normalPaint(w, h)
-                    end
+                    enableSave()
+                end
 
-                    function save:DoClick()
-                        nadmin.clientData.guiColors = {
-                            theme = nadmin.colors.gui.theme,
-                            blue  = nadmin.colors.gui.blue,
-                            red   = nadmin.colors.gui.red
-                        }
+                local divider2 = vgui.Create("DPanel", parent)
+                divider2:Dock(TOP)
+                divider2:DockMargin(0, 8, 0, 4)
+                divider2:SetTall(2)
+                divider2.Paint = divider.Paint
 
-                        file.Write("nadmin_config.txt", util.TableToJSON(nadmin.clientData))
+                save:SetParent(parent)
+                save:Dock(TOP)
+                save:DockMargin(4, 4, 4, 0)
+                save.defaultText = "Make a change and click me to save!"
+                save:SetText(save.defaultText)
+                save:SetEnabled(false)
 
-                        self:SetText("Saved!")
-                        timer.Simple(1, function()
-                            if IsValid(self) then 
-                                self:SetText("Save Configuration")
-                            end
-                        end)
-                    end
-                end},
-                {"Other", "icon16/wrench.png", function()
-                    local noclipInWar = nadmin.vgui:DCheckBox(nil, {content:GetWide()-8, 32}, content)
-                    noclipInWar:Dock(TOP)
-                    noclipInWar:DockMargin(4, 4, 4, 0)
-                    noclipInWar:SetColor(nadmin.colors.gui.theme)
-                    noclipInWar:SetText("Noclip in PVP")
-                    noclipInWar:SetChecked(nadmin.clientData.allowNoclip)
-                    
-                    local physgunPlayers = nadmin.vgui:DCheckBox(nil, {content:GetWide()-8, 32}, content)
-                    physgunPlayers:Dock(TOP)
-                    physgunPlayers:DockMargin(4, 4, 4, 0)
-                    physgunPlayers:SetColor(nadmin.colors.gui.theme)
-                    physgunPlayers:SetText("Physgun pickup other players")
-                    physgunPlayers:SetChecked(nadmin.clientData.physgunOthers)
+                function save:DoClick()
+                    nadmin.clientData.guiColors = {
+                        theme = nadmin.colors.gui.theme,
+                        blue  = nadmin.colors.gui.blue,
+                        red   = nadmin.colors.gui.red
+                    }
 
-                    local afkTime = nadmin.vgui:DCheckBox(nil, {content:GetWide()-8, 32}, content)
-                    afkTime:Dock(TOP)
-                    afkTime:DockMargin(4, 4, 4, 0)
-                    afkTime:SetColor(nadmin.colors.gui.theme)
-                    afkTime:SetText("Add to playtime while AFK")
-                    afkTime:SetChecked(nadmin.clientData.afkTime)
+                    file.Write("nadmin_config.txt", util.TableToJSON(nadmin.clientData))
 
-                    local silentNotifs = nadmin.vgui:DCheckBox(nil, {content:GetWide()-8, 32}, content)
-                    silentNotifs:Dock(TOP)
-                    silentNotifs:DockMargin(4, 4, 4, 0)
-                    silentNotifs:SetColor(nadmin.colors.gui.theme)
-                    silentNotifs:SetText("See silent notifications")
-                    silentNotifs:SetChecked(nadmin.clientData.silentNotifs)
-
-                    local hpRegen = nadmin.vgui:DCheckBox(nil, {content:GetWide()-8, 32}, content)
-                    hpRegen:Dock(TOP)
-                    hpRegen:DockMargin(4, 4, 4, 0)
-                    hpRegen:SetColor(nadmin.colors.gui.theme)
-                    hpRegen:SetText("Regenerate health")
-                    hpRegen:SetChecked(nadmin.clientData.hpRegen)
-
-                    local compactSB = nadmin.vgui:DCheckBox(nil, {content:GetWide()-8, 32}, content)
-                    compactSB:Dock(TOP)
-                    compactSB:DockMargin(4, 4, 4, 0)
-                    compactSB:SetColor(nadmin.colors.gui.theme)
-                    compactSB:SetText("Use compact scoreboard")
-                    compactSB:SetChecked(nadmin.clientData.useCompactSB)
-
-                    saveBtn = nadmin.vgui:DButton(nil, {content:GetWide()-8, 32}, content)
-                    saveBtn:Dock(TOP)
-                    saveBtn:DockMargin(4, 4, 4, 0)
-                    saveBtn:SetText("Save Configuration")
-
-                    function saveBtn:DoClick()
-                        nadmin.clientData.allowNoclip   = noclipInWar:GetChecked()
-                        nadmin.clientData.physgunOthers = physgunPlayers:GetChecked()
-                        nadmin.clientData.afkTime       = afkTime:GetChecked()
-                        nadmin.clientData.silentNotifs  = silentNotifs:GetChecked()
-                        nadmin.clientData.hpRegen       = hpRegen:GetChecked()
-                        nadmin.clientData.useCompactSB  = compactSB:GetChecked()
-
-                        net.Start("nadmin_player_preferences")
-                            net.WriteTable({
-                                allowNoclip   = nadmin.clientData.allowNoclip,
-                                physgunOthers = nadmin.clientData.physgunOthers,
-                                afkTime       = nadmin.clientData.afkTime,
-                                silentNotifs  = nadmin.clientData.silentNotifs,
-                                hpRegen       = nadmin.clientData.hpRegen
-                            })
-                        net.SendToServer()
-
-                        file.Write("nadmin_config.txt", util.TableToJSON(nadmin.clientData))
-                    end
-                end}
-            }
-
-            for i, cat in ipairs(categories) do
-                local btn = nadmin.vgui:DButton(nil, {leftPanel:GetWide() - 8, 32}, leftPanel)
-                btn:Dock(TOP)
-                btn:DockMargin(0, 0, 0, 4)
-                btn:SetText(cat[1])
-                btn:SetIcon(cat[2])
-                btn.selected = false
-
-                -- if i ~= 1 then
-                    btn:SetColor(nadmin:BrightenColor(nadmin.colors.gui.theme, 25))
-                -- end
-
-                function btn:DoClick()
-                    local col = nadmin:BrightenColor(nadmin.colors.gui.theme, 25)
-                    for x, btn in ipairs(leftPanel.btns) do
-                        btn:SetColor(col)
-                        btn.selected = false
-                    end
-                    self:SetColor(nadmin.colors.gui.blue)
-                    btn.selected = true
-
-                    content:Clear()
-                    if isfunction(cat[3]) then
-                        function content:Paint() end
-                        cat[3]()
-                    else
-                        function content:Paint(w, h)
-                            draw.Text({
-                                text = "Please select an option on the left.",
-                                pos = {w/2, h/2},
-                                xalign = TEXT_ALIGN_CENTER,
-                                yalign = TEXT_ALIGN_CENTER,
-                                font = "nadmin_derma",
-                                color = tc
-                            })
+                    self:SetText("Saved!")
+                    self:SetEnabled(false)
+                    timer.Simple(1, function()
+                        if IsValid(self) then 
+                            self:SetText(self.defaultText)
                         end
-                    end
+                    end)
                 end
+            end, true)
 
-                btn.normalPaint = btn.Paint 
-                function btn:Paint(w, h)
-                    self:normalPaint(w, h)
+            local otherTab = tabMenu:AddTab("Server Preferences", function(parent)
+                tabMenu:SetColor(nadmin:DarkenColor(nadmin.colors.gui.theme, 25))
+                local save = vgui.Create("NadminButton")
 
-                    if (self.selected) then 
-                        self:SetColor(nadmin.colors.gui.blue)
+                local options = {
+                    {
+                        setting = "allowNoclip",
+                        title = "Noclip Anytime",
+                        description = "Allows your noclip bind to work regardless of sbox_noclip convar. Requires \"Always Allow Noclip\" permission from the server."
+                    },
+                    {
+                        setting = "physgunOthers",
+                        title = "Physgun Pickup Other Players",
+                        description = "Allows you to use your physgun to pickup other players. Requires \"Physgun Players\" permission from the server."
+                    },
+                    {
+                        setting = "afkTime",
+                        title = "Add to Playtime While AFK",
+                        description = "Your playtime will not be paused if AFK. Requires \"Allow AFK Time\" permission from the server."
+                    },
+                    {
+                        setting = "silentNotifs",
+                        title = "See Silent Messages",
+                        description = "Allows you to see commands that are ran silently. Requires \"See Silent Commands\" permission from the server."
+                    },
+                    {
+                        setting = "hpRegen",
+                        title = "Regenerate Health",
+                        description = "Allows you to passively regenerate health when not taking damage. Requires \"Health Regeneration\" permission from the server."
+                    },
+                }
+                
+                for i, option in ipairs(options) do 
+                    local container = vgui.Create("NadminPanel", parent)
+                    container:Dock(TOP)
+                    if i == 1 then 
+                        container:DockMargin(4, 0, 0, 0)
                     else 
-                        self:SetColor(nadmin:BrightenColor(nadmin.colors.gui.theme, 25))
+                        container:DockMargin(4, 4, 0, 0)
                     end
+                    container:DockPadding(4, 4, 4, 0)
+    
+                    local toggle = vgui.Create("NadminCheckBox", container)
+                    toggle:Dock(TOP)
+                    toggle:SetText(option.title)
+                    toggle:SetChecked(nadmin.clientData[option.setting])
+                    function toggle:OnChange(val)
+                        nadmin.clientData[option.setting] = val
+
+                        save:SetEnabled(true)
+                    end
+    
+                    local label = vgui.Create("NadminLabel", container)
+                    label:Dock(TOP)
+                    label:DockMargin(0, 4, 0, 0)
+                    label:SetFont("nadmin_derma_small")
+                    label:SetText(option.description)
+    
+                    container:InvalidateLayout(true)
+                    container:SizeToChildren(false, true)
                 end
 
-                table.insert(leftPanel.btns, btn)
-            end
-        end
-    })
+                save:SetParent(parent)
+                save:Dock(TOP)
+                save:DockMargin(4, 4, 4, 0)
+                save:SetText("Save Settings")
+                save:SetEnabled(false)
 
-    net.Receive("nadmin_player_preferences", function()
-        if IsValid(saveBtn) then 
-            saveBtn:SetText("Saved!")
-            timer.Simple(1, function()
-                if IsValid(saveBtn) then 
-                    saveBtn:SetText("Save Configuration")
+                function save:DoClick()
+                    net.Start("nadmin_player_preferences")
+                        net.WriteTable({
+                            allowNoclip   = nadmin.clientData.allowNoclip,
+                            physgunOthers = nadmin.clientData.physgunOthers,
+                            afkTime       = nadmin.clientData.afkTime,
+                            silentNotifs  = nadmin.clientData.silentNotifs,
+                            hpRegen       = nadmin.clientData.hpRegen
+                        })
+                    net.SendToServer()
+
+                    file.Write("nadmin_config.txt", util.TableToJSON(nadmin.clientData))
+                    save:SetEnabled(false)
                 end
             end)
         end
-    end)
+    })
 else 
     util.AddNetworkString("nadmin_player_preferences")
     
@@ -356,9 +332,6 @@ else
     net.Receive("nadmin_player_preferences", function(len, ply)
         nadmin.plyPref[ply:SteamID()] = net.ReadTable()
 
-        net.Start("nadmin_player_preferences")
-        net.Send(ply)
-
-        nadmin:Log("Received " .. ply:Nick() .. "'s preferences.")
+        MsgN("[Nadmin]Received " .. ply:Nick() .. "'s server preferences.")
     end)
 end
