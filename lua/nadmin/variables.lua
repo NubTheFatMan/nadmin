@@ -86,12 +86,14 @@ nadmin.errors.noAccessProp    = "You do not have access to this prop."
 
 -- WARNING: If you add your own access variables, they must be in sequential order with no gaps and start from 0, otherwise you will encounter errors!
 --          Any access variables you add won't show up in the ranks tab. The buttons are hard coded. Really this should be all you need.
+-- WARNING 2: You can only add 2 more access levels if you would like. The rank editor uses 3 bits to communicate the access level to the server, so this must be
+--            between 0-7.
 nadmin.access.restricted = 0 -- This access level restricts everything, and the restrictions acts as a whitelist. Like a psuedo ban
-nadmin.access.default    = 1  -- This signifies that a rank is the default rank. Only one rank can have this
-nadmin.access.user       = 2  -- This signifies that they're just a regular user with no special access
-nadmin.access.admin      = 3  -- This rank has administration access on the server
-nadmin.access.superadmin = 4  -- This rank has super admin access on the server
-nadmin.access.owner      = 5  -- This rank has owner access. They have access to everything and nothing can be restricted from them
+nadmin.access.default    = 1 -- This signifies that a rank is the default rank. Only one rank can have this
+nadmin.access.user       = 2 -- This signifies that they're just a regular user with no special access
+nadmin.access.admin      = 3 -- This rank has administration access on the server
+nadmin.access.superadmin = 4 -- This rank has super admin access on the server
+nadmin.access.owner      = 5 -- This rank has owner access. They have access to everything and nothing can be restricted from them
 
 nadmin.plugins.afk          = true  -- Enables AFK system that stops players from gaining playtime.
 nadmin.plugins.joinMessages = true  -- Enables join and leave messages.
