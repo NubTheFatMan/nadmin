@@ -21,7 +21,9 @@ else
     local json = file.Read("nadmin_config.txt", "DATA")
     json = util.JSONToTable(json)
 
-    -- lua "ternary" is weird. (condition) and (truthy_value) or (falsey_value)
+    -- lua "ternary" is weird. (condition) and (truthy_value) or (any_value)
+    -- Basically the value wanted if true needs to be truthy. If it equates to false, it'll go to the any_value regardless of if the condition is true or not
+    -- Of course lua doesn't officially have ternary. So this probably shouldn't be used but it's great for reducing bloat
     nadmin.clientData.allowNoclip   = not isbool(json.allowNoclip)   and true              or json.allowNoclip
     nadmin.clientData.physgunOthers = not isbool(json.physgunOthers) and true              or json.physgunOthers
     nadmin.clientData.afkTime       =     isbool(json.afkTime)       and json.afkTime      or false
