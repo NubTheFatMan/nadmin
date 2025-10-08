@@ -43,16 +43,11 @@ nadmin.colors.gui.red     = Color(255, 62, 62)  -- The color of buttons like "Ar
 nadmin.colors.gui.warning = Color(230, 230, 62) -- The color of warnings in text entries
 nadmin.colors.gui.theme   = Color(75, 75, 75)   -- The main color of the gui. Uses `nadmin:DarkenColor` and `nadmin:BrightenColor` to add variance
 
-nadmin.colors.gui.health = Color(255, 62, 62)  --The color of your health.
-nadmin.colors.gui.armor  = Color(98, 176, 255) --The color of your armor.
-nadmin.colors.gui.xp     = Color(205, 175, 0)  --The color of the XP bar
-nadmin.colors.gui.ammo   = Color(200, 200, 0)  --The color of your ammo counter.
+nadmin.colors.gui.health = Color(255, 62, 62)  --The color of your health (scoreboard only).
+nadmin.colors.gui.armor  = Color(98, 176, 255) --The color of your armor (scoreboard only).
 
 nadmin.config.prefixes  = {"!", "/", "n!", "n/", "~"} --What to type in chat to call a command.
 nadmin.config.sprefixes = {"n@", "n?"}           --What to type in chat to call a command silently.
-
-nadmin.config.chat.tagLeft  = "(" --What goes before the player's rank in chat.
-nadmin.config.chat.tagRight = ")" --What goes after the player's rank in chat.
 
 nadmin.config.saveInterval = 30 --How often to save player data
 
@@ -95,6 +90,7 @@ nadmin.access.admin      = 3 -- This rank has administration access on the serve
 nadmin.access.superadmin = 4 -- This rank has super admin access on the server
 nadmin.access.owner      = 5 -- This rank has owner access. They have access to everything and nothing can be restricted from them
 
+-- To be moved to options in server settings tab
 nadmin.plugins.afk          = true  -- Enables AFK system that stops players from gaining playtime.
 nadmin.plugins.joinMessages = true  -- Enables join and leave messages.
 nadmin.plugins.logs         = true  -- Makes `nadmin:Log()` save to a file.

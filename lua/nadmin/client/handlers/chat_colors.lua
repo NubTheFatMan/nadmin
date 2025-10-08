@@ -15,7 +15,7 @@ hook.Add("OnPlayerChat", "nadmin_chat_replacement", function(ply, msg, isTeam, i
             local rank = ply:GetDisplayRank()
             if rank and rank.title then
                 table.insert(tbl, nadmin.colors.chat.tag)
-                table.insert(tbl, nadmin.config.chat.tagLeft .. rank.title .. nadmin.config.chat.tagRight .. " ")
+                table.insert(tbl, "(" .. rank.title .. ") ")
             end
 
             if rank and rank.color then
